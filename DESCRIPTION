@@ -1,0 +1,29 @@
+Package: watcher
+Type: Package
+Title: Watch the File System for Changes
+Version: 0.0.1
+Authors@R: 
+    c(person(given = "Charlie",
+             family = "Gao",
+             role = c("aut", "cre"),
+             email = "charlie.gao@shikokuchuo.net",
+             comment = c(ORCID = "0000-0002-0750-061X")),
+      person(given = "Posit Software, PBC",
+             role = "cph"))
+Description: R binding for 'libfswatch', a filesystem monitoring library. All
+    functions are asynchronous and do not block your session. Set watches on
+    files or directories recursively. Filter by type of event. Log activity, or
+    trigger an R function to run when a specified event occurs. 
+License: MIT + file LICENSE
+BugReports: https://github.com/shikokuchuo/watcher/issues
+URL: https://shikokuchuo.net/watcher/, https://github.com/shikokuchuo/watcher/
+Encoding: UTF-8
+SystemRequirements: 'libfswatch', or 'cmake' to compile from package sources
+Depends: 
+    R (>= 3.6)
+Suggests: 
+    later,
+    testthat (>= 3.0.0)
+RoxygenNote: 7.3.2
+Roxygen: list(markdown = TRUE)
+Config/testthat/edition: 3

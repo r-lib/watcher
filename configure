@@ -1,0 +1,98 @@
+#!/bin/sh
+
+LIB_VER="1.18.2"
+
+# Initialise
+PKG_CFLAGS=""
+PKG_LIBS="-lfswatch -lpthread"
+
+# Find compiler and export flags
+CC=`"${R_HOME}/bin/R" CMD config CC`
+export CC
+
+if [ -z "$MACOSX_DEPLOYMENT_TARGET" ]; then
+export MACOSX_DEPLOYMENT_TARGET=`echo $CC | sed -En 's/.*-version-min=([0-9][0-9.]*).*/\1/p'`
+fi
+
+# Detect -latomic linker flag for ARM architectures (Raspberry Pi etc.)
+echo "#include <stdint.h>
+uint64_t v;
+int main() {
+    return (int)__atomic_load_n(&v, __ATOMIC_ACQUIRE);
+}" | ${CC} -xc - -o /dev/null > /dev/null 2>&1
+if [ $? -ne 0 ]
+then
+  echo "Adding -latomic linker flag ..."
+  PKG_LIBS="$PKG_LIBS -latomic"
+fi
+
+# Force build bundled libs
+if [ -z "$WATCHER_LIBS" ]; then
+
+# Find MbedTLS and compile if necessary
+if [ "$INCLUDE_DIR" ] || [ "$LIB_DIR" ]
+then
+  PKG_CFLAGS="-I$INCLUDE_DIR $PKG_CFLAGS"
+  PKG_LIBS="-L$LIB_DIR $PKG_LIBS"
+  echo "Found INCLUDE_DIR $INCLUDE_DIR"
+  echo "Found LIB_DIR $LIB_DIR"
+elif [ -d "/usr/local/include/libfswatch" ]
+then
+  PKG_CFLAGS="-I/usr/local/include $PKG_CFLAGS"
+  PKG_LIBS="-L/usr/local/lib $PKG_LIBS"
+  echo "Found 'libfswatch' $PKG_CFLAGS"
+elif [ -d "/usr/include/libfswatch" ]
+then
+  PKG_CFLAGS="-I/usr/include $PKG_CFLAGS"
+  PKG_LIBS="-L/usr/lib $PKG_LIBS"
+  echo "Found 'libfswatch' $PKG_CFLAGS"
+elif [ -d "/usr/local/opt/libfswatch" ]
+then
+  PKG_CFLAGS="-I/usr/local/opt/fswatch/include $PKG_CFLAGS"
+  PKG_LIBS="-L/usr/local/opt/fswatch/lib $PKG_LIBS"
+  echo "Found 'libfswatch' $PKG_CFLAGS"
+else
+  echo "Existing 'libfswatch' not found"
+fi
+
+else
+  echo "WATCHER_LIBS is set... skipping detection"
+fi
+
+if [ -z "$PKG_CFLAGS" ]; then
+  echo "Compiling 'libfswatch' from source..."
+  echo "Detecting 'cmake'..."
+  which cmake
+  if [ $? -ne 0 ]
+  then
+    export PATH=$PATH:/Applications/CMake.app/Contents/bin
+    which cmake
+    if [ $? -ne 0 ]
+    then
+      echo "Required 'cmake' not found"
+      exit 1
+    fi
+  fi
+  tar -xf src/fswatch-$LIB_VER.tar.gz
+  cd fswatch-$LIB_VER
+  cmake -DCMAKE_INSTALL_PREFIX=../install .
+  cmake --build . --target install
+  cd ..
+  rm -rf fswatch-$LIB_VER
+
+  if [ -d "install/lib64" ]
+  then
+  PKG_CFLAGS="-I../install/include $PKG_CFLAGS"
+  PKG_LIBS="-L../install/lib64 $PKG_LIBS"
+  elif [ -d "install/lib" ]
+  then
+  PKG_CFLAGS="-I../install/include $PKG_CFLAGS"
+  PKG_LIBS="-L../install/lib $PKG_LIBS"
+  fi
+fi
+
+# Write to Makevars
+sed -e "s|@cflags@|$PKG_CFLAGS|" -e "s|@libs@|$PKG_LIBS|" src/Makevars.in > src/Makevars
+
+# Success
+exit 0
