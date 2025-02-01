@@ -14,11 +14,10 @@ Watch the File System for Changes
 
 R binding for ‘libfswatch’, a filesystem monitoring library.
 
-All functions are asynchronous and do not block your session.
+All watching is asynchronous and does not block the session.
 
 - Set watches on files or directories recursively.
-- Log activity, or trigger an R function to run when a specified event
-  occurs.
+- Log activity, or trigger an R function to run when an event occurs.
 
 ## Installation
 
@@ -32,8 +31,8 @@ pak::pak("shikokuchuo/watcher")
 
 Create a ‘watch’ using `watcher::watcher()`.
 
-By default this will watch your current working directory recursively
-and write events to `stdout`.
+By default this will watch the current working directory recursively and
+write events to `stdout`.
 
 Set the `callback` argument to run an arbitrary R function every time an
 event triggers. This uses the `later` package to execute the callback
