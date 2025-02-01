@@ -1,0 +1,2 @@
+PKG_CFLAGS=-I../install/include $(C_VISIBILITY)
+PKG_LIBS=-L../install/lib -lfswatch -lstdc++ -static-libgcc -static-libstdc++ -pthread

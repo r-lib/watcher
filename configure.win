@@ -2,10 +2,6 @@
 
 LIB_VER="1.18.2"
 
-# Initialise
-PKG_CFLAGS=""
-PKG_LIBS="-Wl,-Bstatic -lfswatch -lstdc++ -lstdc++fs -pthread -Wl,-Bdynamic"
-
 # Find compiler and export flags
 CC=`"${R_HOME}/bin/R" CMD config CC`
 export CC
@@ -17,19 +13,6 @@ cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=../install .
 cmake --build . --target install
 cd ..
 rm -rf fswatch-$LIB_VER
-
-if [ -d "install/lib64" ]
-then
-PKG_CFLAGS="-I../install/include $PKG_CFLAGS"
-PKG_LIBS="-L../install/lib64 $PKG_LIBS"
-elif [ -d "install/lib" ]
-then
-PKG_CFLAGS="-I../install/include $PKG_CFLAGS"
-PKG_LIBS="-L../install/lib $PKG_LIBS"
-fi
-
-# Write to Makevars
-sed -e "s|@cflags@|$PKG_CFLAGS|" -e "s|@libs@|$PKG_LIBS|" src/Makevars.in > src/Makevars
 
 # Success
 exit 0

@@ -32,8 +32,8 @@ void load_later_safe(void *data) {
 }
 
 void exec_later(void *data) {
-  SEXP call, x = (SEXP) data;
-  PROTECT(call = Rf_lcons(data, R_NilValue));
+  SEXP call, fn = (SEXP) data;
+  PROTECT(call = Rf_lcons(fn, R_NilValue));
   Rf_eval(call, R_GlobalEnv);
   UNPROTECT(1);
 }
