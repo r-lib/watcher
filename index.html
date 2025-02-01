@@ -11,8 +11,8 @@
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Watch the File System for Changes">
-<meta name="description" content="R binding for libfswatch, a filesystem monitoring library. All functions are asynchronous and do not block the session. Set watches on files or directories recursively. Log activity, or trigger an R function to run when an event occurs.">
-<meta property="og:description" content="R binding for libfswatch, a filesystem monitoring library. All functions are asynchronous and do not block the session. Set watches on files or directories recursively. Log activity, or trigger an R function to run when an event occurs.">
+<meta name="description" content="R binding for libfswatch, a file system monitoring library. Watch files or directories recursively in the background. Log activity, or trigger an R function to run every time an event occurs.">
+<meta property="og:description" content="R binding for libfswatch, a file system monitoring library. Watch files or directories recursively in the background. Log activity, or trigger an R function to run every time an event occurs.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -52,11 +52,11 @@
 <!-- badges: start -->
 
 <p>Watch the File System for Changes</p>
-<p>R binding for ‘libfswatch’, a filesystem monitoring library.</p>
-<p>All watching is asynchronous and does not block the session.</p>
+<p>R binding for ‘libfswatch’, a file system monitoring library.</p>
+<p>All watching is done in the background, operating asynchronously without blocking the session.</p>
 <ul>
-<li>Set watches on files or directories recursively.</li>
-<li>Log activity, or trigger an R function to run when an event occurs.</li>
+<li>Watch files or directories recursively.</li>
+<li>Log activity, or trigger an R function to run every time an event occurs.</li>
 </ul>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -68,7 +68,7 @@
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
-<p>Create a ‘watch’ using <code><a href="reference/watcher.html">watcher::watcher()</a></code>.</p>
+<p>Create a ‘Watcher’ using <code><a href="reference/watcher.html">watcher::watcher()</a></code>.</p>
 <p>By default this will watch the current working directory recursively and write events to <code>stdout</code>.</p>
 <p>Set the <code>callback</code> argument to run an arbitrary R function every time an event triggers. This uses the <code>later</code> package to execute the callback when R is idle at the top level, or whenever <code><a href="https://r-lib.github.io/later/reference/run_now.html" class="external-link">later::run_now()</a></code> is called, for example automatically as part of Shiny’s event loop.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -79,27 +79,32 @@
 <span><span class="va">w</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/watcher.html">watcher</a></span><span class="op">(</span><span class="va">dir</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, callback <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"event triggered"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">w</span></span>
 <span><span class="co">#&gt; &lt;Watcher&gt;</span></span>
-<span><span class="co">#&gt;   start()</span></span>
-<span><span class="co">#&gt;   stop()</span></span>
-<span><span class="co">#&gt;   path: /tmp/RtmpTjz7M7/watcher-example</span></span>
-<span><span class="co">#&gt;   recursive: TRUE</span></span>
-<span><span class="co">#&gt;   active: FALSE</span></span>
+<span><span class="co">#&gt;   Public:</span></span>
+<span><span class="co">#&gt;     active: FALSE</span></span>
+<span><span class="co">#&gt;     callback: function () </span></span>
+<span><span class="co">#&gt;     initialize: function (path = getwd(), recursive = TRUE, callback = NULL) </span></span>
+<span><span class="co">#&gt;     path: /tmp/Rtmp8wU9e9/watcher-example</span></span>
+<span><span class="co">#&gt;     recursive: TRUE</span></span>
+<span><span class="co">#&gt;     start: function () </span></span>
+<span><span class="co">#&gt;     stop: function () </span></span>
+<span><span class="co">#&gt;   Private:</span></span>
+<span><span class="co">#&gt;     watch: externalptr</span></span>
 <span><span class="va">w</span><span class="op">$</span><span class="fu">start</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.create</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">"oldfile"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="fu">later</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/later/reference/run_now.html" class="external-link">run_now</a></span><span class="op">(</span><span class="fl">2L</span><span class="op">)</span></span>
+<span><span class="fu">later</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/later/reference/run_now.html" class="external-link">run_now</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "event triggered"</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.rename</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">"oldfile"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">"newfile"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="fu">later</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/later/reference/run_now.html" class="external-link">run_now</a></span><span class="op">(</span><span class="fl">2L</span><span class="op">)</span></span>
+<span><span class="fu">later</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/later/reference/run_now.html" class="external-link">run_now</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "event triggered"</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.remove</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">"newfile"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="fu">later</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/later/reference/run_now.html" class="external-link">run_now</a></span><span class="op">(</span><span class="fl">2L</span><span class="op">)</span></span>
+<span><span class="fu">later</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/later/reference/run_now.html" class="external-link">run_now</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "event triggered"</span></span>
 <span></span>
 <span><span class="va">w</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span></span>
