@@ -42,11 +42,7 @@ asynchronously.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">watcher</span><span class="op">(</span>path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, callback <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">watcher_start</span><span class="op">(</span><span class="va">watch</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">watcher_stop</span><span class="op">(</span><span class="va">watch</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">watcher</span><span class="op">(</span>path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, callback <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -68,16 +64,10 @@ current working directory.</p></dd>
 time an event is triggered - requires the <span class="pkg">later</span> package. The default,
 <code>NULL</code>, causes event paths and types to be written to <code>stdout</code> instead.</p></dd>
 
-
-<dt id="arg-watch">watch<a class="anchor" aria-label="anchor" href="#arg-watch"></a></dt>
-<dd><p>a 'watch' object.</p></dd>
-
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>For watcher: a 'watch' object. <br>
-For watcher_start and watcher_stop: invisibly, <code>TRUE</code> upon success or
-<code>FALSE</code> otherwise.</p>
+    <p>A 'Watcher' R6 class object.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -87,19 +77,23 @@ Renamed. Default latency is 1s.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">watch</span> <span class="op">&lt;-</span> <span class="fu">watcher</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE</a></span><span class="op">(</span><span class="fu">watcher_start</span><span class="op">(</span><span class="va">watch</span><span class="op">)</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">w</span> <span class="op">&lt;-</span> <span class="fu">watcher</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE</a></span><span class="op">(</span><span class="va">w</span><span class="op">$</span><span class="fu">start</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-in"><span><span class="va">watch</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt; watch &gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   path: /tmp/Rtmpi9KhQd</span>
+<span class="r-in"><span><span class="va">w</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;Watcher&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   start()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   stop()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   path: /tmp/RtmpV2kp4p</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   recursive: TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   active: TRUE</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE</a></span><span class="op">(</span><span class="fu">watcher_stop</span><span class="op">(</span><span class="va">watch</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE</a></span><span class="op">(</span><span class="va">w</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-in"><span><span class="va">watch</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt; watch &gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   path: /tmp/Rtmpi9KhQd</span>
+<span class="r-in"><span><span class="va">w</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;Watcher&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   start()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   stop()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   path: /tmp/RtmpV2kp4p</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   recursive: TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   active: FALSE</span>
 <span class="r-in"><span></span></span>
