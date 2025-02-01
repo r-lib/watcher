@@ -22,12 +22,12 @@ knitr::opts_chunk$set(
 
 Watch the File System for Changes
 
-R binding for 'libfswatch', a filesystem monitoring library.
+R binding for 'libfswatch', a file system monitoring library.
 
-All watching is asynchronous and does not block the session.
+All watching is done in the background, operating asynchronously without blocking the session.
 
-- Set watches on files or directories recursively.
-- Log activity, or trigger an R function to run when an event occurs.
+- Watch files or directories recursively.
+- Log activity, or trigger an R function to run every time an event occurs.
 
 ## Installation
 
@@ -39,7 +39,7 @@ pak::pak("shikokuchuo/watcher")
 
 ## Example
 
-Create a 'watch' using `watcher::watcher()`.
+Create a 'Watcher' using `watcher::watcher()`.
 
 By default this will watch the current working directory recursively and write events to `stdout`.
 
@@ -54,15 +54,15 @@ w <- watcher(dir, recursive = TRUE, callback = function() print("event triggered
 w
 w$start()
 
-Sys.sleep(1L)
+Sys.sleep(1)
 file.create(file.path(dir, "oldfile"))
-later::run_now(2L)
+later::run_now(2)
 
 file.rename(file.path(dir, "oldfile"), file.path(dir, "newfile"))
-later::run_now(2L)
+later::run_now(2)
 
 file.remove(file.path(dir, "newfile"))
-later::run_now(2L)
+later::run_now(2)
 
 w$stop()
 unlink(dir, force = TRUE)

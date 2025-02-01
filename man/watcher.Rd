@@ -18,15 +18,16 @@ time an event is triggered - requires the \pkg{later} package. The default,
 \code{NULL}, causes event paths and types to be written to \code{stdout} instead.}
 }
 \value{
-A 'Watcher' R6 class object.
+A 'Watcher' R6 class object. Start and stop background monitoring
+using the \verb{$start()} and \verb{$stop()} methods.
 }
 \description{
-Create a watch on a filesystem location. Start and stop monitoring
-asynchronously.
+Create a 'Watcher' on a filesystem location to monitor for changes in the
+background.
 }
 \details{
-A limited subset of events are watched, namely: Created, Updated, Removed and
-Renamed. Default latency is 1s.
+A limited subset of filesystem events are watched, namely: Created, Updated,
+Removed and Renamed. Default latency is 1s.
 }
 \examples{
 w <- watcher(tempdir())

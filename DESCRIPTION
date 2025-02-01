@@ -10,10 +10,9 @@ Authors@R:
              comment = c(ORCID = "0000-0002-0750-061X")),
       person(given = "Posit Software, PBC",
              role = "cph"))
-Description: R binding for 'libfswatch', a filesystem monitoring library. All
-    functions are asynchronous and do not block the session. Set watches on
-    files or directories recursively. Log activity, or trigger an R function to
-    run when an event occurs. 
+Description: R binding for 'libfswatch', a file system monitoring library. Watch
+    files or directories recursively in the background. Log activity, or trigger
+    an R function to run every time an event occurs. 
 License: MIT + file LICENSE
 BugReports: https://github.com/shikokuchuo/watcher/issues
 URL: https://shikokuchuo.net/watcher/, https://github.com/shikokuchuo/watcher/

@@ -1,10 +1,10 @@
 #' Watch a Filesystem Location
 #'
-#' Create a watch on a filesystem location. Start and stop monitoring
-#' asynchronously.
+#' Create a 'Watcher' on a filesystem location to monitor for changes in the
+#' background.
 #'
-#' A limited subset of events are watched, namely: Created, Updated, Removed and
-#' Renamed. Default latency is 1s.
+#' A limited subset of filesystem events are watched, namely: Created, Updated,
+#' Removed and Renamed. Default latency is 1s.
 #'
 #' @param path character path to a file or directory to watch. Defaults to the
 #'   current working directory.
@@ -14,7 +14,8 @@
 #'   time an event is triggered - requires the \pkg{later} package. The default,
 #'   `NULL`, causes event paths and types to be written to `stdout` instead.
 #'
-#' @return A 'Watcher' R6 class object.
+#' @return A 'Watcher' R6 class object. Start and stop background monitoring
+#'   using the `$start()` and `$stop()` methods.
 #'
 #' @examples
 #' w <- watcher(tempdir())
@@ -35,12 +36,15 @@ Watcher <- R6Class(
     active = FALSE,
     callback = NULL,
     path = NULL,
-    recursive = TRUE,
+    recursive = NULL,
     initialize = function(path = getwd(), recursive = TRUE, callback = NULL) {
-      self$path <- path.expand(path)
-      self$recursive <- as.logical(recursive)
-      self$callback <- callback
-      private$watch <- .Call(watcher_create, self$path, self$recursive, self$callback)
+      if (is.null(self$path)) {
+        self$path <- path.expand(path)
+        self$recursive <- as.logical(recursive)
+        self$callback <- callback
+        private$watch <- .Call(watcher_create, self$path, self$recursive, self$callback)
+      }
+      invisible(self)
     },
     start = function() {
       res <- .Call(watcher_start_monitor, private$watch)
@@ -51,13 +55,11 @@ Watcher <- R6Class(
       res <- invisible(.Call(watcher_stop_monitor, private$watch))
       if (res) self$active <- FALSE
       invisible(res)
-    },
-    print = function(...) {
-      cat(sprintf("<Watcher>\n  start()\n  stop()\n  path: %s\n  recursive: %s\n  active: %s\n",
-                  self$path, self$recursive, self$active))
     }
   ),
   private = list(
     watch = NULL
-  )
+  ),
+  cloneable = FALSE,
+  lock_class = TRUE
 )
