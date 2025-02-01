@@ -59,7 +59,7 @@ void* watcher_thread(void *args) {
 
 SEXP watcher_create(SEXP path, SEXP recursive, SEXP callback) {
 
-  const char *watch_path = R_ExpandFileName(CHAR(STRING_ELT(path, 0)));
+  const char *watch_path = CHAR(STRING_ELT(path, 0));
   const int recurse = LOGICAL(recursive)[0];
   if (callback != R_NilValue) {
     SEXPTYPE typ = TYPEOF(callback);
@@ -93,14 +93,9 @@ SEXP watcher_create(SEXP path, SEXP recursive, SEXP callback) {
     }
   }
 
-  SEXP out, PathSymbol;
-  PathSymbol = Rf_install("path");
+  SEXP out;
   PROTECT(out = R_MakeExternalPtr(handle, R_NilValue, callback));
   R_RegisterCFinalizerEx(out, session_finalizer, TRUE);
-  Rf_setAttrib(out, PathSymbol, Rf_mkString(watch_path));
-  Rf_setAttrib(out, Rf_install("recursive"), Rf_ScalarLogical(recurse));
-  Rf_setAttrib(out, Rf_install("active"), Rf_ScalarLogical(0));
-  Rf_classgets(out, Rf_mkString("watch"));
 
   UNPROTECT(1);
   return out;
@@ -109,9 +104,6 @@ SEXP watcher_create(SEXP path, SEXP recursive, SEXP callback) {
 
 SEXP watcher_start_monitor(SEXP session) {
 
-  if (TYPEOF(session) != EXTPTRSXP)
-    return Rf_ScalarLogical(0);
-
   FSW_HANDLE handle = (FSW_HANDLE) R_ExternalPtrAddr(session);
   pthread_t thr;
 
@@ -119,23 +111,14 @@ SEXP watcher_start_monitor(SEXP session) {
     eln2 = (void (*)(void (*)(void *), void *, double, int)) R_GetCCallable("later", "execLaterNative2");
   }
 
-  const int started = pthread_create(&thr, NULL, &watcher_thread, handle) == 0;
-  Rf_setAttrib(session, Rf_install("active"), Rf_ScalarLogical(started));
-
-  return Rf_ScalarLogical(started);
+  return Rf_ScalarLogical(pthread_create(&thr, NULL, &watcher_thread, handle) == 0);
 
 }
 
 SEXP watcher_stop_monitor(SEXP session) {
 
-  if (TYPEOF(session) != EXTPTRSXP)
-    return Rf_ScalarLogical(0);
-
   FSW_HANDLE handle = (FSW_HANDLE) R_ExternalPtrAddr(session);
 
-  const int stopped = fsw_stop_monitor(handle) == FSW_OK;
-  Rf_setAttrib(session, Rf_install("active"), Rf_ScalarLogical(!stopped));
-
-  return Rf_ScalarLogical(stopped);
+  return Rf_ScalarLogical(fsw_stop_monitor(handle) == FSW_OK);
 
 }

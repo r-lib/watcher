@@ -13,45 +13,51 @@
 #' @param callback (optional) a function (taking no arguments) to be called each
 #'   time an event is triggered - requires the \pkg{later} package. The default,
 #'   `NULL`, causes event paths and types to be written to `stdout` instead.
-#' @param watch a 'watch' object.
 #'
-#' @return For [watcher]: a 'watch' object. \cr
-#'   For [watcher_start] and [watcher_stop]: invisibly, `TRUE` upon success or
-#'   `FALSE` otherwise.
+#' @return A 'Watcher' R6 class object.
 #'
 #' @examples
-#' watch <- watcher(tempdir())
-#' isTRUE(watcher_start(watch))
-#' watch
-#' isTRUE(watcher_stop(watch))
-#' watch
+#' w <- watcher(tempdir())
+#' isTRUE(w$start())
+#' w
+#' isTRUE(w$stop())
+#' w
 #'
 #' @export
 #'
 watcher <- function(path = getwd(), recursive = TRUE, callback = NULL) {
-  .Call(watcher_create, path, recursive, callback)
+  Watcher$new(path, recursive, callback)
 }
 
-#' @rdname watcher
-#' @export
-#'
-watcher_start <- function(watch) {
-  invisible(.Call(watcher_start_monitor, watch))
-}
-
-#' @rdname watcher
-#' @export
-#'
-watcher_stop <- function(watch) {
-  invisible(.Call(watcher_stop_monitor, watch))
-}
-
-#' @export
-#'
-print.watch <- function(x, ...) {
-
-  cat(sprintf("< watch >\n  path: %s\n  recursive: %s\n  active: %s\n",
-              attr(x, "path"), attr(x, "recursive"), attr(x, "active")))
-  invisible(x)
-
-}
+Watcher <- R6Class(
+  "Watcher",
+  public = list(
+    active = FALSE,
+    callback = NULL,
+    path = NULL,
+    recursive = TRUE,
+    initialize = function(path = getwd(), recursive = TRUE, callback = NULL) {
+      self$path <- path.expand(path)
+      self$recursive <- as.logical(recursive)
+      self$callback <- callback
+      private$watch <- .Call(watcher_create, self$path, self$recursive, self$callback)
+    },
+    start = function() {
+      res <- .Call(watcher_start_monitor, private$watch)
+      if (res) self$active <- TRUE
+      invisible(res)
+    },
+    stop = function() {
+      res <- invisible(.Call(watcher_stop_monitor, private$watch))
+      if (res) self$active <- FALSE
+      invisible(res)
+    },
+    print = function(...) {
+      cat(sprintf("<Watcher>\n  start()\n  stop()\n  path: %s\n  recursive: %s\n  active: %s\n",
+                  self$path, self$recursive, self$active))
+    }
+  ),
+  private = list(
+    watch = NULL
+  )
+)

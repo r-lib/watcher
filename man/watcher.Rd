@@ -2,15 +2,9 @@
 % Please edit documentation in R/watch.R
 \name{watcher}
 \alias{watcher}
-\alias{watcher_start}
-\alias{watcher_stop}
 \title{Watch a Filesystem Location}
 \usage{
 watcher(path = getwd(), recursive = TRUE, callback = NULL)
-
-watcher_start(watch)
-
-watcher_stop(watch)
 }
 \arguments{
 \item{path}{character path to a file or directory to watch. Defaults to the
@@ -22,13 +16,9 @@ current working directory.}
 \item{callback}{(optional) a function (taking no arguments) to be called each
 time an event is triggered - requires the \pkg{later} package. The default,
 \code{NULL}, causes event paths and types to be written to \code{stdout} instead.}
-
-\item{watch}{a 'watch' object.}
 }
 \value{
-For \link{watcher}: a 'watch' object. \cr
-For \link{watcher_start} and \link{watcher_stop}: invisibly, \code{TRUE} upon success or
-\code{FALSE} otherwise.
+A 'Watcher' R6 class object.
 }
 \description{
 Create a watch on a filesystem location. Start and stop monitoring
@@ -39,10 +29,10 @@ A limited subset of events are watched, namely: Created, Updated, Removed and
 Renamed. Default latency is 1s.
 }
 \examples{
-watch <- watcher(tempdir())
-isTRUE(watcher_start(watch))
-watch
-isTRUE(watcher_stop(watch))
-watch
+w <- watcher(tempdir())
+isTRUE(w$start())
+w
+isTRUE(w$stop())
+w
 
 }

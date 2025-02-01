@@ -45,22 +45,31 @@ dir <- file.path(tempdir(), "watcher-example")
 dir.create(dir)
 
 w <- watcher(dir, recursive = TRUE, callback = function() print("event triggered"))
+w
+#> <Watcher>
+#>   start()
+#>   stop()
+#>   path: /tmp/RtmpTjz7M7/watcher-example
+#>   recursive: TRUE
+#>   active: FALSE
+w$start()
 
-watcher_start(w)
 Sys.sleep(1L)
 file.create(file.path(dir, "oldfile"))
 #> [1] TRUE
 later::run_now(2L)
 #> [1] "event triggered"
+
 file.rename(file.path(dir, "oldfile"), file.path(dir, "newfile"))
 #> [1] TRUE
 later::run_now(2L)
 #> [1] "event triggered"
+
 file.remove(file.path(dir, "newfile"))
 #> [1] TRUE
 later::run_now(2L)
 #> [1] "event triggered"
-watcher_stop(w)
 
+w$stop()
 unlink(dir, force = TRUE)
 ```

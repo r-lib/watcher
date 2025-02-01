@@ -51,16 +51,19 @@ dir <- file.path(tempdir(), "watcher-example")
 dir.create(dir)
 
 w <- watcher(dir, recursive = TRUE, callback = function() print("event triggered"))
+w
+w$start()
 
-watcher_start(w)
 Sys.sleep(1L)
 file.create(file.path(dir, "oldfile"))
 later::run_now(2L)
+
 file.rename(file.path(dir, "oldfile"), file.path(dir, "newfile"))
 later::run_now(2L)
+
 file.remove(file.path(dir, "newfile"))
 later::run_now(2L)
-watcher_stop(w)
 
+w$stop()
 unlink(dir, force = TRUE)
 ```
