@@ -53,10 +53,10 @@
 
 <p>Watch the File System for Changes</p>
 <p>R binding for ‘libfswatch’, a filesystem monitoring library.</p>
-<p>All functions are asynchronous and do not block your session.</p>
+<p>All watching is asynchronous and does not block the session.</p>
 <ul>
 <li>Set watches on files or directories recursively.</li>
-<li>Log activity, or trigger an R function to run when a specified event occurs.</li>
+<li>Log activity, or trigger an R function to run when an event occurs.</li>
 </ul>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -69,7 +69,7 @@
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
 <p>Create a ‘watch’ using <code><a href="reference/watcher.html">watcher::watcher()</a></code>.</p>
-<p>By default this will watch your current working directory recursively and write events to <code>stdout</code>.</p>
+<p>By default this will watch the current working directory recursively and write events to <code>stdout</code>.</p>
 <p>Set the <code>callback</code> argument to run an arbitrary R function every time an event triggers. This uses the <code>later</code> package to execute the callback when R is idle at the top level, or whenever <code><a href="https://r-lib.github.io/later/reference/run_now.html" class="external-link">later::run_now()</a></code> is called, for example automatically as part of Shiny’s event loop.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shikokuchuo.net/watcher/" class="external-link">watcher</a></span><span class="op">)</span></span>
