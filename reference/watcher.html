@@ -42,7 +42,7 @@ background.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">watcher</span><span class="op">(</span>path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, callback <span class="op">=</span> <span class="cn">NULL</span>, latency <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">watcher</span><span class="op">(</span>path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, callback <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -64,10 +64,6 @@ current working directory.</p></dd>
 time an event is triggered. The default, <code>NULL</code>, causes event flag types
 and paths to be written to <code>stdout</code> instead.</p></dd>
 
-
-<dt id="arg-latency">latency<a class="anchor" aria-label="anchor" href="#arg-latency"></a></dt>
-<dd><p>numeric seconds latency, with a default of 1s.</p></dd>
-
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -79,7 +75,8 @@ whether or not they have succeeded.</p>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>A limited subset of filesystem events are watched, namely: Created, Updated,
 Removed and Renamed. Events are 'bubbled' such that if a single event
-triggers multiple event flag types, the callback will be called only once.</p>
+triggers multiple event flag types, the callback will be called only once.
+Default latency is 1s.</p>
     </div>
 
     <div class="section level2">
@@ -91,8 +88,8 @@ triggers multiple event flag types, the callback will be called only once.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;Watcher&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Public:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     active: TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     initialize: function (path, recursive, callback, latency) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/RtmpTY7hih</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     initialize: function (path = getwd(), recursive = TRUE, callback = NULL) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/RtmpvDwmV2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     recursive: TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     start: function () </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     stop: function () </span>
@@ -104,8 +101,8 @@ triggers multiple event flag types, the callback will be called only once.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;Watcher&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Public:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     active: FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     initialize: function (path, recursive, callback, latency) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/RtmpTY7hih</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     initialize: function (path = getwd(), recursive = TRUE, callback = NULL) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/RtmpvDwmV2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     recursive: TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     start: function () </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     stop: function () </span>
