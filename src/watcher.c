@@ -58,7 +58,7 @@ static void process_events(fsw_cevent const *const events, const unsigned int ev
     for (unsigned int i = 0; i < event_num; i++) {
       for (unsigned int j = 0; j < events[i].flags_num; j++) {
         get_event_flag_name(events[i].flags[j], buf);
-        Wprintf("Event: %s\n Flag: %s\n", events[i].path, buf);
+        Wprintf("%s: %s\n", buf, events[i].path);
       }
     }
   }
