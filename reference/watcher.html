@@ -9,7 +9,7 @@ background."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">watcher</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,19 +50,19 @@ background.</p>
 
 
 <dl><dt id="arg-path">path<a class="anchor" aria-label="anchor" href="#arg-path"></a></dt>
-<dd><p>character path to a file or directory to watch. Defaults to the
+<dd><p>Character path to a file or directory to watch. Defaults to the
 current working directory.</p></dd>
 
 
 <dt id="arg-recursive">recursive<a class="anchor" aria-label="anchor" href="#arg-recursive"></a></dt>
-<dd><p>logical value, default TRUE, whether to recursively scan
+<dd><p>Logical value, default TRUE, whether to recursively scan
 <code>path</code>, including all subdirectories.</p></dd>
 
 
 <dt id="arg-callback">callback<a class="anchor" aria-label="anchor" href="#arg-callback"></a></dt>
-<dd><p>(optional) a function (taking no arguments) to be called each
-time an event is triggered. The default, <code>NULL</code>, causes event flag types
-and paths to be written to <code>stdout</code> instead.</p></dd>
+<dd><p>A function or formula (see <a href="https://rlang.r-lib.org/reference/as_function.html" class="external-link">rlang::as_function</a>) - to be
+called each time an event is triggered. The default, <code>NULL</code>, causes event
+flag types and paths to be written to <code>stdout</code> instead.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -88,8 +88,7 @@ Default latency is 1s.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;Watcher&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Public:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     initialize: function (path, recursive, callback) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/Rtmp2F2ge4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     recursive: TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/RtmpLMCL0q</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     running: TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     start: function () </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     stop: function () </span>
@@ -101,8 +100,7 @@ Default latency is 1s.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;Watcher&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Public:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     initialize: function (path, recursive, callback) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/Rtmp2F2ge4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     recursive: TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/RtmpLMCL0q</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     running: FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     start: function () </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     stop: function () </span>
