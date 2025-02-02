@@ -33,13 +33,16 @@ watcher <- function(path = getwd(), recursive = TRUE, callback = NULL) {
   Watcher$new(path, recursive, callback)
 }
 
+# Note: R6 class uses a field for 'running' instead of using 'fsw_is_running()'
+# as the latter does not update immediately after stopping the monitor.
+
 Watcher <- R6Class(
   "Watcher",
   public = list(
-    active = FALSE,
     path = NULL,
     recursive = NULL,
-    initialize = function(path = getwd(), recursive = TRUE, callback = NULL) {
+    running = FALSE,
+    initialize = function(path, recursive, callback) {
       if (is.null(self$path)) {
         self$path <- path.expand(path)
         self$recursive <- as.logical(recursive)
@@ -51,18 +54,18 @@ Watcher <- R6Class(
       invisible(self)
     },
     start = function() {
-      res <- self$active
+      res <- self$running
       if (!res) {
-        self$active <- .Call(watcher_start_monitor, private$watch)
-        res <- !self$active
+        self$running <- .Call(watcher_start_monitor, private$watch)
+        res <- !self$running
       }
       invisible(!res)
     },
     stop = function() {
-      res <- self$active
+      res <- self$running
       if (res) {
         res <- .Call(watcher_stop_monitor, private$watch)
-        self$active <- !res
+        self$running <- !res
       }
       invisible(res)
     }

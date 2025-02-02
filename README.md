@@ -50,10 +50,10 @@ w <- watcher(dir, recursive = TRUE, callback = function() print("event triggered
 w
 #> <Watcher>
 #>   Public:
-#>     active: FALSE
-#>     initialize: function (path, recursive, callback, latency) 
-#>     path: /tmp/RtmpvAax6s/watcher-example
+#>     initialize: function (path, recursive, callback) 
+#>     path: /tmp/Rtmp9dZtT5/watcher-example
 #>     recursive: TRUE
+#>     running: FALSE
 #>     start: function () 
 #>     stop: function () 
 #>   Private:
