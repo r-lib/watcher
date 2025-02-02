@@ -61,8 +61,8 @@ current working directory.</p></dd>
 
 <dt id="arg-callback">callback<a class="anchor" aria-label="anchor" href="#arg-callback"></a></dt>
 <dd><p>(optional) a function (taking no arguments) to be called each
-time an event is triggered - requires the <span class="pkg">later</span> package. The default,
-<code>NULL</code>, causes event paths and types to be written to <code>stdout</code> instead.</p></dd>
+time an event is triggered. The default, <code>NULL</code>, causes event flag types
+and paths to be written to <code>stdout</code> instead.</p></dd>
 
 
 <dt id="arg-latency">latency<a class="anchor" aria-label="anchor" href="#arg-latency"></a></dt>
@@ -78,7 +78,8 @@ whether or not they have succeeded.</p>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>A limited subset of filesystem events are watched, namely: Created, Updated,
-Removed and Renamed. Default latency is 1s.</p>
+Removed and Renamed. Events are 'bubbled' such that if a single event
+triggers multiple event flag types, the callback will be called only once.</p>
     </div>
 
     <div class="section level2">
@@ -90,10 +91,8 @@ Removed and Renamed. Default latency is 1s.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;Watcher&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Public:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     active: TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     callback: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     initialize: function (path, recursive, callback, latency) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     latency: 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/Rtmphm6gi3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/RtmpTY7hih</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     recursive: TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     start: function () </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     stop: function () </span>
@@ -105,10 +104,8 @@ Removed and Renamed. Default latency is 1s.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;Watcher&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Public:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     active: FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     callback: NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     initialize: function (path, recursive, callback, latency) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     latency: 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/Rtmphm6gi3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/RtmpTY7hih</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     recursive: TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     start: function () </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     stop: function () </span>
