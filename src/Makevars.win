@@ -1,2 +1,2 @@
 PKG_CFLAGS=-I../install/include $(C_VISIBILITY)
-PKG_LIBS=-L../install/lib -Wl,-Bstatic -lfswatch -lstdc++ -lstdc++fs -pthread -Wl,-Bdynamic
+PKG_LIBS=-L../install/lib -lfswatch -pthread -lstdc++fs
