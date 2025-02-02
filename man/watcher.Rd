@@ -14,8 +14,8 @@ current working directory.}
 \code{path}, including all subdirectories.}
 
 \item{callback}{(optional) a function (taking no arguments) to be called each
-time an event is triggered - requires the \pkg{later} package. The default,
-\code{NULL}, causes event paths and types to be written to \code{stdout} instead.}
+time an event is triggered. The default, \code{NULL}, causes event flag types
+and paths to be written to \code{stdout} instead.}
 }
 \value{
 A 'Watcher' R6 class object. Start and stop background monitoring
@@ -28,7 +28,9 @@ background.
 }
 \details{
 A limited subset of filesystem events are watched, namely: Created, Updated,
-Removed and Renamed. Default latency is 1s.
+Removed and Renamed. Events are 'bubbled' such that if a single event
+triggers multiple event flag types, the callback will be called only once.
+Default latency is 1s.
 }
 \examples{
 w <- watcher(tempdir())

@@ -4,15 +4,17 @@
 #' background.
 #'
 #' A limited subset of filesystem events are watched, namely: Created, Updated,
-#' Removed and Renamed. Default latency is 1s.
+#' Removed and Renamed. Events are 'bubbled' such that if a single event
+#' triggers multiple event flag types, the callback will be called only once.
+#' Default latency is 1s.
 #'
 #' @param path character path to a file or directory to watch. Defaults to the
 #'   current working directory.
 #' @param recursive logical value, default TRUE, whether to recursively scan
 #'   `path`, including all subdirectories.
 #' @param callback (optional) a function (taking no arguments) to be called each
-#'   time an event is triggered - requires the \pkg{later} package. The default,
-#'   `NULL`, causes event paths and types to be written to `stdout` instead.
+#'   time an event is triggered. The default, `NULL`, causes event flag types
+#'   and paths to be written to `stdout` instead.
 #'
 #' @return A 'Watcher' R6 class object. Start and stop background monitoring
 #'   using the `$start()` and `$stop()` methods - these return a logical value
@@ -35,15 +37,16 @@ Watcher <- R6Class(
   "Watcher",
   public = list(
     active = FALSE,
-    callback = NULL,
     path = NULL,
     recursive = NULL,
     initialize = function(path = getwd(), recursive = TRUE, callback = NULL) {
       if (is.null(self$path)) {
         self$path <- path.expand(path)
         self$recursive <- as.logical(recursive)
-        self$callback <- callback
-        private$watch <- .Call(watcher_create, self$path, self$recursive, self$callback)
+        if (!is.null(callback) && !is.function(callback)) {
+          callback <- rlang::as_function(callback)
+        }
+        private$watch <- .Call(watcher_create, self$path, self$recursive, callback)
       }
       invisible(self)
     },

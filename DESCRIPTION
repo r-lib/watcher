@@ -21,9 +21,10 @@ SystemRequirements: 'libfswatch', or 'cmake' to compile from package sources
 Depends: 
     R (>= 3.6)
 Imports:
-    R6
-Suggests: 
     later,
+    R6,
+    rlang
+Suggests: 
     testthat (>= 3.0.0)
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)

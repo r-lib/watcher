@@ -20,15 +20,6 @@ static void session_finalizer(SEXP xptr) {
   fsw_destroy_session(handle);
 }
 
-void (*eln2)(void (*)(void *), void *, double, int) = NULL;
-
-static void load_later_safe(void *data) {
-  SEXP call, fn = (SEXP) data;
-  PROTECT(call = Rf_lang2(fn, Rf_mkString("later")));
-  Rf_eval(call, R_GlobalEnv);
-  UNPROTECT(1);
-}
-
 static void exec_later(void *data) {
   SEXP call, fn = (SEXP) data;
   PROTECT(call = Rf_lcons(fn, R_NilValue));
@@ -50,7 +41,7 @@ static void get_event_flag_name(const int flag, char *buf) {
 }
 
 static void process_events(fsw_cevent const *const events, const unsigned int event_num, void *data) {
-  if (data != R_NilValue && eln2 != NULL) {
+  if (data != R_NilValue) {
     eln2(exec_later, data, 0, 0);
   } else {
     char buf[8]; // large enough for subset of events handled by get_event_flag_name()
@@ -76,11 +67,6 @@ SEXP watcher_create(SEXP path, SEXP recursive, SEXP callback) {
 
   const char *watch_path = CHAR(STRING_ELT(path, 0));
   const int recurse = LOGICAL(recursive)[0];
-  if (callback != R_NilValue) {
-    SEXPTYPE typ = TYPEOF(callback);
-    if (typ != CLOSXP && typ != BUILTINSXP && typ != SPECIALSXP)
-      Rf_error("'callback' must be a function");
-  }
 
   FSW_HANDLE handle = fsw_init_session(system_default_monitor_type);
   if (handle == NULL) {
@@ -121,15 +107,11 @@ SEXP watcher_create(SEXP path, SEXP recursive, SEXP callback) {
 SEXP watcher_start_monitor(SEXP session) {
 
   FSW_HANDLE handle = (FSW_HANDLE) R_ExternalPtrAddr(session);
+
   pthread_t thr;
   pthread_attr_t attr;
-
   pthread_attr_init(&attr);
   pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-
-  if (eln2 == NULL && R_ToplevelExec(load_later_safe, (void *) Rf_install("loadNamespace"))) {
-    eln2 = (void (*)(void (*)(void *), void *, double, int)) R_GetCCallable("later", "execLaterNative2");
-  }
   const int ret = pthread_create(&thr, &attr, &watcher_thread, handle);
   pthread_attr_destroy(&attr);
 

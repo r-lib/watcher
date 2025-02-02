@@ -2,4 +2,5 @@
 
 export(watcher)
 importFrom(R6,R6Class)
+importFrom(later,run_now)
 useDynLib(watcher, .registration = TRUE)

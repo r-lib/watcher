@@ -57,8 +57,4 @@ test_that("watcher() callbacks", {
   rm(w)
 })
 
-test_that("watcher() validation", {
-  expect_error(watcher(callback = "callback"), "must be a function")
-})
-
 unlink(dir, recursive = TRUE, force = TRUE)

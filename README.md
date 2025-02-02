@@ -51,9 +51,8 @@ w
 #> <Watcher>
 #>   Public:
 #>     active: FALSE
-#>     callback: function () 
-#>     initialize: function (path = getwd(), recursive = TRUE, callback = NULL) 
-#>     path: /tmp/Rtmp8wU9e9/watcher-example
+#>     initialize: function (path, recursive, callback, latency) 
+#>     path: /tmp/RtmpvAax6s/watcher-example
 #>     recursive: TRUE
 #>     start: function () 
 #>     stop: function () 
