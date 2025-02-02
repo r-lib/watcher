@@ -5,7 +5,7 @@
 \alias{watcher-package}
 \title{watcher: Watch the File System for Changes}
 \description{
-R binding for 'libfswatch', a filesystem monitoring library. All functions are asynchronous and do not block the session. Set watches on files or directories recursively. Log activity, or trigger an R function to run when an event occurs.
+R binding for 'libfswatch', a file system monitoring library. Watch files or directories recursively in the background. Log activity, or trigger an R function to run every time an event occurs.
 }
 \seealso{
 Useful links:

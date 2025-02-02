@@ -19,7 +19,8 @@ time an event is triggered - requires the \pkg{later} package. The default,
 }
 \value{
 A 'Watcher' R6 class object. Start and stop background monitoring
-using the \verb{$start()} and \verb{$stop()} methods.
+using the \verb{$start()} and \verb{$stop()} methods - these return a logical value
+whether or not they have succeeded.
 }
 \description{
 Create a 'Watcher' on a filesystem location to monitor for changes in the

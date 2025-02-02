@@ -15,7 +15,8 @@
 #'   `NULL`, causes event paths and types to be written to `stdout` instead.
 #'
 #' @return A 'Watcher' R6 class object. Start and stop background monitoring
-#'   using the `$start()` and `$stop()` methods.
+#'   using the `$start()` and `$stop()` methods - these return a logical value
+#'   whether or not they have succeeded.
 #'
 #' @examples
 #' w <- watcher(tempdir())
@@ -47,13 +48,19 @@ Watcher <- R6Class(
       invisible(self)
     },
     start = function() {
-      res <- .Call(watcher_start_monitor, private$watch)
-      if (res) self$active <- TRUE
-      invisible(res)
+      res <- self$active
+      if (!res) {
+        self$active <- .Call(watcher_start_monitor, private$watch)
+        res <- !self$active
+      }
+      invisible(!res)
     },
     stop = function() {
-      res <- invisible(.Call(watcher_stop_monitor, private$watch))
-      if (res) self$active <- FALSE
+      res <- self$active
+      if (res) {
+        res <- .Call(watcher_stop_monitor, private$watch)
+        self$active <- !res
+      }
       invisible(res)
     }
   ),

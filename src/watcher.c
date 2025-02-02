@@ -1,6 +1,6 @@
 #include "watcher.h"
 
-static void Wprintf(const int err, const char *fmt, ...) {
+static void Wprintf(const char *fmt, ...) {
 
   char buf[WATCHER_BUFSIZE];
   va_list arg_ptr;
@@ -9,11 +9,11 @@ static void Wprintf(const int err, const char *fmt, ...) {
   int bytes = vsnprintf(buf, WATCHER_BUFSIZE, fmt, arg_ptr);
   va_end(arg_ptr);
 
-  if (write(err ? STDERR_FILENO : STDOUT_FILENO, buf, (size_t) bytes)) {};
+  if (write(STDOUT_FILENO, buf, (size_t) bytes)) {};
 
 }
 
-void session_finalizer(SEXP xptr) {
+static void session_finalizer(SEXP xptr) {
   if (R_ExternalPtrAddr(xptr) == NULL) return;
   FSW_HANDLE handle = (FSW_HANDLE) R_ExternalPtrAddr(xptr);
   fsw_stop_monitor(handle);
@@ -22,38 +22,53 @@ void session_finalizer(SEXP xptr) {
 
 void (*eln2)(void (*)(void *), void *, double, int) = NULL;
 
-void load_later_safe(void *data) {
-  (void) data;
-  SEXP fn, call;
-  fn = Rf_install("loadNamespace");
+static void load_later_safe(void *data) {
+  SEXP call, fn = (SEXP) data;
   PROTECT(call = Rf_lang2(fn, Rf_mkString("later")));
   Rf_eval(call, R_GlobalEnv);
   UNPROTECT(1);
 }
 
-void exec_later(void *data) {
+static void exec_later(void *data) {
   SEXP call, fn = (SEXP) data;
   PROTECT(call = Rf_lcons(fn, R_NilValue));
   Rf_eval(call, R_GlobalEnv);
   UNPROTECT(1);
 }
 
-void process_events(fsw_cevent const *const events, const unsigned int event_num, void *data) {
+// custom non-allocating version of fsw_get_event_flag_name() handling main types
+static void get_event_flag_name(const int flag, char *buf) {
+  const char *name;
+  switch(flag) {
+  case 1 << 1: name = "Created"; break;
+  case 1 << 2: name = "Updated"; break;
+  case 1 << 3: name = "Removed"; break;
+  case 1 << 4: name = "Renamed"; break;
+  default: name = "Unknown"; break;
+  }
+  memcpy(buf, name, strlen(name));
+}
+
+static void process_events(fsw_cevent const *const events, const unsigned int event_num, void *data) {
   if (data != R_NilValue && eln2 != NULL) {
     eln2(exec_later, data, 0, 0);
   } else {
-    for (unsigned int i = 0; i < event_num; i++)
-      for (unsigned int j = 0; j < events[i].flags_num; j++)
-        Wprintf(0, "Event: %s\n Flag: %s\n", events[i].path, fsw_get_event_flag_name(events[i].flags[j]));
+    char buf[8]; // large enough for subset of events handled by get_event_flag_name()
+    memset(buf, 0, sizeof(buf));
+    for (unsigned int i = 0; i < event_num; i++) {
+      for (unsigned int j = 0; j < events[i].flags_num; j++) {
+        get_event_flag_name(events[i].flags[j], buf);
+        Wprintf("Event: %s\n Flag: %s\n", events[i].path, buf);
+      }
+    }
   }
 }
 
-void* watcher_thread(void *args) {
+static void * watcher_thread(void *args) {
 
-  pthread_detach(pthread_self());
   FSW_HANDLE handle = (FSW_HANDLE) args;
   fsw_start_monitor(handle);
-  return (void *) NULL;
+  return NULL;
 
 }
 
@@ -84,6 +99,7 @@ SEXP watcher_create(SEXP path, SEXP recursive, SEXP callback) {
     Rf_error("Failed to set watch callback");
   }
 
+  // filter only for main event types: Created, Updated, Removed, Renamed
   fsw_event_type_filter filter;
   for (int flag = Created; flag <= Renamed; flag = flag << 1) {
     filter.flag = flag;
@@ -106,12 +122,18 @@ SEXP watcher_start_monitor(SEXP session) {
 
   FSW_HANDLE handle = (FSW_HANDLE) R_ExternalPtrAddr(session);
   pthread_t thr;
+  pthread_attr_t attr;
 
-  if (eln2 == NULL && R_ToplevelExec(load_later_safe, NULL)) {
+  pthread_attr_init(&attr);
+  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+
+  if (eln2 == NULL && R_ToplevelExec(load_later_safe, (void *) Rf_install("loadNamespace"))) {
     eln2 = (void (*)(void (*)(void *), void *, double, int)) R_GetCCallable("later", "execLaterNative2");
   }
+  const int ret = pthread_create(&thr, &attr, &watcher_thread, handle);
+  pthread_attr_destroy(&attr);
 
-  return Rf_ScalarLogical(pthread_create(&thr, NULL, &watcher_thread, handle) == 0);
+  return Rf_ScalarLogical(ret == 0);
 
 }
 
