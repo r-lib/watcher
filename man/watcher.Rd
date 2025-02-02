@@ -7,15 +7,15 @@
 watcher(path = getwd(), recursive = TRUE, callback = NULL)
 }
 \arguments{
-\item{path}{character path to a file or directory to watch. Defaults to the
+\item{path}{Character path to a file or directory to watch. Defaults to the
 current working directory.}
 
-\item{recursive}{logical value, default TRUE, whether to recursively scan
+\item{recursive}{Logical value, default TRUE, whether to recursively scan
 \code{path}, including all subdirectories.}
 
-\item{callback}{(optional) a function (taking no arguments) to be called each
-time an event is triggered. The default, \code{NULL}, causes event flag types
-and paths to be written to \code{stdout} instead.}
+\item{callback}{A function or formula (see \link[rlang:as_function]{rlang::as_function}) - to be
+called each time an event is triggered. The default, \code{NULL}, causes event
+flag types and paths to be written to \code{stdout} instead.}
 }
 \value{
 A 'Watcher' R6 class object. Start and stop background monitoring

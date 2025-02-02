@@ -8,13 +8,13 @@
 #' triggers multiple event flag types, the callback will be called only once.
 #' Default latency is 1s.
 #'
-#' @param path character path to a file or directory to watch. Defaults to the
+#' @param path Character path to a file or directory to watch. Defaults to the
 #'   current working directory.
-#' @param recursive logical value, default TRUE, whether to recursively scan
+#' @param recursive Logical value, default TRUE, whether to recursively scan
 #'   `path`, including all subdirectories.
-#' @param callback (optional) a function (taking no arguments) to be called each
-#'   time an event is triggered. The default, `NULL`, causes event flag types
-#'   and paths to be written to `stdout` instead.
+#' @param callback A function or formula (see [rlang::as_function]) - to be
+#'   called each time an event is triggered. The default, `NULL`, causes event
+#'   flag types and paths to be written to `stdout` instead.
 #'
 #' @return A 'Watcher' R6 class object. Start and stop background monitoring
 #'   using the `$start()` and `$stop()` methods - these return a logical value
@@ -40,16 +40,16 @@ Watcher <- R6Class(
   "Watcher",
   public = list(
     path = NULL,
-    recursive = NULL,
     running = FALSE,
     initialize = function(path, recursive, callback) {
       if (is.null(self$path)) {
         self$path <- path.expand(path)
-        self$recursive <- as.logical(recursive)
+        recursive <- as.logical(recursive)
         if (!is.null(callback) && !is.function(callback)) {
           callback <- rlang::as_function(callback)
         }
-        private$watch <- .Call(watcher_create, self$path, self$recursive, callback)
+        private$watch <- .Call(watcher_create, self$path, recursive, callback)
+        lockBinding("path", self)
       }
       invisible(self)
     },

@@ -6,7 +6,6 @@ dir.create(subdir)
 test_that("watcher() logs", {
   w <- watcher(dir, recursive = FALSE, callback = NULL)
   expect_s3_class(w, "Watcher")
-  expect_false(w$recursive)
   expect_false(w$running)
   expect_false(w$stop())
   expect_true(w$start())
@@ -25,10 +24,9 @@ test_that("watcher() logs", {
 
 test_that("watcher() callbacks", {
   x <- 0L
-  w <- watcher(dir, recursive = TRUE, callback = function() x <<- x + 1L)
+  w <- watcher(dir, recursive = TRUE, callback = ~ {x <<- x + 1L})
   expect_output(print(w))
   expect_s3_class(w, "Watcher")
-  expect_true(w$recursive)
   expect_false(w$running)
   expect_true(w$start())
   expect_true(w$running)

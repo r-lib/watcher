@@ -36,23 +36,25 @@ Create a ‘Watcher’ using `watcher::watcher()`.
 By default this will watch the current working directory recursively and
 write events to `stdout`.
 
-Set the `callback` argument to run an arbitrary R function every time an
-event triggers. This uses the `later` package to execute the callback
-when R is idle at the top level, or whenever `later::run_now()` is
-called, for example automatically as part of Shiny’s event loop.
+Set the `callback` argument to run an arbitrary R function, or
+`rlang`-style formula, every time a file changes:
+
+- Uses the `later` package to execute the callback when R is idle at the
+  top level, or
+- Whenever `later::run_now()` is called, for instance automatically in
+  Shiny’s event loop.
 
 ``` r
 library(watcher)
 dir <- file.path(tempdir(), "watcher-example")
 dir.create(dir)
 
-w <- watcher(dir, recursive = TRUE, callback = function() print("event triggered"))
+w <- watcher(dir, recursive = TRUE, callback = ~print("event triggered"))
 w
 #> <Watcher>
 #>   Public:
 #>     initialize: function (path, recursive, callback) 
-#>     path: /tmp/Rtmp9dZtT5/watcher-example
-#>     recursive: TRUE
+#>     path: /tmp/RtmpvhoSAP/watcher-example
 #>     running: FALSE
 #>     start: function () 
 #>     stop: function () 

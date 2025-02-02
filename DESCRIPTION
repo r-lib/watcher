@@ -1,7 +1,7 @@
 Package: watcher
 Type: Package
 Title: Watch the File System for Changes
-Version: 0.0.1
+Version: 0.0.1.9000
 Authors@R: 
     c(person(given = "Charlie",
              family = "Gao",
