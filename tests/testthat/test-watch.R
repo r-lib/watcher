@@ -55,3 +55,4 @@ test_that("watcher() callbacks", {
 })
 
 unlink(dir, recursive = TRUE, force = TRUE)
+Sys.sleep(1) # time for watch threads to terminate and release resources
