@@ -77,10 +77,12 @@ static void session_finalizer(SEXP xptr) {
 
 }
 
-SEXP watcher_create(SEXP path, SEXP recursive, SEXP callback) {
+/* Note: recursive is always set for consistency of behaviour, as Windows and
+MacOS default monitors are always recursive this would apply only on Linux */
+
+SEXP watcher_create(SEXP path, SEXP callback) {
 
   const char *watch_path = CHAR(STRING_ELT(path, 0));
-  const int recurse = LOGICAL(recursive)[0] == 1;
 
   FSW_HANDLE handle = fsw_init_session(system_default_monitor_type);
   if (handle == NULL)
@@ -89,7 +91,7 @@ SEXP watcher_create(SEXP path, SEXP recursive, SEXP callback) {
   if (fsw_add_path(handle, watch_path) != FSW_OK)
     watcher_error(handle, "Failed to add path to watch");
 
-  if (fsw_set_recursive(handle, recurse) != FSW_OK)
+  if (fsw_set_recursive(handle, true) != FSW_OK)
     watcher_error(handle, "Failed to set recursive watch");
 
   if (fsw_set_callback(handle, process_events, callback) != FSW_OK)

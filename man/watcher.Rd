@@ -4,14 +4,11 @@
 \alias{watcher}
 \title{Watch a Filesystem Location}
 \usage{
-watcher(path = getwd(), recursive = TRUE, callback = NULL)
+watcher(path = getwd(), callback = NULL)
 }
 \arguments{
-\item{path}{Character path to a file or directory to watch. Defaults to the
-current working directory.}
-
-\item{recursive}{Logical value, default TRUE, whether to recursively scan
-\code{path}, including all subdirectories.}
+\item{path}{Character path to a file, or directory to watch recursively.
+Defaults to the current working directory.}
 
 \item{callback}{A function or formula (see \link[rlang:as_function]{rlang::as_function}) - to be
 called each time an event is triggered. The default, \code{NULL}, causes event

@@ -49,12 +49,12 @@ library(watcher)
 dir <- file.path(tempdir(), "watcher-example")
 dir.create(dir)
 
-w <- watcher(dir, recursive = TRUE, callback = ~print("event triggered"))
+w <- watcher(dir, callback = ~print("event triggered"))
 w
 #> <Watcher>
 #>   Public:
-#>     initialize: function (path, recursive, callback) 
-#>     path: /tmp/RtmpvhoSAP/watcher-example
+#>     initialize: function (path, callback) 
+#>     path: /tmp/Rtmp1YkKqF/watcher-example
 #>     running: FALSE
 #>     start: function () 
 #>     stop: function () 

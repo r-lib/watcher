@@ -21,7 +21,7 @@
 
 extern void (*eln2)(void (*)(void *), void *, double, int);
 
-SEXP watcher_create(SEXP, SEXP, SEXP);
+SEXP watcher_create(SEXP, SEXP);
 SEXP watcher_start_monitor(SEXP);
 SEXP watcher_stop_monitor(SEXP);
 

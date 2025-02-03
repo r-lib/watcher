@@ -53,7 +53,7 @@ library(watcher)
 dir <- file.path(tempdir(), "watcher-example")
 dir.create(dir)
 
-w <- watcher(dir, recursive = TRUE, callback = ~print("event triggered"))
+w <- watcher(dir, callback = ~print("event triggered"))
 w
 w$start()
 
