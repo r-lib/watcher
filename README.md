@@ -12,12 +12,15 @@ coverage](https://codecov.io/gh/shikokuchuo/watcher/graph/badge.svg)](https://ap
 
 Watch the File System for Changes
 
-R binding for ‘libfswatch’, a file system monitoring library.
+R binding for ‘libfswatch’, a file system monitoring library. This uses
+the optimal event-driven API for each platform: `ReadDirectoryChangesW`
+on Windows, `FSEvents` on MacOS, `inotify` on Linux, `kqueue` on BSD,
+and `File Events Notification` on Solaris/Illumos.
 
-All watching is done in the background, operating asynchronously without
-blocking the session.
+Watching is done asynchronously in the background, without blocking the
+session.
 
-- Watch files or directories recursively.
+- Watch files, or directories recursively.
 - Log activity, or trigger an R function to run every time an event
   occurs.
 
@@ -49,12 +52,12 @@ library(watcher)
 dir <- file.path(tempdir(), "watcher-example")
 dir.create(dir)
 
-w <- watcher(dir, callback = ~print("event triggered"))
+w <- watcher(dir, callback = ~print("event triggered"), latency = 0.1)
 w
 #> <Watcher>
 #>   Public:
-#>     initialize: function (path, callback) 
-#>     path: /tmp/Rtmp1YkKqF/watcher-example
+#>     initialize: function (path, callback, latency) 
+#>     path: /tmp/Rtmp3M0FZQ/watcher-example
 #>     running: FALSE
 #>     start: function () 
 #>     stop: function () 
@@ -62,22 +65,22 @@ w
 #>     watch: externalptr
 w$start()
 
-Sys.sleep(1)
+Sys.sleep(0.1)
 file.create(file.path(dir, "oldfile"))
 #> [1] TRUE
-later::run_now(2)
+later::run_now(0.1)
 #> [1] "event triggered"
 
 file.rename(file.path(dir, "oldfile"), file.path(dir, "newfile"))
 #> [1] TRUE
-later::run_now(2)
+later::run_now(0.1)
 #> [1] "event triggered"
 
 file.remove(file.path(dir, "newfile"))
 #> [1] TRUE
-later::run_now(2)
+later::run_now(0.1)
 #> [1] "event triggered"
 
 w$stop()
-unlink(dir, force = TRUE)
+unlink(dir, recursive = TRUE, force = TRUE)
 ```

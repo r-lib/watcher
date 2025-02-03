@@ -11,8 +11,8 @@ Authors@R:
       person(given = "Posit Software, PBC",
              role = "cph"))
 Description: R binding for 'libfswatch', a file system monitoring library. Watch
-    files or directories recursively in the background. Log activity, or trigger
-    an R function to run every time an event occurs. 
+    files, or directories recursively, for changes in the background. Log
+    activity, or trigger an R function to run every time an event occurs. 
 License: MIT + file LICENSE
 BugReports: https://github.com/shikokuchuo/watcher/issues
 URL: https://shikokuchuo.net/watcher/, https://github.com/shikokuchuo/watcher/
