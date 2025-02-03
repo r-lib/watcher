@@ -30,30 +30,12 @@ static void exec_later(void *data) {
   UNPROTECT(1);
 }
 
-// non-allocating version of fsw_get_event_flag_name() handling main event flags
-static void get_event_flag_name(char *buf, const int flag) {
-  const char *name;
-  switch(flag) {
-  case 1 << 1: name = "Created"; break;
-  case 1 << 2: name = "Updated"; break;
-  case 1 << 3: name = "Removed"; break;
-  case 1 << 4: name = "Renamed"; break;
-  default: name = "Unknown"; break;
-  }
-  memcpy(buf, name, strlen(name));
-}
-
 static void process_events(fsw_cevent const *const events, const unsigned int event_num, void *data) {
   if (data != R_NilValue) {
     eln2(exec_later, data, 0, 0);
   } else {
-    char strbuf[8]; // large enough for subset of events handled by get_event_flag_name()
-    memset(strbuf, 0, sizeof(strbuf));
     for (unsigned int i = 0; i < event_num; i++) {
-      for (unsigned int j = 0; j < events[i].flags_num; j++) {
-        get_event_flag_name(strbuf, events[i].flags[j]);
-        Wprintf("%s: %s\n", strbuf, events[i].path);
-      }
+      Wprintf("%d: %s\n", i, events[i].path);
     }
   }
 }

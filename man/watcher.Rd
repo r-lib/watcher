@@ -11,8 +11,8 @@ watcher(path = getwd(), callback = NULL, latency = 1)
 Defaults to the current working directory.}
 
 \item{callback}{A function or formula (see \link[rlang:as_function]{rlang::as_function}) - to be
-called each time an event is triggered. The default, \code{NULL}, causes event
-flag types and paths to be written to \code{stdout} instead.}
+called each time an event is triggered. The default, \code{NULL}, causes the
+paths that have changed to be written to \code{stdout} instead.}
 
 \item{latency}{Numeric latency in seconds for events to be reported or
 callbacks triggered. The default is 1s.}
