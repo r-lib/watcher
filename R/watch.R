@@ -19,9 +19,10 @@
 #'
 #' @param path Character path to a file, or directory to watch recursively.
 #'   Defaults to the current working directory.
-#' @param callback A function or formula (see [rlang::as_function]) - to be
-#'   called each time an event is triggered. The default, `NULL`, causes event
-#'   flag types and paths to be written to `stdout` instead.
+#' @param callback A function or formula (see [rlang::as_function]), which takes
+#'   at least one argument. It will be called back with a character vector
+#'   comprising the paths of all files that have changed. The default, `NULL`,
+#'   causes the paths that have changed to be written to `stdout` instead.
 #' @param latency Numeric latency in seconds for events to be reported or
 #'   callbacks triggered. The default is 1s.
 #'

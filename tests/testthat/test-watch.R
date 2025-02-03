@@ -24,7 +24,7 @@ test_that("watcher() logs", {
 
 test_that("watcher() callbacks", {
   x <- 0L
-  w <- watcher(dir, callback = ~ {x <<- x + 1L}, latency = 0.1)
+  w <- watcher(dir, callback = function(p) {is.character(p) || stop(); x <<- x + 1L}, latency = 0.1)
   expect_output(print(w))
   expect_s3_class(w, "Watcher")
   expect_false(w$running)

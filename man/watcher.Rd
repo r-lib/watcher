@@ -10,9 +10,10 @@ watcher(path = getwd(), callback = NULL, latency = 1)
 \item{path}{Character path to a file, or directory to watch recursively.
 Defaults to the current working directory.}
 
-\item{callback}{A function or formula (see \link[rlang:as_function]{rlang::as_function}) - to be
-called each time an event is triggered. The default, \code{NULL}, causes event
-flag types and paths to be written to \code{stdout} instead.}
+\item{callback}{A function or formula (see \link[rlang:as_function]{rlang::as_function}), which takes
+at least one argument. It will be called back with a character vector
+comprising the paths of all files that have changed. The default, \code{NULL},
+causes the paths that have changed to be written to \code{stdout} instead.}
 
 \item{latency}{Numeric latency in seconds for events to be reported or
 callbacks triggered. The default is 1s.}
