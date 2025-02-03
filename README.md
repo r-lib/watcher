@@ -43,21 +43,22 @@ Set the `callback` argument to run an arbitrary R function, or
 `rlang`-style formula, every time a file changes:
 
 - Uses the `later` package to execute the callback when R is idle at the
-  top level, or
-- Whenever `later::run_now()` is called, for instance automatically in
-  Shiny’s event loop.
+  top level, or whenever `later::run_now()` is called, for instance
+  automatically in Shiny’s event loop.
+- Is called back with a character vector of the paths of all files which
+  have changed.
 
 ``` r
 library(watcher)
 dir <- file.path(tempdir(), "watcher-example")
 dir.create(dir)
 
-w <- watcher(dir, callback = ~print("event triggered"), latency = 0.1)
+w <- watcher(dir, callback = ~print(.x), latency = 0.5)
 w
 #> <Watcher>
 #>   Public:
 #>     initialize: function (path, callback, latency) 
-#>     path: /tmp/Rtmp3M0FZQ/watcher-example
+#>     path: /tmp/RtmpwWFRRy/watcher-example
 #>     running: FALSE
 #>     start: function () 
 #>     stop: function () 
@@ -66,20 +67,24 @@ w
 w$start()
 
 Sys.sleep(0.1)
-file.create(file.path(dir, "oldfile"))
+file.create(file.path(dir, "newfile"))
 #> [1] TRUE
-later::run_now(0.1)
-#> [1] "event triggered"
+file.create(file.path(dir, "anotherfile"))
+#> [1] TRUE
+later::run_now(1)
+#> [1] "/tmp/RtmpwWFRRy/watcher-example/newfile"
+#> [1] "/tmp/RtmpwWFRRy/watcher-example/anotherfile"
 
-file.rename(file.path(dir, "oldfile"), file.path(dir, "newfile"))
-#> [1] TRUE
-later::run_now(0.1)
-#> [1] "event triggered"
+newfile <- file(file.path(dir, "newfile"), open = "r+")
+cat("hello", file = newfile)
+close(newfile)
+later::run_now(1)
+#> [1] "/tmp/RtmpwWFRRy/watcher-example/newfile"
 
 file.remove(file.path(dir, "newfile"))
 #> [1] TRUE
-later::run_now(0.1)
-#> [1] "event triggered"
+later::run_now(1)
+#> [1] "/tmp/RtmpwWFRRy/watcher-example/newfile"
 
 w$stop()
 unlink(dir, recursive = TRUE, force = TRUE)

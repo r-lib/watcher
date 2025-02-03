@@ -24,20 +24,49 @@ static inline void watcher_error(FSW_HANDLE handle, const char *msg) {
 // callbacks -------------------------------------------------------------------
 
 static void exec_later(void *data) {
-  SEXP call, fn = (SEXP) data;
-  PROTECT(call = Rf_lcons(fn, R_NilValue));
+
+  watcher_cb *wcb = (watcher_cb *) data;
+  SEXP call, paths;
+  PROTECT(paths = Rf_allocVector(STRSXP, wcb->event_num));
+  for (unsigned int i = 0; i < wcb->event_num; i++) {
+    SET_STRING_ELT(paths, i, Rf_mkChar(wcb->paths[i]));
+  }
+  PROTECT(call = Rf_lang2(wcb->callack, paths));
   Rf_eval(call, R_GlobalEnv);
-  UNPROTECT(1);
+  UNPROTECT(2);
+  for (unsigned int i = 0; i < wcb->event_num; i++) {
+    R_Free(wcb->paths[i]);
+  }
+  R_Free(wcb->paths);
+  R_Free(wcb);
+
 }
 
 static void process_events(fsw_cevent const *const events, const unsigned int event_num, void *data) {
-  if (data != R_NilValue) {
-    eln2(exec_later, data, 0, 0);
+
+  SEXP callback = (SEXP) data;
+
+  if (callback != R_NilValue) {
+
+    watcher_cb *wcb = R_Calloc(1, watcher_cb);
+    wcb->callack = callback;
+    wcb->event_num = event_num;
+    wcb->paths = R_Calloc(event_num, char *);
+    for (unsigned int i = 0; i < event_num; i++) {
+      size_t slen = strlen(events[i].path);
+      wcb->paths[i] = R_Calloc(slen + 1, char);
+      memcpy(wcb->paths[i], events[i].path, slen);
+    }
+    eln2(exec_later, wcb, 0, 0);
+
   } else {
+
     for (unsigned int i = 0; i < event_num; i++) {
       Wprintf("%d: %s\n", i, events[i].path);
     }
+
   }
+
 }
 
 static void* watcher_thread(void *args) {
@@ -71,12 +100,11 @@ SEXP watcher_create(SEXP path, SEXP callback, SEXP latency) {
   if (fsw_add_path(handle, watch_path) != FSW_OK)
     watcher_error(handle, "Watcher path invalid.");
 
-  if (fsw_set_callback(handle, process_events, callback) != FSW_OK)
-    watcher_error(handle, "Watcher callback invalid.");
-
   if (fsw_set_latency(handle, lat) != FSW_OK) {
     watcher_error(handle, "Watcher latency cannot be negative.");
   }
+
+  fsw_set_callback(handle, process_events, callback);
 
   /* recursive is always set for consistency of behaviour, as Windows and MacOS
    * default monitors are always recursive, hence this applies only on Linux
