@@ -4,7 +4,7 @@
 \alias{watcher}
 \title{Watch a Filesystem Location}
 \usage{
-watcher(path = getwd(), callback = NULL)
+watcher(path = getwd(), callback = NULL, latency = 1)
 }
 \arguments{
 \item{path}{Character path to a file, or directory to watch recursively.
@@ -13,6 +13,9 @@ Defaults to the current working directory.}
 \item{callback}{A function or formula (see \link[rlang:as_function]{rlang::as_function}) - to be
 called each time an event is triggered. The default, \code{NULL}, causes event
 flag types and paths to be written to \code{stdout} instead.}
+
+\item{latency}{Numeric latency in seconds for events to be reported or
+callbacks triggered. The default is 1s.}
 }
 \value{
 A 'Watcher' R6 class object. Start and stop background monitoring
@@ -24,10 +27,16 @@ Create a 'Watcher' on a filesystem location to monitor for changes in the
 background.
 }
 \details{
+Uses the optimal event-driven API for each platform: 'ReadDirectoryChangesW'
+on Windows, 'FSEvents' on MacOS, 'inotify' on Linux, 'kqueue' on BSD, and
+'File Events Notification' on Solaris/Illumos.
+
+Note: the \code{latency} setting does not mean that changes are polled for at this
+interval, these still rely on the optimal platform-specific monitor. The
+implementation of 'latency' is also platform-dependent.
+
 Events are 'bubbled' such that a single change that triggers multiple event
 flags will cause the callback to be called only once.
-
-Default latency is 1s.
 
 It is possible to set a watch on a path that does not currently exist, and it
 will be monitored once created.
