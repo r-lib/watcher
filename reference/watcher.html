@@ -68,10 +68,11 @@ whether or not they have succeeded.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>A limited subset of filesystem events are watched, namely: Created, Updated,
-Removed and Renamed. Events are 'bubbled' such that if a single event
-triggers multiple event flag types, the callback will be called only once.
-Default latency is 1s.</p>
+    <p>Events are 'bubbled' such that a single change that triggers multiple event
+flags will cause the callback to be called only once.</p>
+<p>Default latency is 1s.</p>
+<p>It is possible to set a watch on a path that does not currently exist, and it
+will be monitored once created.</p>
     </div>
 
     <div class="section level2">
@@ -83,7 +84,7 @@ Default latency is 1s.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;Watcher&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Public:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     initialize: function (path, callback) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/RtmpsWSyjP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/RtmpFPxbC5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     running: TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     start: function () </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     stop: function () </span>
@@ -95,7 +96,7 @@ Default latency is 1s.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;Watcher&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Public:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     initialize: function (path, callback) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/RtmpsWSyjP</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/RtmpFPxbC5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     running: FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     start: function () </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     stop: function () </span>
