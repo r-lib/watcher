@@ -55,9 +55,10 @@ Defaults to the current working directory.</p></dd>
 
 
 <dt id="arg-callback">callback<a class="anchor" aria-label="anchor" href="#arg-callback"></a></dt>
-<dd><p>A function or formula (see <a href="https://rlang.r-lib.org/reference/as_function.html" class="external-link">rlang::as_function</a>) - to be
-called each time an event is triggered. The default, <code>NULL</code>, causes event
-flag types and paths to be written to <code>stdout</code> instead.</p></dd>
+<dd><p>A function or formula (see <a href="https://rlang.r-lib.org/reference/as_function.html" class="external-link">rlang::as_function</a>), which takes
+at least one argument. It will be called back with a character vector
+comprising the paths of all files that have changed. The default, <code>NULL</code>,
+causes the paths that have changed to be written to <code>stdout</code> instead.</p></dd>
 
 
 <dt id="arg-latency">latency<a class="anchor" aria-label="anchor" href="#arg-latency"></a></dt>
@@ -94,7 +95,7 @@ will be monitored once created.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;Watcher&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Public:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     initialize: function (path, callback, latency) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/RtmpS2L3ld</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/Rtmpca0PaU</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     running: TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     start: function () </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     stop: function () </span>
@@ -106,7 +107,7 @@ will be monitored once created.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;Watcher&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Public:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     initialize: function (path, callback, latency) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/RtmpS2L3ld</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/Rtmpca0PaU</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     running: FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     start: function () </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     stop: function () </span>
