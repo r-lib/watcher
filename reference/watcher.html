@@ -42,7 +42,7 @@ background.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">watcher</span><span class="op">(</span>path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>, callback <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">watcher</span><span class="op">(</span>path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>, callback <span class="op">=</span> <span class="cn">NULL</span>, latency <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -59,6 +59,11 @@ Defaults to the current working directory.</p></dd>
 called each time an event is triggered. The default, <code>NULL</code>, causes event
 flag types and paths to be written to <code>stdout</code> instead.</p></dd>
 
+
+<dt id="arg-latency">latency<a class="anchor" aria-label="anchor" href="#arg-latency"></a></dt>
+<dd><p>Numeric latency in seconds for events to be reported or
+callbacks triggered. The default is 1s.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -68,9 +73,14 @@ whether or not they have succeeded.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Events are 'bubbled' such that a single change that triggers multiple event
+    <p>Uses the optimal event-driven API for each platform: 'ReadDirectoryChangesW'
+on Windows, 'FSEvents' on MacOS, 'inotify' on Linux, 'kqueue' on BSD, and
+'File Events Notification' on Solaris/Illumos.</p>
+<p>Note: the <code>latency</code> setting does not mean that changes are polled for at this
+interval, these still rely on the optimal platform-specific monitor. The
+implementation of 'latency' is also platform-dependent.</p>
+<p>Events are 'bubbled' such that a single change that triggers multiple event
 flags will cause the callback to be called only once.</p>
-<p>Default latency is 1s.</p>
 <p>It is possible to set a watch on a path that does not currently exist, and it
 will be monitored once created.</p>
     </div>
@@ -83,8 +93,8 @@ will be monitored once created.</p>
 <span class="r-in"><span><span class="va">w</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;Watcher&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Public:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     initialize: function (path, callback) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/RtmpFPxbC5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     initialize: function (path, callback, latency) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/RtmpS2L3ld</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     running: TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     start: function () </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     stop: function () </span>
@@ -95,8 +105,8 @@ will be monitored once created.</p>
 <span class="r-in"><span><span class="va">w</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;Watcher&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Public:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     initialize: function (path, callback) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/RtmpFPxbC5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     initialize: function (path, callback, latency) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/RtmpS2L3ld</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     running: FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     start: function () </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     stop: function () </span>
