@@ -3,10 +3,16 @@
 #' Create a 'Watcher' on a filesystem location to monitor for changes in the
 #' background.
 #'
+#' Uses the optimal event-driven API for each platform: 'ReadDirectoryChangesW'
+#' on Windows, 'FSEvents' on MacOS, 'inotify' on Linux, 'kqueue' on BSD, and
+#' 'File Events Notification' on Solaris/Illumos.
+#'
+#' Note: the `latency` setting does not mean that changes are polled for at this
+#' interval, these still rely on the optimal platform-specific monitor. The
+#' implementation of 'latency' is also platform-dependent.
+#'
 #' Events are 'bubbled' such that a single change that triggers multiple event
 #' flags will cause the callback to be called only once.
-#'
-#' Default latency is 1s.
 #'
 #' It is possible to set a watch on a path that does not currently exist, and it
 #' will be monitored once created.
@@ -16,6 +22,8 @@
 #' @param callback A function or formula (see [rlang::as_function]) - to be
 #'   called each time an event is triggered. The default, `NULL`, causes event
 #'   flag types and paths to be written to `stdout` instead.
+#' @param latency Numeric latency in seconds for events to be reported or
+#'   callbacks triggered. The default is 1s.
 #'
 #' @return A 'Watcher' R6 class object. Start and stop background monitoring
 #'   using the `$start()` and `$stop()` methods - these return a logical value
@@ -30,8 +38,8 @@
 #'
 #' @export
 #'
-watcher <- function(path = getwd(), callback = NULL) {
-  Watcher$new(path, callback)
+watcher <- function(path = getwd(), callback = NULL, latency = 1) {
+  Watcher$new(path, callback, latency)
 }
 
 # Note: R6 class uses a field for 'running' instead of using 'fsw_is_running()'
@@ -42,13 +50,14 @@ Watcher <- R6Class(
   public = list(
     path = NULL,
     running = FALSE,
-    initialize = function(path, callback) {
+    initialize = function(path, callback, latency) {
       if (is.null(self$path)) {
         self$path <- path.expand(path)
         if (!is.null(callback) && !is.function(callback)) {
           callback <- rlang::as_function(callback)
         }
-        private$watch <- .Call(watcher_create, self$path, callback)
+        latency <- as.double(latency)
+        private$watch <- .Call(watcher_create, self$path, callback, latency)
         lockBinding("path", self)
       }
       invisible(self)

@@ -77,19 +77,24 @@ static void session_finalizer(SEXP xptr) {
 
 }
 
-SEXP watcher_create(SEXP path, SEXP callback) {
+SEXP watcher_create(SEXP path, SEXP callback, SEXP latency) {
 
   const char *watch_path = CHAR(STRING_ELT(path, 0));
+  const double lat = REAL(latency)[0];
 
   FSW_HANDLE handle = fsw_init_session(system_default_monitor_type);
   if (handle == NULL)
-    watcher_error(handle, "Failed to initialize watch");
+    watcher_error(handle, "Failed to allocate memory.");
 
   if (fsw_add_path(handle, watch_path) != FSW_OK)
-    watcher_error(handle, "Failed to add path to watch");
+    watcher_error(handle, "Watcher path invalid.");
 
   if (fsw_set_callback(handle, process_events, callback) != FSW_OK)
-    watcher_error(handle, "Failed to set watch callback");
+    watcher_error(handle, "Watcher callback invalid.");
+
+  if (fsw_set_latency(handle, lat) != FSW_OK) {
+    watcher_error(handle, "Watcher latency cannot be negative.");
+  }
 
   /* recursive is always set for consistency of behaviour, as Windows and MacOS
    * default monitors are always recursive, hence this applies only on Linux

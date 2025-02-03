@@ -3,7 +3,7 @@
 void (*eln2)(void (*)(void *), void *, double, int);
 
 static const R_CallMethodDef callMethods[] = {
-  {"watcher_create", (DL_FUNC) &watcher_create, 2},
+  {"watcher_create", (DL_FUNC) &watcher_create, 3},
   {"watcher_start_monitor", (DL_FUNC) &watcher_start_monitor, 1},
   {"watcher_stop_monitor", (DL_FUNC) &watcher_stop_monitor, 1},
   {NULL, NULL, 0}

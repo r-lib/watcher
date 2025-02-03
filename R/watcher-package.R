@@ -8,6 +8,6 @@
 # rlang is not loaded unless used, later is loaded but used only at C level
 # nocov start
 .internal <- function() {
-  if (FALSE) later::run_now(rlang::as_function(identity))
+  if (FALSE) rlang::as_function(later::run_now)
 }
 # nocov end
