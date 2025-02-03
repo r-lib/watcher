@@ -20,7 +20,7 @@
 #define WATCHER_BUFSIZE 4096
 
 typedef struct watcher_cb_s {
-  SEXP callack;
+  SEXP callback;
   char **paths;
   unsigned int event_num;
 } watcher_cb;

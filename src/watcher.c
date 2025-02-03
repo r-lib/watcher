@@ -31,7 +31,7 @@ static void exec_later(void *data) {
   for (unsigned int i = 0; i < wcb->event_num; i++) {
     SET_STRING_ELT(paths, i, Rf_mkChar(wcb->paths[i]));
   }
-  PROTECT(call = Rf_lang2(wcb->callack, paths));
+  PROTECT(call = Rf_lang2(wcb->callback, paths));
   Rf_eval(call, R_GlobalEnv);
   UNPROTECT(2);
   for (unsigned int i = 0; i < wcb->event_num; i++) {
@@ -49,7 +49,7 @@ static void process_events(fsw_cevent const *const events, const unsigned int ev
   if (callback != R_NilValue) {
 
     watcher_cb *wcb = R_Calloc(1, watcher_cb);
-    wcb->callack = callback;
+    wcb->callback = callback;
     wcb->event_num = event_num;
     wcb->paths = R_Calloc(event_num, char *);
     for (unsigned int i = 0; i < event_num; i++) {
