@@ -42,7 +42,7 @@ background.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">watcher</span><span class="op">(</span>path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, callback <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">watcher</span><span class="op">(</span>path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>, callback <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -50,13 +50,8 @@ background.</p>
 
 
 <dl><dt id="arg-path">path<a class="anchor" aria-label="anchor" href="#arg-path"></a></dt>
-<dd><p>Character path to a file or directory to watch. Defaults to the
-current working directory.</p></dd>
-
-
-<dt id="arg-recursive">recursive<a class="anchor" aria-label="anchor" href="#arg-recursive"></a></dt>
-<dd><p>Logical value, default TRUE, whether to recursively scan
-<code>path</code>, including all subdirectories.</p></dd>
+<dd><p>Character path to a file, or directory to watch recursively.
+Defaults to the current working directory.</p></dd>
 
 
 <dt id="arg-callback">callback<a class="anchor" aria-label="anchor" href="#arg-callback"></a></dt>
@@ -87,8 +82,8 @@ Default latency is 1s.</p>
 <span class="r-in"><span><span class="va">w</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;Watcher&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Public:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     initialize: function (path, recursive, callback) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/Rtmpc5ZOQd</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     initialize: function (path, callback) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/RtmpsWSyjP</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     running: TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     start: function () </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     stop: function () </span>
@@ -99,8 +94,8 @@ Default latency is 1s.</p>
 <span class="r-in"><span><span class="va">w</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;Watcher&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Public:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     initialize: function (path, recursive, callback) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/Rtmpc5ZOQd</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     initialize: function (path, callback) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/RtmpsWSyjP</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     running: FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     start: function () </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     stop: function () </span>
