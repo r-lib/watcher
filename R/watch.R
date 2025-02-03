@@ -3,10 +3,13 @@
 #' Create a 'Watcher' on a filesystem location to monitor for changes in the
 #' background.
 #'
-#' A limited subset of filesystem events are watched, namely: Created, Updated,
-#' Removed and Renamed. Events are 'bubbled' such that if a single event
-#' triggers multiple event flag types, the callback will be called only once.
+#' Events are 'bubbled' such that a single change that triggers multiple event
+#' flags will cause the callback to be called only once.
+#'
 #' Default latency is 1s.
+#'
+#' It is possible to set a watch on a path that does not currently exist, and it
+#' will be monitored once created.
 #'
 #' @param path Character path to a file, or directory to watch recursively.
 #'   Defaults to the current working directory.

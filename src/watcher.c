@@ -77,9 +77,6 @@ static void session_finalizer(SEXP xptr) {
 
 }
 
-/* Note: recursive is always set for consistency of behaviour, as Windows and
-MacOS default monitors are always recursive this would apply only on Linux */
-
 SEXP watcher_create(SEXP path, SEXP callback) {
 
   const char *watch_path = CHAR(STRING_ELT(path, 0));
@@ -91,18 +88,23 @@ SEXP watcher_create(SEXP path, SEXP callback) {
   if (fsw_add_path(handle, watch_path) != FSW_OK)
     watcher_error(handle, "Failed to add path to watch");
 
-  if (fsw_set_recursive(handle, true) != FSW_OK)
-    watcher_error(handle, "Failed to set recursive watch");
-
   if (fsw_set_callback(handle, process_events, callback) != FSW_OK)
     watcher_error(handle, "Failed to set watch callback");
 
-  // filter only for main event types: Created, Updated, Removed, Renamed
+  /* recursive is always set for consistency of behaviour, as Windows and MacOS
+   * default monitors are always recursive, hence this applies only on Linux
+   */
+  fsw_set_recursive(handle, true);
+  fsw_set_allow_overflow(handle, true);
+
+  /* filter only for main event types: Created, Updated, Removed, Renamed
+   * This is to prevent events being triggered too often as some platforms e.g.
+   * Ubuntu generate events even when files are being read etc.
+   */
   fsw_event_type_filter filter;
   for (int flag = Created; flag <= Renamed; flag = flag << 1) {
     filter.flag = flag;
-    if (fsw_add_event_type_filter(handle, filter) != FSW_OK)
-      watcher_error(handle, "Failed to apply watch filters");
+    fsw_add_event_type_filter(handle, filter);
   }
 
   SEXP out;
