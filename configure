@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# uses: https://github.com/shikokuchuo/fswatch/commit/2d7d9f3ce12ed37df42a47ddf3d3d33af6fd741a
+# uses: https://github.com/shikokuchuo/fswatch/commit/a37be38dd4dbb7e6397ea4847bf2a80f00ed4747
 LIB_VER="1.18.2"
 
 # Initialise
