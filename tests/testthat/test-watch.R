@@ -1,5 +1,5 @@
 dir <- file.path(tempdir(), "watcher-test")
-subdir <- file.path(dir, "subdir")
+subdir <- file.path(dir, "文件subdir")
 dir.create(dir)
 dir.create(subdir)
 
@@ -24,7 +24,7 @@ test_that("watcher() logs", {
 
 test_that("watcher() callbacks", {
   x <- 0L
-  w <- watcher(dir, callback = function(p) {is.character(p) || stop(); x <<- x + 1L}, latency = 0.1)
+  w <- watcher(dir, callback = ~{is.character(.x) || stop(); x <<- x + 1L}, latency = 0.1)
   expect_output(print(w))
   expect_s3_class(w, "Watcher")
   expect_false(w$running)
@@ -40,10 +40,10 @@ test_that("watcher() callbacks", {
   file.create(file.path(dir, "oldfile"))
   later::run_now(1)
   expect_equal(x, 3L)
-  file.rename(file.path(dir, "oldfile"), file.path(dir, "newfile"))
+  file.rename(file.path(dir, "oldfile"), file.path(dir, "みらいヘ"))
   later::run_now(1)
   expect_equal(x, 4L)
-  file.remove(file.path(dir, "newfile"))
+  file.remove(file.path(dir, "みらいヘ"))
   later::run_now(1)
   expect_equal(x, 5L)
   expect_true(w$stop())
