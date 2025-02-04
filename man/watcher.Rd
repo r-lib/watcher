@@ -44,9 +44,11 @@ will be monitored once created.
 }
 \examples{
 w <- watcher(tempdir())
-isTRUE(w$start())
+w$start()
 w
-isTRUE(w$stop())
+w$stop()
 w
+
+Sys.sleep(1)
 
 }
