@@ -90,7 +90,7 @@ static void session_finalizer(SEXP xptr) {
 
 SEXP watcher_create(SEXP path, SEXP callback, SEXP latency) {
 
-  const char *watch_path = CHAR(STRING_ELT(path, 0));
+  const char *watch_path = Rf_translateChar(STRING_ELT(path, 0));
   const double lat = REAL(latency)[0];
 
   FSW_HANDLE handle = fsw_init_session(system_default_monitor_type);
