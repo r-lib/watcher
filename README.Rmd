@@ -16,8 +16,8 @@ knitr::opts_chunk$set(
 # watcher
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/shikokuchuo/watcher/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/shikokuchuo/watcher/actions/workflows/R-CMD-check.yaml)
-[![Codecov test coverage](https://codecov.io/gh/shikokuchuo/watcher/graph/badge.svg)](https://app.codecov.io/gh/shikokuchuo/watcher)
+[![R-CMD-check](https://github.com/r-lib/watcher/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-lib/watcher/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/r-lib/watcher/graph/badge.svg)](https://app.codecov.io/gh/r-lib/watcher)
 <!-- badges: end -->
 
 Watch the File System for Changes
@@ -40,7 +40,7 @@ Watching is done asynchronously in the background, without blocking the session.
 You can install the development version of watcher from:
 
 ``` r
-pak::pak("shikokuchuo/watcher")
+pak::pak("r-lib/watcher")
 ```
 
 #### Installation from Source
