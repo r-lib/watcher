@@ -5,9 +5,9 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/shikokuchuo/watcher/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/shikokuchuo/watcher/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/r-lib/watcher/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-lib/watcher/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
-coverage](https://codecov.io/gh/shikokuchuo/watcher/graph/badge.svg)](https://app.codecov.io/gh/shikokuchuo/watcher)
+coverage](https://codecov.io/gh/r-lib/watcher/graph/badge.svg)](https://app.codecov.io/gh/r-lib/watcher)
 <!-- badges: end -->
 
 Watch the File System for Changes
@@ -33,7 +33,7 @@ session.
 You can install the development version of watcher from:
 
 ``` r
-pak::pak("shikokuchuo/watcher")
+pak::pak("r-lib/watcher")
 ```
 
 #### Installation from Source
@@ -70,7 +70,7 @@ w
 #> <Watcher>
 #>   Public:
 #>     initialize: function (path, callback, latency) 
-#>     path: /tmp/RtmpgUPHtI/watcher-example
+#>     path: /tmp/RtmpoVr77F/watcher-example
 #>     running: FALSE
 #>     start: function () 
 #>     stop: function () 
@@ -84,19 +84,19 @@ file.create(file.path(dir, "newfile"))
 file.create(file.path(dir, "anotherfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/tmp/RtmpgUPHtI/watcher-example/newfile"
-#> [1] "/tmp/RtmpgUPHtI/watcher-example/anotherfile"
+#> [1] "/tmp/RtmpoVr77F/watcher-example/newfile"
+#> [1] "/tmp/RtmpoVr77F/watcher-example/anotherfile"
 
 newfile <- file(file.path(dir, "newfile"), open = "r+")
 cat("hello", file = newfile)
 close(newfile)
 later::run_now(1)
-#> [1] "/tmp/RtmpgUPHtI/watcher-example/newfile"
+#> [1] "/tmp/RtmpoVr77F/watcher-example/newfile"
 
 file.remove(file.path(dir, "newfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/tmp/RtmpgUPHtI/watcher-example/newfile"
+#> [1] "/tmp/RtmpoVr77F/watcher-example/newfile"
 
 w$stop()
 unlink(dir, recursive = TRUE, force = TRUE)

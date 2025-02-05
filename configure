@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# uses: https://github.com/shikokuchuo/fswatch/commit/a37be38dd4dbb7e6397ea4847bf2a80f00ed4747
+# bundled source: https://github.com/shikokuchuo/fswatch/commit/a37be38dd4dbb7e6397ea4847bf2a80f00ed4747
 LIB_VER="1.18.2"
 
 # Initialise
