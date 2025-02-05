@@ -52,7 +52,19 @@
 <!-- badges: start -->
 
 <p>Watch the File System for Changes</p>
-<p>R binding for ‘libfswatch’, a file system monitoring library. This uses the optimal event-driven API for each platform: <code>ReadDirectoryChangesW</code> on Windows, <code>FSEvents</code> on MacOS, <code>inotify</code> on Linux, <code>kqueue</code> on BSD, and <code>File Events Notification</code> on Solaris/Illumos.</p>
+<p>R binding for ‘libfswatch’, a file system monitoring library. This uses the optimal event-driven API for each platform:</p>
+<ul>
+<li>
+<code>ReadDirectoryChangesW</code> on Windows</li>
+<li>
+<code>FSEvents</code> on MacOS</li>
+<li>
+<code>inotify</code> on Linux</li>
+<li>
+<code>kqueue</code> on BSD</li>
+<li>
+<code>File Events Notification</code> on Solaris/Illumos.</li>
+</ul>
 <p>Watching is done asynchronously in the background, without blocking the session.</p>
 <ul>
 <li>Watch files, or directories recursively.</li>
@@ -64,16 +76,21 @@
 <p>You can install the development version of watcher from:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"shikokuchuo/watcher"</span><span class="op">)</span></span></code></pre></div>
+<div class="section level4">
+<h4 id="installation-from-source">Installation from Source<a class="anchor" aria-label="anchor" href="#installation-from-source"></a>
+</h4>
+<p>‘libfswatch’ is required, and on Linux / MacOS an installed version will be used if found in the usual filesystem locations. On Windows, or if not otherwise found, the bundled version of ‘libfswatch’ 1.18.2 patched will be compiled from the package sources. Source compilation of the library requires ‘cmake’.</p>
+</div>
 </div>
 <div class="section level2">
-<h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
+<h2 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h2>
 <p>Create a ‘Watcher’ using <code><a href="reference/watcher.html">watcher::watcher()</a></code>.</p>
 <p>By default this will watch the current working directory recursively and write events to <code>stdout</code>.</p>
-<p>Set the <code>callback</code> argument to run an arbitrary R function, or <code>rlang</code>-style formula, every time a file changes:</p>
+<p>Set the <code>callback</code> argument to run an R function, or <code>rlang</code>-style formula, every time a file changes:</p>
 <ul>
 <li>Uses the <code>later</code> package to execute the callback when R is idle at the top level, or whenever <code><a href="https://r-lib.github.io/later/reference/run_now.html" class="external-link">later::run_now()</a></code> is called, for instance automatically in Shiny’s event loop.</li>
-<li>Is called back with a character vector of the paths of all files which have changed.</li>
+<li>Function is called back with a character vector of the paths of all files which have changed.</li>
 </ul>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shikokuchuo.net/watcher/" class="external-link">watcher</a></span><span class="op">)</span></span>
@@ -85,7 +102,7 @@
 <span><span class="co">#&gt; &lt;Watcher&gt;</span></span>
 <span><span class="co">#&gt;   Public:</span></span>
 <span><span class="co">#&gt;     initialize: function (path, callback, latency) </span></span>
-<span><span class="co">#&gt;     path: /tmp/RtmpwWFRRy/watcher-example</span></span>
+<span><span class="co">#&gt;     path: /tmp/RtmpgUPHtI/watcher-example</span></span>
 <span><span class="co">#&gt;     running: FALSE</span></span>
 <span><span class="co">#&gt;     start: function () </span></span>
 <span><span class="co">#&gt;     stop: function () </span></span>
@@ -99,22 +116,31 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.create</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">"anotherfile"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span><span class="fu">later</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/later/reference/run_now.html" class="external-link">run_now</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "/tmp/RtmpwWFRRy/watcher-example/newfile"</span></span>
-<span><span class="co">#&gt; [1] "/tmp/RtmpwWFRRy/watcher-example/anotherfile"</span></span>
+<span><span class="co">#&gt; [1] "/tmp/RtmpgUPHtI/watcher-example/newfile"</span></span>
+<span><span class="co">#&gt; [1] "/tmp/RtmpgUPHtI/watcher-example/anotherfile"</span></span>
 <span></span>
 <span><span class="va">newfile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">"newfile"</span><span class="op">)</span>, open <span class="op">=</span> <span class="st">"r+"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"hello"</span>, file <span class="op">=</span> <span class="va">newfile</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">close</a></span><span class="op">(</span><span class="va">newfile</span><span class="op">)</span></span>
 <span><span class="fu">later</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/later/reference/run_now.html" class="external-link">run_now</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "/tmp/RtmpwWFRRy/watcher-example/newfile"</span></span>
+<span><span class="co">#&gt; [1] "/tmp/RtmpgUPHtI/watcher-example/newfile"</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.remove</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">"newfile"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span><span class="fu">later</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/later/reference/run_now.html" class="external-link">run_now</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "/tmp/RtmpwWFRRy/watcher-example/newfile"</span></span>
+<span><span class="co">#&gt; [1] "/tmp/RtmpgUPHtI/watcher-example/newfile"</span></span>
 <span></span>
 <span><span class="va">w</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">dir</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="credits">Credits<a class="anchor" aria-label="anchor" href="#credits"></a>
+</h2>
+<p>Thanks to the authors of ‘libfswatch’ upon which this package is based:</p>
+<ul>
+<li>Alan Dipert</li>
+<li>Enrico M. Crisostomo</li>
+</ul>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
