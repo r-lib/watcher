@@ -19,18 +19,17 @@ the optimal event-driven API for each platform:
 - `FSEvents` on MacOS
 - `inotify` on Linux
 - `kqueue` on BSD
-- `File Events Notification` on Solaris/Illumos.
+- `File Events Notification` on Solaris/Illumos
 
 Watching is done asynchronously in the background, without blocking the
 session.
 
 - Watch files, or directories recursively.
-- Log activity, or trigger an R function to run every time an event
-  occurs.
+- Log activity, or run an R function every time a change event occurs.
 
 ## Installation
 
-You can install the development version of watcher from:
+Install the current development version of watcher using:
 
 ``` r
 pak::pak("r-lib/watcher")
@@ -38,11 +37,13 @@ pak::pak("r-lib/watcher")
 
 #### Installation from Source
 
-‘libfswatch’ is required, and on Linux / MacOS an installed version will
-be used if found in the usual filesystem locations. On Windows, or if
-not otherwise found, the bundled version of ‘libfswatch’ 1.18.2 patched
-will be compiled from the package sources. Source compilation of the
-library requires ‘cmake’.
+watcher requires the ‘libfswatch’ library.
+
+- On Linux / MacOS, an installed version will be used if found in the
+  standard filesystem locations.
+- On Windows, or if not found, the bundled version of ‘libfswatch’
+  1.18.2 patched will be compiled from source.
+- Source compilation of the library requires ‘cmake’.
 
 ## Quick Start
 
@@ -70,7 +71,7 @@ w
 #> <Watcher>
 #>   Public:
 #>     initialize: function (path, callback, latency) 
-#>     path: /tmp/RtmpoVr77F/watcher-example
+#>     path: /tmp/Rtmp9R4IEk/watcher-example
 #>     running: FALSE
 #>     start: function () 
 #>     stop: function () 
@@ -78,33 +79,32 @@ w
 #>     watch: externalptr
 w$start()
 
-Sys.sleep(0.1)
 file.create(file.path(dir, "newfile"))
 #> [1] TRUE
 file.create(file.path(dir, "anotherfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/tmp/RtmpoVr77F/watcher-example/newfile"
-#> [1] "/tmp/RtmpoVr77F/watcher-example/anotherfile"
+#> [1] "/tmp/Rtmp9R4IEk/watcher-example/newfile"
+#> [1] "/tmp/Rtmp9R4IEk/watcher-example/anotherfile"
 
 newfile <- file(file.path(dir, "newfile"), open = "r+")
 cat("hello", file = newfile)
 close(newfile)
 later::run_now(1)
-#> [1] "/tmp/RtmpoVr77F/watcher-example/newfile"
+#> [1] "/tmp/Rtmp9R4IEk/watcher-example/newfile"
 
 file.remove(file.path(dir, "newfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/tmp/RtmpoVr77F/watcher-example/newfile"
+#> [1] "/tmp/Rtmp9R4IEk/watcher-example/newfile"
 
 w$stop()
 unlink(dir, recursive = TRUE, force = TRUE)
 ```
 
-## Credits
+## Acknowledgements
 
-Thanks to the authors of ‘libfswatch’ upon which this package is based:
+Thanks to the authors of ‘libfswatch’, upon which this package is based:
 
 - Alan Dipert
 - Enrico M. Crisostomo

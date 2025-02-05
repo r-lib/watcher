@@ -28,16 +28,16 @@ R binding for 'libfswatch', a file system monitoring library. This uses the opti
 - `FSEvents` on MacOS
 - `inotify` on Linux
 - `kqueue` on BSD
-- `File Events Notification` on Solaris/Illumos.
+- `File Events Notification` on Solaris/Illumos
 
 Watching is done asynchronously in the background, without blocking the session.
 
 - Watch files, or directories recursively.
-- Log activity, or trigger an R function to run every time an event occurs.
+- Log activity, or run an R function every time a change event occurs.
 
 ## Installation
 
-You can install the development version of watcher from:
+Install the current development version of watcher using:
 
 ``` r
 pak::pak("r-lib/watcher")
@@ -45,7 +45,11 @@ pak::pak("r-lib/watcher")
 
 #### Installation from Source
 
-'libfswatch' is required, and on Linux / MacOS an installed version will be used if found in the usual filesystem locations. On Windows, or if not otherwise found, the bundled version of 'libfswatch' 1.18.2 patched will be compiled from the package sources. Source compilation of the library requires 'cmake'.
+watcher requires the 'libfswatch' library.
+
+- On Linux / MacOS, an installed version will be used if found in the standard filesystem locations.
+- On Windows, or if not found, the bundled version of 'libfswatch' 1.18.2 patched will be compiled from source.
+- Source compilation of the library requires 'cmake'.
 
 ## Quick Start
 
@@ -67,7 +71,6 @@ w <- watcher(dir, callback = ~print(.x), latency = 0.5)
 w
 w$start()
 
-Sys.sleep(0.1)
 file.create(file.path(dir, "newfile"))
 file.create(file.path(dir, "anotherfile"))
 later::run_now(1)
@@ -84,9 +87,9 @@ w$stop()
 unlink(dir, recursive = TRUE, force = TRUE)
 ```
 
-## Credits
+## Acknowledgements
 
-Thanks to the authors of 'libfswatch' upon which this package is based:
+Thanks to the authors of 'libfswatch', upon which this package is based:
 
 - Alan Dipert
 - Enrico M. Crisostomo
