@@ -21,6 +21,18 @@ static inline void watcher_error(FSW_HANDLE handle, const char *msg) {
 
 }
 
+static inline void watcher_unwind(watcher_cb *wcb) {
+
+  if (wcb->paths) {
+    for (unsigned int i = 0; i < wcb->event_num; i++) {
+      free(wcb->paths[i]);
+    }
+    free(wcb->paths);
+  }
+  free(wcb);
+
+}
+
 // callbacks -------------------------------------------------------------------
 
 static void exec_later(void *data) {
@@ -34,11 +46,7 @@ static void exec_later(void *data) {
   PROTECT(call = Rf_lang2(wcb->callback, paths));
   Rf_eval(call, R_GlobalEnv);
   UNPROTECT(2);
-  for (unsigned int i = 0; i < wcb->event_num; i++) {
-    R_Free(wcb->paths[i]);
-  }
-  R_Free(wcb->paths);
-  R_Free(wcb);
+  watcher_unwind(wcb);
 
 }
 
@@ -48,13 +56,17 @@ static void process_events(fsw_cevent const *const events, const unsigned int ev
 
   if (callback != R_NilValue) {
 
-    watcher_cb *wcb = R_Calloc(1, watcher_cb);
-    wcb->callback = callback;
+    watcher_cb *wcb = calloc(1, sizeof(watcher_cb));
+    if (!wcb) return;
+
     wcb->event_num = event_num;
-    wcb->paths = R_Calloc(event_num, char *);
+    wcb->paths = calloc(event_num, sizeof(char *));
+    if (!wcb->paths) { watcher_unwind(wcb); return; }
+    wcb->callback = callback;
     for (unsigned int i = 0; i < event_num; i++) {
-      size_t slen = strlen(events[i].path);
-      wcb->paths[i] = R_Calloc(slen + 1, char);
+      size_t slen = strlen(events[i].path) + 1;
+      wcb->paths[i] = malloc(sizeof(char) * slen);
+      if (!wcb->paths[i]) { watcher_unwind(wcb); return; }
       memcpy(wcb->paths[i], events[i].path, slen);
     }
     eln2(exec_later, wcb, 0, 0);
@@ -95,14 +107,13 @@ SEXP watcher_create(SEXP path, SEXP callback, SEXP latency) {
 
   FSW_HANDLE handle = fsw_init_session(system_default_monitor_type);
   if (handle == NULL)
-    watcher_error(handle, "Failed to allocate memory.");
+    watcher_error(handle, "Watcher failed to allocate memory.");
 
   if (fsw_add_path(handle, watch_path) != FSW_OK)
     watcher_error(handle, "Watcher path invalid.");
 
-  if (fsw_set_latency(handle, lat) != FSW_OK) {
+  if (fsw_set_latency(handle, lat) != FSW_OK)
     watcher_error(handle, "Watcher latency cannot be negative.");
-  }
 
   fsw_set_callback(handle, process_events, callback);
 
