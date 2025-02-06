@@ -44,7 +44,7 @@ watcher requires the ‘libfswatch’ library.
 - On Linux / MacOS, an installed version will be used if found in the
   standard filesystem locations.
 - On Windows, or if not found, the bundled version of ‘libfswatch’
-  1.18.2 patched will be compiled from source.
+  1.19.0 will be compiled from source.
 - Source compilation of the library requires ‘cmake’.
 
 ## Quick Start
@@ -73,7 +73,7 @@ w
 #> <Watcher>
 #>   Public:
 #>     initialize: function (path, callback, latency) 
-#>     path: /tmp/Rtmp8ACY91/watcher-example
+#>     path: /tmp/RtmpoojMlQ/watcher-example
 #>     running: FALSE
 #>     start: function () 
 #>     stop: function () 
@@ -86,19 +86,19 @@ file.create(file.path(dir, "newfile"))
 file.create(file.path(dir, "anotherfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/tmp/Rtmp8ACY91/watcher-example/newfile"
-#> [1] "/tmp/Rtmp8ACY91/watcher-example/anotherfile"
+#> [1] "/tmp/RtmpoojMlQ/watcher-example/newfile"
+#> [1] "/tmp/RtmpoojMlQ/watcher-example/anotherfile"
 
 newfile <- file(file.path(dir, "newfile"), open = "r+")
 cat("hello", file = newfile)
 close(newfile)
 later::run_now(1)
-#> [1] "/tmp/Rtmp8ACY91/watcher-example/newfile"
+#> [1] "/tmp/RtmpoojMlQ/watcher-example/newfile"
 
 file.remove(file.path(dir, "newfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/tmp/Rtmp8ACY91/watcher-example/newfile"
+#> [1] "/tmp/RtmpoojMlQ/watcher-example/newfile"
 
 w$stop()
 unlink(dir, recursive = TRUE, force = TRUE)

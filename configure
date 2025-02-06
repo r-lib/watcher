@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# bundled source: https://github.com/shikokuchuo/fswatch/commit/01e37fc618df129d114bcb2eaea72bbba269e222
-LIB_VER="1.18.2"
+# bundled source: https://github.com/shikokuchuo/fswatch/tree/4c1767e6d12901df54b73cac2a87e26014332b44
+LIB_VER="1.19.0"
 
 # Initialise
 PKG_CFLAGS=""

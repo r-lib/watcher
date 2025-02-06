@@ -49,7 +49,7 @@ pak::pak("r-lib/watcher")
 watcher requires the 'libfswatch' library.
 
 - On Linux / MacOS, an installed version will be used if found in the standard filesystem locations.
-- On Windows, or if not found, the bundled version of 'libfswatch' 1.18.2 patched will be compiled from source.
+- On Windows, or if not found, the bundled version of 'libfswatch' 1.19.0 will be compiled from source.
 - Source compilation of the library requires 'cmake'.
 
 ## Quick Start
