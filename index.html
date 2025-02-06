@@ -82,7 +82,7 @@
 <p>watcher requires the ‘libfswatch’ library.</p>
 <ul>
 <li>On Linux / MacOS, an installed version will be used if found in the standard filesystem locations.</li>
-<li>On Windows, or if not found, the bundled version of ‘libfswatch’ 1.18.2 patched will be compiled from source.</li>
+<li>On Windows, or if not found, the bundled version of ‘libfswatch’ 1.19.0-dev will be compiled from source.</li>
 <li>Source compilation of the library requires ‘cmake’.</li>
 </ul>
 </div>
@@ -92,9 +92,9 @@
 </h2>
 <p>Create a ‘Watcher’ using <code><a href="reference/watcher.html">watcher::watcher()</a></code>.</p>
 <p>By default this will watch the current working directory recursively and write events to <code>stdout</code>.</p>
-<p>Set the <code>callback</code> argument to run an R function, or <code>rlang</code>-style formula, every time a file changes:</p>
+<p>Set the <code>callback</code> argument to run an R function, or rlang-style formula, every time a file changes:</p>
 <ul>
-<li>Uses the <code>later</code> package to execute the callback when R is idle at the top level, or whenever <code><a href="https://r-lib.github.io/later/reference/run_now.html" class="external-link">later::run_now()</a></code> is called, for instance automatically in Shiny’s event loop.</li>
+<li>Uses the ‘later’ package to execute the callback when R is idle at the top level, or whenever <code><a href="https://r-lib.github.io/later/reference/run_now.html" class="external-link">later::run_now()</a></code> is called, for instance automatically in Shiny’s event loop.</li>
 <li>Function is called back with a character vector of the paths of all files which have changed.</li>
 </ul>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -107,7 +107,7 @@
 <span><span class="co">#&gt; &lt;Watcher&gt;</span></span>
 <span><span class="co">#&gt;   Public:</span></span>
 <span><span class="co">#&gt;     initialize: function (path, callback, latency) </span></span>
-<span><span class="co">#&gt;     path: /tmp/Rtmp8ACY91/watcher-example</span></span>
+<span><span class="co">#&gt;     path: /tmp/RtmpcSO6DA/watcher-example</span></span>
 <span><span class="co">#&gt;     running: FALSE</span></span>
 <span><span class="co">#&gt;     start: function () </span></span>
 <span><span class="co">#&gt;     stop: function () </span></span>
@@ -120,19 +120,19 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.create</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">"anotherfile"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span><span class="fu">later</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/later/reference/run_now.html" class="external-link">run_now</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "/tmp/Rtmp8ACY91/watcher-example/newfile"</span></span>
-<span><span class="co">#&gt; [1] "/tmp/Rtmp8ACY91/watcher-example/anotherfile"</span></span>
+<span><span class="co">#&gt; [1] "/tmp/RtmpcSO6DA/watcher-example/newfile"    </span></span>
+<span><span class="co">#&gt; [2] "/tmp/RtmpcSO6DA/watcher-example/anotherfile"</span></span>
 <span></span>
 <span><span class="va">newfile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">"newfile"</span><span class="op">)</span>, open <span class="op">=</span> <span class="st">"r+"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"hello"</span>, file <span class="op">=</span> <span class="va">newfile</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">close</a></span><span class="op">(</span><span class="va">newfile</span><span class="op">)</span></span>
 <span><span class="fu">later</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/later/reference/run_now.html" class="external-link">run_now</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "/tmp/Rtmp8ACY91/watcher-example/newfile"</span></span>
+<span><span class="co">#&gt; [1] "/tmp/RtmpcSO6DA/watcher-example/newfile"</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.remove</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">"newfile"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span><span class="fu">later</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/later/reference/run_now.html" class="external-link">run_now</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "/tmp/Rtmp8ACY91/watcher-example/newfile"</span></span>
+<span><span class="co">#&gt; [1] "/tmp/RtmpcSO6DA/watcher-example/newfile"</span></span>
 <span></span>
 <span><span class="va">w</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">dir</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
