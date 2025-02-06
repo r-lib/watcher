@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">watcher</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -107,7 +107,7 @@
 <span><span class="co">#&gt; &lt;Watcher&gt;</span></span>
 <span><span class="co">#&gt;   Public:</span></span>
 <span><span class="co">#&gt;     initialize: function (path, callback, latency) </span></span>
-<span><span class="co">#&gt;     path: /tmp/Rtmp9R4IEk/watcher-example</span></span>
+<span><span class="co">#&gt;     path: /tmp/Rtmp8ACY91/watcher-example</span></span>
 <span><span class="co">#&gt;     running: FALSE</span></span>
 <span><span class="co">#&gt;     start: function () </span></span>
 <span><span class="co">#&gt;     stop: function () </span></span>
@@ -120,19 +120,19 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.create</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">"anotherfile"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span><span class="fu">later</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/later/reference/run_now.html" class="external-link">run_now</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "/tmp/Rtmp9R4IEk/watcher-example/newfile"</span></span>
-<span><span class="co">#&gt; [1] "/tmp/Rtmp9R4IEk/watcher-example/anotherfile"</span></span>
+<span><span class="co">#&gt; [1] "/tmp/Rtmp8ACY91/watcher-example/newfile"</span></span>
+<span><span class="co">#&gt; [1] "/tmp/Rtmp8ACY91/watcher-example/anotherfile"</span></span>
 <span></span>
 <span><span class="va">newfile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">"newfile"</span><span class="op">)</span>, open <span class="op">=</span> <span class="st">"r+"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"hello"</span>, file <span class="op">=</span> <span class="va">newfile</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">close</a></span><span class="op">(</span><span class="va">newfile</span><span class="op">)</span></span>
 <span><span class="fu">later</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/later/reference/run_now.html" class="external-link">run_now</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "/tmp/Rtmp9R4IEk/watcher-example/newfile"</span></span>
+<span><span class="co">#&gt; [1] "/tmp/Rtmp8ACY91/watcher-example/newfile"</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.remove</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">"newfile"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span><span class="fu">later</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/later/reference/run_now.html" class="external-link">run_now</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "/tmp/Rtmp9R4IEk/watcher-example/newfile"</span></span>
+<span><span class="co">#&gt; [1] "/tmp/Rtmp8ACY91/watcher-example/newfile"</span></span>
 <span></span>
 <span><span class="va">w</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">dir</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
@@ -150,6 +150,7 @@
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
+<li><a href="https://cloud.r-project.org/package=watcher" class="external-link">View on CRAN</a></li>
 <li><a href="https://github.com/r-lib/watcher/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/r-lib/watcher/issues" class="external-link">Report a bug</a></li>
 </ul>
@@ -182,6 +183,7 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
+<li><a href="https://CRAN.R-project.org/package=watcher" class="external-link"><img src="https://www.r-pkg.org/badges/version/watcher" alt="CRAN status"></a></li>
 <li><a href="https://github.com/r-lib/watcher/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/r-lib/watcher/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://app.codecov.io/gh/r-lib/watcher" class="external-link"><img src="https://codecov.io/gh/r-lib/watcher/graph/badge.svg" alt="Codecov test coverage"></a></li>
 </ul>
