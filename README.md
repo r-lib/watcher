@@ -5,6 +5,8 @@
 
 <!-- badges: start -->
 
+[![CRAN
+status](https://www.r-pkg.org/badges/version/watcher)](https://CRAN.R-project.org/package=watcher)
 [![R-CMD-check](https://github.com/r-lib/watcher/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-lib/watcher/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/r-lib/watcher/graph/badge.svg)](https://app.codecov.io/gh/r-lib/watcher)
@@ -71,7 +73,7 @@ w
 #> <Watcher>
 #>   Public:
 #>     initialize: function (path, callback, latency) 
-#>     path: /tmp/Rtmp9R4IEk/watcher-example
+#>     path: /tmp/Rtmp8ACY91/watcher-example
 #>     running: FALSE
 #>     start: function () 
 #>     stop: function () 
@@ -84,19 +86,19 @@ file.create(file.path(dir, "newfile"))
 file.create(file.path(dir, "anotherfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/tmp/Rtmp9R4IEk/watcher-example/newfile"
-#> [1] "/tmp/Rtmp9R4IEk/watcher-example/anotherfile"
+#> [1] "/tmp/Rtmp8ACY91/watcher-example/newfile"
+#> [1] "/tmp/Rtmp8ACY91/watcher-example/anotherfile"
 
 newfile <- file(file.path(dir, "newfile"), open = "r+")
 cat("hello", file = newfile)
 close(newfile)
 later::run_now(1)
-#> [1] "/tmp/Rtmp9R4IEk/watcher-example/newfile"
+#> [1] "/tmp/Rtmp8ACY91/watcher-example/newfile"
 
 file.remove(file.path(dir, "newfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/tmp/Rtmp9R4IEk/watcher-example/newfile"
+#> [1] "/tmp/Rtmp8ACY91/watcher-example/newfile"
 
 w$stop()
 unlink(dir, recursive = TRUE, force = TRUE)
