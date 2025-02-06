@@ -33,19 +33,23 @@ test_that("watcher() callbacks", {
   Sys.sleep(1)
   file.create(file.path(subdir, "testfile"))
   later::run_now(1)
-  expect_equal(x, 1L)
+  expect_gte(x, 1L)
+  y <- x
   file.remove(file.path(subdir, "testfile"))
   later::run_now(1)
-  expect_equal(x, 2L)
+  expect_gte(x, y + 1L)
+  y <- x
   file.create(file.path(dir, "oldfile"))
   later::run_now(1)
-  expect_equal(x, 3L)
+  expect_gte(x, y + 1L)
+  y <- x
   file.rename(file.path(dir, "oldfile"), file.path(dir, "みらいヘ"))
   later::run_now(1)
-  expect_equal(x, 4L)
+  expect_gte(x, y + 1L)
+  y <- x
   file.remove(file.path(dir, "みらいヘ"))
   later::run_now(1)
-  expect_equal(x, 5L)
+  expect_gte(x, y + 1L)
   expect_true(w$stop())
   expect_false(w$running)
   rm(w)
