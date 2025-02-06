@@ -1,5 +1,3 @@
-# watcher 0.0.1.9000 (development)
+# watcher 0.1.0
 
-# watcher 0.0.1
-
-* Initial open source version.
+* Initial CRAN release.
