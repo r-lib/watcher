@@ -44,7 +44,7 @@ watcher requires the ‘libfswatch’ library.
 - On Linux / MacOS, an installed version will be used if found in the
   standard filesystem locations.
 - On Windows, or if not found, the bundled version of ‘libfswatch’
-  1.18.2 patched will be compiled from source.
+  1.19.0-dev will be compiled from source.
 - Source compilation of the library requires ‘cmake’.
 
 ## Quick Start
@@ -54,10 +54,10 @@ Create a ‘Watcher’ using `watcher::watcher()`.
 By default this will watch the current working directory recursively and
 write events to `stdout`.
 
-Set the `callback` argument to run an R function, or `rlang`-style
+Set the `callback` argument to run an R function, or rlang-style
 formula, every time a file changes:
 
-- Uses the `later` package to execute the callback when R is idle at the
+- Uses the ‘later’ package to execute the callback when R is idle at the
   top level, or whenever `later::run_now()` is called, for instance
   automatically in Shiny’s event loop.
 - Function is called back with a character vector of the paths of all
@@ -73,7 +73,7 @@ w
 #> <Watcher>
 #>   Public:
 #>     initialize: function (path, callback, latency) 
-#>     path: /tmp/Rtmp8ACY91/watcher-example
+#>     path: /tmp/RtmpcSO6DA/watcher-example
 #>     running: FALSE
 #>     start: function () 
 #>     stop: function () 
@@ -86,19 +86,19 @@ file.create(file.path(dir, "newfile"))
 file.create(file.path(dir, "anotherfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/tmp/Rtmp8ACY91/watcher-example/newfile"
-#> [1] "/tmp/Rtmp8ACY91/watcher-example/anotherfile"
+#> [1] "/tmp/RtmpcSO6DA/watcher-example/newfile"    
+#> [2] "/tmp/RtmpcSO6DA/watcher-example/anotherfile"
 
 newfile <- file(file.path(dir, "newfile"), open = "r+")
 cat("hello", file = newfile)
 close(newfile)
 later::run_now(1)
-#> [1] "/tmp/Rtmp8ACY91/watcher-example/newfile"
+#> [1] "/tmp/RtmpcSO6DA/watcher-example/newfile"
 
 file.remove(file.path(dir, "newfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/tmp/Rtmp8ACY91/watcher-example/newfile"
+#> [1] "/tmp/RtmpcSO6DA/watcher-example/newfile"
 
 w$stop()
 unlink(dir, recursive = TRUE, force = TRUE)

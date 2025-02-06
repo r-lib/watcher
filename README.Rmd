@@ -49,7 +49,7 @@ pak::pak("r-lib/watcher")
 watcher requires the 'libfswatch' library.
 
 - On Linux / MacOS, an installed version will be used if found in the standard filesystem locations.
-- On Windows, or if not found, the bundled version of 'libfswatch' 1.18.2 patched will be compiled from source.
+- On Windows, or if not found, the bundled version of 'libfswatch' 1.19.0-dev will be compiled from source.
 - Source compilation of the library requires 'cmake'.
 
 ## Quick Start
@@ -58,9 +58,9 @@ Create a 'Watcher' using `watcher::watcher()`.
 
 By default this will watch the current working directory recursively and write events to `stdout`.
 
-Set the `callback` argument to run an R function, or `rlang`-style formula, every time a file changes:
+Set the `callback` argument to run an R function, or rlang-style formula, every time a file changes:
 
-- Uses the `later` package to execute the callback when R is idle at the top level, or whenever `later::run_now()` is called, for instance automatically in Shiny's event loop.
+- Uses the 'later' package to execute the callback when R is idle at the top level, or whenever `later::run_now()` is called, for instance automatically in Shiny's event loop.
 - Function is called back with a character vector of the paths of all files which have changed.
 
 ```{r example}

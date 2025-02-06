@@ -24,7 +24,7 @@ test_that("watcher() logs", {
 
 test_that("watcher() callbacks", {
   x <- 0L
-  w <- watcher(dir, callback = ~{is.character(.x) || stop(); x <<- x + 1L}, latency = 0.1)
+  w <- watcher(dir, callback = ~{is.character(.x) || stop(); x <<- x + 1L}, latency = 0.2)
   expect_output(print(w))
   expect_s3_class(w, "Watcher")
   expect_false(w$running)
@@ -33,19 +33,23 @@ test_that("watcher() callbacks", {
   Sys.sleep(1)
   file.create(file.path(subdir, "testfile"))
   later::run_now(1)
-  expect_equal(x, 1L)
+  expect_gte(x, 1L)
+  x <- 0L
   file.remove(file.path(subdir, "testfile"))
   later::run_now(1)
-  expect_equal(x, 2L)
+  expect_gte(x, 1L)
+  x <- 0L
   file.create(file.path(dir, "oldfile"))
   later::run_now(1)
-  expect_equal(x, 3L)
+  expect_gte(x, 1L)
+  x <- 0L
   file.rename(file.path(dir, "oldfile"), file.path(dir, "みらいヘ"))
   later::run_now(1)
-  expect_equal(x, 4L)
+  expect_gte(x, 1L)
+  x <- 0L
   file.remove(file.path(dir, "みらいヘ"))
   later::run_now(1)
-  expect_equal(x, 5L)
+  expect_gte(x, 1L)
   expect_true(w$stop())
   expect_false(w$running)
   rm(w)

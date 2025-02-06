@@ -1,4 +1,4 @@
-LIB_VER="1.18.2"
+LIB_VER="1.19.0"
 
 # Find compiler and export flags
 CC=`"${R_HOME}/bin/R" CMD config CC`
