@@ -72,12 +72,14 @@ w <- watcher(dir, callback = ~print(.x), latency = 0.5)
 w
 #> <Watcher>
 #>   Public:
+#>     get_path: function () 
 #>     initialize: function (path, callback, latency) 
-#>     path: /tmp/RtmpcSO6DA/watcher-example
-#>     running: FALSE
+#>     is_running: function () 
 #>     start: function () 
 #>     stop: function () 
 #>   Private:
+#>     path: /tmp/RtmpF8BnsM/watcher-example
+#>     running: FALSE
 #>     watch: externalptr
 w$start()
 
@@ -86,19 +88,19 @@ file.create(file.path(dir, "newfile"))
 file.create(file.path(dir, "anotherfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/tmp/RtmpcSO6DA/watcher-example/newfile"    
-#> [2] "/tmp/RtmpcSO6DA/watcher-example/anotherfile"
+#> [1] "/tmp/RtmpF8BnsM/watcher-example/newfile"
+#> [1] "/tmp/RtmpF8BnsM/watcher-example/anotherfile"
 
 newfile <- file(file.path(dir, "newfile"), open = "r+")
 cat("hello", file = newfile)
 close(newfile)
 later::run_now(1)
-#> [1] "/tmp/RtmpcSO6DA/watcher-example/newfile"
+#> [1] "/tmp/RtmpF8BnsM/watcher-example/newfile"
 
 file.remove(file.path(dir, "newfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/tmp/RtmpcSO6DA/watcher-example/newfile"
+#> [1] "/tmp/RtmpF8BnsM/watcher-example/newfile"
 
 w$stop()
 unlink(dir, recursive = TRUE, force = TRUE)

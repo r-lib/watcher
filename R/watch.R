@@ -26,16 +26,27 @@
 #' @param latency Numeric latency in seconds for events to be reported or
 #'   callbacks triggered. The default is 1s.
 #'
-#' @return A 'Watcher' R6 class object. Start and stop background monitoring
-#'   using the `$start()` and `$stop()` methods - these return a logical value
-#'   whether or not they have succeeded.
+#' @return A 'Watcher' R6 class object.
+#'
+#' @section Watcher Methods:
+#'
+#' A `Watcher` is an R6 class with the following methods:
+#'
+#' - `$start()` starts background monitoring. Returns logical `TRUE` upon
+#'   success, `FALSE` otherwise.
+#' - `$stop()` stops background monitoring. Returns logical `TRUE` upon success,
+#'   `FALSE` otherwise.
+#' - `$get_path()` returns the watched path as a character string.
+#' - `$is_running()` returns logical `TRUE` or `FALSE` depending on whether the
+#'   monitor is running.
 #'
 #' @examples
 #' w <- watcher(tempdir())
 #' w$start()
 #' w
+#' w$get_path()
 #' w$stop()
-#' w
+#' w$is_running()
 #'
 #' Sys.sleep(1)
 #'
@@ -51,38 +62,43 @@ watcher <- function(path = getwd(), callback = NULL, latency = 1) {
 Watcher <- R6Class(
   "Watcher",
   public = list(
-    path = NULL,
-    running = FALSE,
     initialize = function(path, callback, latency) {
-      if (is.null(self$path)) {
-        self$path <- path.expand(path)
+      if (is.null(private$path)) {
+        private$path <- path.expand(path)
         if (!is.null(callback) && !is.function(callback)) {
           callback <- rlang::as_function(callback)
         }
         latency <- as.double(latency)
-        private$watch <- .Call(watcher_create, self$path, callback, latency)
-        lockBinding("path", self)
+        private$watch <- .Call(watcher_create, private$path, callback, latency)
       }
       invisible(self)
     },
+    get_path = function() {
+      private$path
+    },
+    is_running = function() {
+      private$running
+    },
     start = function() {
-      res <- self$running
+      res <- private$running
       if (!res) {
-        self$running <- .Call(watcher_start_monitor, private$watch)
-        res <- !self$running
+        private$running <- .Call(watcher_start_monitor, private$watch)
+        res <- !private$running
       }
       invisible(!res)
     },
     stop = function() {
-      res <- self$running
+      res <- private$running
       if (res) {
         res <- .Call(watcher_stop_monitor, private$watch)
-        self$running <- !res
+        private$running <- !res
       }
       invisible(res)
     }
   ),
   private = list(
+    path = NULL,
+    running = FALSE,
     watch = NULL
   ),
   cloneable = FALSE,
