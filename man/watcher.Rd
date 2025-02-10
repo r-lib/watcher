@@ -19,9 +19,7 @@ causes the paths that have changed to be written to \code{stdout} instead.}
 callbacks triggered. The default is 1s.}
 }
 \value{
-A 'Watcher' R6 class object. Start and stop background monitoring
-using the \verb{$start()} and \verb{$stop()} methods - these return a logical value
-whether or not they have succeeded.
+A 'Watcher' R6 class object.
 }
 \description{
 Create a 'Watcher' on a filesystem location to monitor for changes in the
@@ -42,6 +40,21 @@ flags will cause the callback to be called only once.
 It is possible to set a watch on a path that does not currently exist, and it
 will be monitored once created.
 }
+\section{Watcher Methods}{
+
+
+A \code{Watcher} is an R6 class with the following methods:
+\itemize{
+\item \verb{$start()} starts background monitoring. Returns logical \code{TRUE} upon
+success, \code{FALSE} otherwise.
+\item \verb{$stop()} stops background monitoring. Returns logical \code{TRUE} upon success,
+\code{FALSE} otherwise.
+\item \verb{$get_path()} returns the watched path as a character string.
+\item \verb{$is_running()} returns logical \code{TRUE} or \code{FALSE} depending on whether the
+monitor is running.
+}
+}
+
 \examples{
 w <- watcher(tempdir())
 w$start()

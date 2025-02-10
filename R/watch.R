@@ -26,9 +26,19 @@
 #' @param latency Numeric latency in seconds for events to be reported or
 #'   callbacks triggered. The default is 1s.
 #'
-#' @return A 'Watcher' R6 class object. Start and stop background monitoring
-#'   using the `$start()` and `$stop()` methods - these return a logical value
-#'   whether or not they have succeeded.
+#' @return A 'Watcher' R6 class object.
+#'
+#' @section Watcher Methods:
+#'
+#' A `Watcher` is an R6 class with the following methods:
+#'
+#' - `$start()` starts background monitoring. Returns logical `TRUE` upon
+#'   success, `FALSE` otherwise.
+#' - `$stop()` stops background monitoring. Returns logical `TRUE` upon success,
+#'   `FALSE` otherwise.
+#' - `$get_path()` returns the watched path as a character string.
+#' - `$is_running()` returns logical `TRUE` or `FALSE` depending on whether the
+#'   monitor is running.
 #'
 #' @examples
 #' w <- watcher(tempdir())
