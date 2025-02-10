@@ -34,6 +34,7 @@
 #' w <- watcher(tempdir())
 #' w$start()
 #' w
+#' w$get_path()
 #' w$stop()
 #' w$is_running()
 #'
@@ -51,18 +52,19 @@ watcher <- function(path = getwd(), callback = NULL, latency = 1) {
 Watcher <- R6Class(
   "Watcher",
   public = list(
-    path = NULL,
     initialize = function(path, callback, latency) {
-      if (is.null(self$path)) {
-        self$path <- path.expand(path)
+      if (is.null(private$path)) {
+        private$path <- path.expand(path)
         if (!is.null(callback) && !is.function(callback)) {
           callback <- rlang::as_function(callback)
         }
         latency <- as.double(latency)
-        private$watch <- .Call(watcher_create, self$path, callback, latency)
-        lockBinding("path", self)
+        private$watch <- .Call(watcher_create, private$path, callback, latency)
       }
       invisible(self)
+    },
+    get_path = function() {
+      private$path
     },
     is_running = function() {
       private$running
@@ -85,6 +87,7 @@ Watcher <- R6Class(
     }
   ),
   private = list(
+    path = NULL,
     running = FALSE,
     watch = NULL
   ),

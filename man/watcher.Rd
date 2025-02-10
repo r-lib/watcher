@@ -46,6 +46,7 @@ will be monitored once created.
 w <- watcher(tempdir())
 w$start()
 w
+w$get_path()
 w$stop()
 w$is_running()
 

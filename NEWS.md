@@ -1,6 +1,7 @@
 # watcher (development version)
 
-* Adds `$is_running()` method to the `Watcher` R6 class - use this to query the status as the `running` field is now private.
+* Adds `$get_path()` and `$is_running()` methods to the `Watcher` R6 class.
+  + Use these rather than the fields `path` and `running`, as they have been made private.
 
 # watcher 0.1.1
 
