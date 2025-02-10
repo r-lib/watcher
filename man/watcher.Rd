@@ -47,7 +47,7 @@ w <- watcher(tempdir())
 w$start()
 w
 w$stop()
-w
+w$is_running()
 
 Sys.sleep(1)
 

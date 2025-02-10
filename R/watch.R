@@ -35,7 +35,7 @@
 #' w$start()
 #' w
 #' w$stop()
-#' w
+#' w$is_running()
 #'
 #' Sys.sleep(1)
 #'
@@ -52,7 +52,6 @@ Watcher <- R6Class(
   "Watcher",
   public = list(
     path = NULL,
-    running = FALSE,
     initialize = function(path, callback, latency) {
       if (is.null(self$path)) {
         self$path <- path.expand(path)
@@ -65,24 +64,28 @@ Watcher <- R6Class(
       }
       invisible(self)
     },
+    is_running = function() {
+      private$running
+    },
     start = function() {
-      res <- self$running
+      res <- private$running
       if (!res) {
-        self$running <- .Call(watcher_start_monitor, private$watch)
-        res <- !self$running
+        private$running <- .Call(watcher_start_monitor, private$watch)
+        res <- !private$running
       }
       invisible(!res)
     },
     stop = function() {
-      res <- self$running
+      res <- private$running
       if (res) {
         res <- .Call(watcher_stop_monitor, private$watch)
-        self$running <- !res
+        private$running <- !res
       }
       invisible(res)
     }
   ),
   private = list(
+    running = FALSE,
     watch = NULL
   ),
   cloneable = FALSE,

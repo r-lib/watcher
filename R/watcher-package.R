@@ -7,7 +7,5 @@
 # Silences R CMD check note: All declared Imports should be used
 # rlang is not loaded unless used, later is loaded but used only at C level
 # nocov start
-.internal <- function() {
-  if (FALSE) rlang::as_function(later::run_now)
-}
+.internal <- function() if (FALSE) rlang::as_function(later::run_now)
 # nocov end
