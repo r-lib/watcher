@@ -11,7 +11,7 @@ R binding for 'libfswatch', a file system monitoring library. Watch files, or di
 Useful links:
 \itemize{
   \item \url{https://r-lib.github.io/watcher/}
-  \item \url{https://github.com/r-lib/watcher/}
+  \item \url{https://github.com/r-lib/watcher}
   \item Report bugs at \url{https://github.com/r-lib/watcher/issues}
 }
 
