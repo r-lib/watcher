@@ -72,14 +72,14 @@ callbacks triggered. The default is 1s.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Uses the optimal event-driven API for each platform: 'ReadDirectoryChangesW'
+    <p>Uses an optimal event-driven API for each platform: 'ReadDirectoryChangesW'
 on Windows, 'FSEvents' on MacOS, 'inotify' on Linux, 'kqueue' on BSD, and
 'File Events Notification' on Solaris/Illumos.</p>
-<p>Note: the <code>latency</code> setting does not mean that changes are polled for at this
-interval, these still rely on the optimal platform-specific monitor. The
-implementation of 'latency' is also platform-dependent.</p>
-<p>Events are 'bubbled' such that a single change that triggers multiple event
-flags will cause the callback to be called only once.</p>
+<p>Note: the <code>latency</code> setting controls how often the changes are processed, and
+does not mean that changes are polled for at this interval. The changes are
+monitored in an event-driven fashion by the platform-specific monitor. Events
+are 'bubbled' such that a single change that triggers multiple filesystem
+events will cause the callback to be called only once.</p>
 <p>It is possible to set a watch on a path that does not currently exist, and it
 will be monitored once created.</p>
     </div>
@@ -110,11 +110,11 @@ monitor is running.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     start: function () </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     stop: function () </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Private:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/RtmpmODQ6g</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/RtmpLCY31s</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     running: TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     watch: externalptr</span>
 <span class="r-in"><span><span class="va">w</span><span class="op">$</span><span class="fu">get_path</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpmODQ6g"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpLCY31s"</span>
 <span class="r-in"><span><span class="va">w</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">w</span><span class="op">$</span><span class="fu">is_running</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
