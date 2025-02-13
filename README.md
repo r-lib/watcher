@@ -15,7 +15,7 @@ coverage](https://codecov.io/gh/r-lib/watcher/graph/badge.svg)](https://app.code
 Watch the File System for Changes
 
 R binding for ‘libfswatch’, a file system monitoring library. This uses
-the optimal event-driven API for each platform:
+an optimal event-driven API for each platform:
 
 - `ReadDirectoryChangesW` on Windows
 - `FSEvents` on MacOS
@@ -78,7 +78,7 @@ w
 #>     start: function () 
 #>     stop: function () 
 #>   Private:
-#>     path: /tmp/RtmpF8BnsM/watcher-example
+#>     path: /tmp/RtmpgY1G2U/watcher-example
 #>     running: FALSE
 #>     watch: externalptr
 w$start()
@@ -88,19 +88,19 @@ file.create(file.path(dir, "newfile"))
 file.create(file.path(dir, "anotherfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/tmp/RtmpF8BnsM/watcher-example/newfile"
-#> [1] "/tmp/RtmpF8BnsM/watcher-example/anotherfile"
+#> [1] "/tmp/RtmpgY1G2U/watcher-example/newfile"
+#> [1] "/tmp/RtmpgY1G2U/watcher-example/anotherfile"
 
 newfile <- file(file.path(dir, "newfile"), open = "r+")
 cat("hello", file = newfile)
 close(newfile)
 later::run_now(1)
-#> [1] "/tmp/RtmpF8BnsM/watcher-example/newfile"
+#> [1] "/tmp/RtmpgY1G2U/watcher-example/newfile"
 
 file.remove(file.path(dir, "newfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/tmp/RtmpF8BnsM/watcher-example/newfile"
+#> [1] "/tmp/RtmpgY1G2U/watcher-example/newfile"
 
 w$stop()
 unlink(dir, recursive = TRUE, force = TRUE)

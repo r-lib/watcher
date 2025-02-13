@@ -3,16 +3,15 @@
 #' Create a 'Watcher' on a filesystem location to monitor for changes in the
 #' background.
 #'
-#' Uses the optimal event-driven API for each platform: 'ReadDirectoryChangesW'
+#' Uses an optimal event-driven API for each platform: 'ReadDirectoryChangesW'
 #' on Windows, 'FSEvents' on MacOS, 'inotify' on Linux, 'kqueue' on BSD, and
 #' 'File Events Notification' on Solaris/Illumos.
 #'
-#' Note: the `latency` setting does not mean that changes are polled for at this
-#' interval, these still rely on the optimal platform-specific monitor. The
-#' implementation of 'latency' is also platform-dependent.
-#'
-#' Events are 'bubbled' such that a single change that triggers multiple event
-#' flags will cause the callback to be called only once.
+#' Note: the `latency` setting controls how often the changes are processed, and
+#' does not mean that changes are polled for at this interval. The changes are
+#' monitored in an event-driven fashion by the platform-specific monitor. Events
+#' are 'bubbled' such that a single change that triggers multiple filesystem
+#' events will cause the callback to be called only once.
 #'
 #' It is possible to set a watch on a path that does not currently exist, and it
 #' will be monitored once created.

@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 
 Watch the File System for Changes
 
-R binding for 'libfswatch', a file system monitoring library. This uses the optimal event-driven API for each platform:
+R binding for 'libfswatch', a file system monitoring library. This uses an optimal event-driven API for each platform:
 
 - `ReadDirectoryChangesW` on Windows
 - `FSEvents` on MacOS
