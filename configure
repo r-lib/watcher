@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# bundled source: https://github.com/shikokuchuo/fswatch/tree/4c1767e6d12901df54b73cac2a87e26014332b44
-LIB_VER="1.19.0"
+# Upstream SHA of emcrisostomo/fswatch
+LIB_VER="5c443d2"
 
 # Initialise
 PKG_CFLAGS=""
@@ -76,7 +76,10 @@ if [ -z "$PKG_CFLAGS" ]; then
   fi
   tar -xf src/fswatch-$LIB_VER.tar.gz
   cd fswatch-$LIB_VER
-  cmake -DCMAKE_INSTALL_PREFIX=../install .
+  cmake -DCMAKE_INSTALL_PREFIX=../install \
+  -DBUILD_LIBS_ONLY=1 -DUSE_NLS=0 -DCMAKE_POSITION_INDEPENDENT_CODE=1 \
+  -DCMAKE_COLOR_MAKEFILE=0 -DCMAKE_INSTALL_MESSAGE=NEVER \
+  -DCMAKE_BUILD_TYPE=Release .
   cmake --build . --target install
   cd ..
   rm -rf fswatch-$LIB_VER
