@@ -38,10 +38,10 @@ Watching is done asynchronously in the background, without blocking the session.
 
 ## Installation
 
-Install the current development version of watcher using:
+Install watcher from CRAN with:
 
 ``` r
-pak::pak("r-lib/watcher")
+install.packages("watcher")
 ```
 
 #### Installation from Source
