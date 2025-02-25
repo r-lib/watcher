@@ -1,12 +1,12 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
-<url><loc>https://r-lib.github.io/watcher/404.html</loc></url>
-<url><loc>https://r-lib.github.io/watcher/LICENSE-text.html</loc></url>
-<url><loc>https://r-lib.github.io/watcher/LICENSE.html</loc></url>
-<url><loc>https://r-lib.github.io/watcher/authors.html</loc></url>
-<url><loc>https://r-lib.github.io/watcher/index.html</loc></url>
-<url><loc>https://r-lib.github.io/watcher/news/index.html</loc></url>
-<url><loc>https://r-lib.github.io/watcher/reference/index.html</loc></url>
-<url><loc>https://r-lib.github.io/watcher/reference/watcher-package.html</loc></url>
-<url><loc>https://r-lib.github.io/watcher/reference/watcher.html</loc></url>
+<url><loc>https://watcher.r-lib.org/404.html</loc></url>
+<url><loc>https://watcher.r-lib.org/LICENSE-text.html</loc></url>
+<url><loc>https://watcher.r-lib.org/LICENSE.html</loc></url>
+<url><loc>https://watcher.r-lib.org/authors.html</loc></url>
+<url><loc>https://watcher.r-lib.org/index.html</loc></url>
+<url><loc>https://watcher.r-lib.org/news/index.html</loc></url>
+<url><loc>https://watcher.r-lib.org/reference/index.html</loc></url>
+<url><loc>https://watcher.r-lib.org/reference/watcher-package.html</loc></url>
+<url><loc>https://watcher.r-lib.org/reference/watcher.html</loc></url>
 </urlset>
 
