@@ -74,7 +74,7 @@ if [ -z "$PKG_CFLAGS" ]; then
       exit 1
     fi
   fi
-  tar -xf src/fswatch-$LIB_VER.tar.gz
+  gzip -dc src/fswatch-$LIB_VER.tar.gz | tar -xf -
   cd fswatch-$LIB_VER
   cmake -DCMAKE_INSTALL_PREFIX=../install \
   -DBUILD_LIBS_ONLY=1 -DUSE_NLS=0 -DCMAKE_POSITION_INDEPENDENT_CODE=1 \
