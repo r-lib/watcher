@@ -7,8 +7,8 @@
 watcher(path = getwd(), callback = NULL, latency = 1)
 }
 \arguments{
-\item{path}{Character path to a file, or directory to watch recursively.
-Defaults to the current working directory.}
+\item{path}{Character path to a file, or directory to watch recursively, or a
+vector of paths. Defaults to the current working directory.}
 
 \item{callback}{A function or formula (see \link[rlang:as_function]{rlang::as_function}), which takes
 at least one argument. It will be called back with a character vector

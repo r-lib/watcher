@@ -112,6 +112,13 @@ SEXP watcher_create(SEXP path, SEXP callback, SEXP latency) {
   if (fsw_add_path(handle, watch_path) != FSW_OK)
     watcher_error(handle, "Watcher path invalid.");
 
+  if (XLENGTH(path) > 1) {
+    for (R_xlen_t i = 1; i < XLENGTH(path); i++) {
+      if (fsw_add_path(handle, Rf_translateChar(STRING_ELT(path, i))) != FSW_OK)
+        watcher_error(handle, "Watcher path invalid.");
+    }
+  }
+
   if (fsw_set_latency(handle, lat) != FSW_OK)
     watcher_error(handle, "Watcher latency cannot be negative.");
 
