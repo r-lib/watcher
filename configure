@@ -37,7 +37,7 @@ then
   PKG_LIBS="-L$LIB_DIR -lfswatch $PKG_LIBS"
   echo "Found INCLUDE_DIR $INCLUDE_DIR"
   echo "Found LIB_DIR $LIB_DIR"
-elif [ -d "/usr/local/include/libfswatch1" ]
+elif [ -d "/usr/local/include/libfswatch" ]
 then
   PKG_CFLAGS="-I/usr/local/include $PKG_CFLAGS"
   PKG_LIBS="-L/usr/local/lib -lfswatch $PKG_LIBS"
