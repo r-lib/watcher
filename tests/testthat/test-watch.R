@@ -1,6 +1,8 @@
 dir <- file.path(tempdir(), "watcher-test")
+dir2 <- file.path(tempdir(), "watcher-test2")
 subdir <- file.path(dir, "文件subdir")
 dir.create(dir)
+dir.create(dir2)
 dir.create(subdir)
 
 test_that("watcher() logs", {
@@ -24,13 +26,14 @@ test_that("watcher() logs", {
 
 test_that("watcher() callbacks", {
   x <- 0L
-  w <- watcher(dir, callback = ~{is.character(.x) || stop(); x <<- x + 1L}, latency = 0.2)
+  w <- watcher(c(dir, dir2), callback = ~{is.character(.x) || stop(); x <<- x + 1L}, latency = 0.2)
   expect_output(print(w))
   expect_s3_class(w, "Watcher")
   expect_false(w$is_running())
   expect_true(w$start())
   expect_true(w$is_running())
   expect_type(w$get_path(), "character")
+  expect_length(w$get_path(), 2L)
   Sys.sleep(1)
   file.create(file.path(subdir, "testfile"))
   later::run_now(1)
@@ -48,15 +51,25 @@ test_that("watcher() callbacks", {
   later::run_now(1)
   expect_gte(x, 1L)
   x <- 0L
+  file.create(file.path(dir2, "français"))
+  later::run_now(1)
+  expect_gte(x, 1L)
+  x <- 0L
   file.remove(file.path(dir, "みらいヘ"))
   later::run_now(1)
   expect_gte(x, 1L)
+  x <- 0L
+  file.remove(file.path(dir2, "français"))
+  later::run_now(1)
+  expect_gte(x, 1L)
+  x <- 0L
   expect_true(w$stop())
   expect_false(w$is_running())
   rm(w)
 })
 
 unlink(dir, recursive = TRUE, force = TRUE)
+unlink(dir2, recursive = TRUE, force = TRUE)
 
 test_that("watcher() error handling", {
   expect_error(watcher(latency = -1), "Watcher latency cannot be negative.")

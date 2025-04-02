@@ -16,8 +16,8 @@
 #' It is possible to set a watch on a path that does not currently exist, and it
 #' will be monitored once created.
 #'
-#' @param path Character path to a file, or directory to watch recursively.
-#'   Defaults to the current working directory.
+#' @param path Character path to a file, or directory to watch recursively, or a
+#'   vector of paths. Defaults to the current working directory.
 #' @param callback A function or formula (see [rlang::as_function]), which takes
 #'   at least one argument. It will be called back with a character vector
 #'   comprising the paths of all files that have changed. The default, `NULL`,
