@@ -1,2 +1,2 @@
 PKG_CFLAGS=-I../install/include $(C_VISIBILITY)
-PKG_LIBS=-L../install/lib -lfswatch -pthread
+PKG_LIBS=../install/lib/libfswatch.b -pthread
