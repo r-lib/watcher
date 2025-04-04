@@ -20,6 +20,7 @@ jobs:
       matrix:
         config:
           - {os: macos-latest,   r: 'release'}
+          - {os: macos-latest,   r: 'oldrel-3'}
           - {os: windows-latest, r: 'release'}
           - {os: windows-latest, r: 'oldrel-2'}
           - {os: windows-latest, r: 'oldrel-4'}

@@ -1,2 +1,2 @@
-PKG_CFLAGS=-I../install/include $(C_VISIBILITY)
-PKG_LIBS=../install/lib/libfswatch.b -pthread -lstdc++fs
+PKG_CFLAGS=-I../install${R_ARCH}/include $(C_VISIBILITY)
+PKG_LIBS=../install${R_ARCH}/lib/libfswatch.b -pthread -lstdc++fs
