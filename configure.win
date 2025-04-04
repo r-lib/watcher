@@ -7,7 +7,10 @@ for ARCH in x64 i386; do
 
   if [ -e "${R_HOME}/bin/${ARCH}/R" ]; then
     CC=`"${R_HOME}/bin/${ARCH}/R" CMD config CC`
-    export CC
+    CFLAGS=`"${R_HOME}/${ARCH}/bin/R" CMD config CFLAGS`
+    CPPFLAGS=`"${R_HOME}/${ARCH}/bin/R" CMD config CPPFLAGS`
+    LDFLAGS=`"${R_HOME}/${ARCH}/bin/R" CMD config LDFLAGS`
+    export CC CFLAGS CPPFLAGS LDFLAGS
 
     echo "Compiling 'libfswatch' from source..."
 
