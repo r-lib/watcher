@@ -1,6 +1,7 @@
 # watcher (development version)
 
 * `watcher()` now accepts a vector for the `path` argument to monitor multiple files or directories (#16).
+* Fixes Windows bi-arch source builds for R <= 4.1 using rtools40 and earlier (#19).
 
 # watcher 0.1.2
 
