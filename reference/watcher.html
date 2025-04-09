@@ -9,7 +9,7 @@ background."><script defer data-domain="watcher.r-lib.org,all.tidyverse.org" src
 
     <a class="navbar-brand me-2" href="../index.html">watcher</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,7 +31,7 @@ background."><script defer data-domain="watcher.r-lib.org,all.tidyverse.org" src
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Watch a Filesystem Location</h1>
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/watcher/blob/v0.1.2/R/watch.R" class="external-link"><code>R/watch.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/watcher/blob/main/R/watch.R" class="external-link"><code>R/watch.R</code></a></small>
       <div class="d-none name"><code>watcher.Rd</code></div>
     </div>
 
@@ -50,8 +50,8 @@ background.</p>
 
 
 <dl><dt id="arg-path">path<a class="anchor" aria-label="anchor" href="#arg-path"></a></dt>
-<dd><p>Character path to a file, or directory to watch recursively.
-Defaults to the current working directory.</p></dd>
+<dd><p>Character path to a file, or directory to watch recursively, or a
+vector of paths. Defaults to the current working directory.</p></dd>
 
 
 <dt id="arg-callback">callback<a class="anchor" aria-label="anchor" href="#arg-callback"></a></dt>
@@ -110,11 +110,11 @@ monitor is running.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     start: function () </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     stop: function () </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Private:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/Rtmp1x5ioa</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     path: /tmp/RtmpVmBSMg</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     running: TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     watch: externalptr</span>
 <span class="r-in"><span><span class="va">w</span><span class="op">$</span><span class="fu">get_path</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmp1x5ioa"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpVmBSMg"</span>
 <span class="r-in"><span><span class="va">w</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">w</span><span class="op">$</span><span class="fu">is_running</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
