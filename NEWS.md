@@ -1,3 +1,5 @@
+# watcher (development version)
+
 # watcher 0.1.3
 
 * `watcher()` now accepts a vector for the `path` argument to monitor multiple files or directories (#16).
