@@ -12,12 +12,11 @@ for ARCH in x64 i386; do
     LDFLAGS=`"${R_HOME}/bin/${ARCH}/R" CMD config LDFLAGS`
     export CC CFLAGS CPPFLAGS LDFLAGS
 
-    echo "Compiling 'libfswatch' from source..."
+    echo "Compiling 'libfswatch' from source for ${ARCH} ..."
 
     cd fswatch-$LIB_VER
     mkdir ${ARCH}
     cd ${ARCH}
-    echo "Compiling 'libfswatch' from source for ${ARCH} ..."
     cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=../../install/${ARCH} \
       -DBUILD_LIBS_ONLY=1 -DUSE_NLS=0 -DCMAKE_POSITION_INDEPENDENT_CODE=1 \
       -DCMAKE_COLOR_MAKEFILE=0 -DCMAKE_INSTALL_MESSAGE=NEVER \
