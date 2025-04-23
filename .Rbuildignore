@@ -8,3 +8,5 @@
 ^pkgdown$
 ^codecov\.yml$
 ^cran-comments\.md$
+^[\.]?air\.toml$
+^\.vscode$
