@@ -80,7 +80,7 @@ unlink(dir, recursive = TRUE, force = TRUE)
 unlink(dir2, recursive = TRUE, force = TRUE)
 
 test_that("watcher() error handling", {
-  expect_error(watcher(latency = -1), "Watcher latency cannot be negative.")
+  expect_snapshot(watcher(latency = -1), error = TRUE)
 })
 
 Sys.sleep(1) # time for watch threads to terminate and release resources
