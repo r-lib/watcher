@@ -116,7 +116,7 @@
 <span><span class="co">#&gt;     start: function () </span></span>
 <span><span class="co">#&gt;     stop: function () </span></span>
 <span><span class="co">#&gt;   Private:</span></span>
-<span><span class="co">#&gt;     path: /tmp/RtmpR5tJmF/watcher-example</span></span>
+<span><span class="co">#&gt;     path: /tmp/RtmpLJO67C/watcher-example</span></span>
 <span><span class="co">#&gt;     running: FALSE</span></span>
 <span><span class="co">#&gt;     watch: externalptr</span></span>
 <span><span class="va">w</span><span class="op">$</span><span class="fu">start</span><span class="op">(</span><span class="op">)</span></span>
@@ -126,19 +126,19 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.create</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">"anotherfile"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span><span class="fu">later</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/later/reference/run_now.html" class="external-link">run_now</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "/tmp/RtmpR5tJmF/watcher-example/newfile"</span></span>
-<span><span class="co">#&gt; [1] "/tmp/RtmpR5tJmF/watcher-example/anotherfile"</span></span>
+<span><span class="co">#&gt; [1] "/tmp/RtmpLJO67C/watcher-example/newfile"</span></span>
+<span><span class="co">#&gt; [1] "/tmp/RtmpLJO67C/watcher-example/anotherfile"</span></span>
 <span></span>
 <span><span class="va">newfile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">"newfile"</span><span class="op">)</span>, open <span class="op">=</span> <span class="st">"r+"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"hello"</span>, file <span class="op">=</span> <span class="va">newfile</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">close</a></span><span class="op">(</span><span class="va">newfile</span><span class="op">)</span></span>
 <span><span class="fu">later</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/later/reference/run_now.html" class="external-link">run_now</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "/tmp/RtmpR5tJmF/watcher-example/newfile"</span></span>
+<span><span class="co">#&gt; [1] "/tmp/RtmpLJO67C/watcher-example/newfile"</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.remove</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">"newfile"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span><span class="fu">later</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/later/reference/run_now.html" class="external-link">run_now</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "/tmp/RtmpR5tJmF/watcher-example/newfile"</span></span>
+<span><span class="co">#&gt; [1] "/tmp/RtmpLJO67C/watcher-example/newfile"</span></span>
 <span></span>
 <span><span class="va">w</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">dir</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
@@ -182,6 +182,8 @@
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>Charlie Gao <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-0750-061X" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>
+<a href="https://www.posit.co" class="external-link"><img src="https://www.tidyverse.org/posit-logo.svg" alt="Posit" height="16" width="62" style="margin-bottom: 3px;"></a> <br><small class="roles"> Copyright holder, funder </small>  </li>
 <li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
@@ -202,7 +204,7 @@
    </div>
   <footer><div class="container">
   <div class="pkgdown-footer-left">
-  <p>Developed by Charlie Gao.</p>
+  <p>Developed by Charlie Gao, <a href="https://www.posit.co" class="external-link"><img src="https://www.tidyverse.org/posit-logo.svg" alt="Posit" height="16" width="62" style="margin-bottom: 3px;"></a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
