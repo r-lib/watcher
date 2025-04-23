@@ -27,7 +27,14 @@ test_that("watcher() logs", {
 test_that("watcher() callbacks", {
   skip_if(R.version$arch == "aarch64" && !Sys.getenv("NOT_CRAN") == "true")
   x <- 0L
-  w <- watcher(c(dir, dir2), callback = ~{is.character(.x) || stop(); x <<- x + 1L}, latency = 0.2)
+  w <- watcher(
+    c(dir, dir2),
+    callback = ~ {
+      is.character(.x) || stop()
+      x <<- x + 1L
+    },
+    latency = 0.2
+  )
   expect_output(print(w))
   expect_s3_class(w, "Watcher")
   expect_false(w$is_running())
