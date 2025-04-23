@@ -4,7 +4,8 @@ output: github_document
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-```{r, include = FALSE}
+```{r}
+#| include: false
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -63,7 +64,8 @@ Set the `callback` argument to run an R function, or rlang-style formula, every 
 - Uses the 'later' package to execute the callback when R is idle at the top level, or whenever `later::run_now()` is called, for instance automatically in Shiny's event loop.
 - Function is called back with a character vector of the paths of all files which have changed.
 
-```{r example}
+```{r}
+#| label: example
 library(watcher)
 dir <- file.path(tempdir(), "watcher-example")
 dir.create(dir)

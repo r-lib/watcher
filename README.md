@@ -78,7 +78,7 @@ w
 #>     start: function () 
 #>     stop: function () 
 #>   Private:
-#>     path: /tmp/RtmpR5tJmF/watcher-example
+#>     path: /tmp/RtmpLJO67C/watcher-example
 #>     running: FALSE
 #>     watch: externalptr
 w$start()
@@ -88,19 +88,19 @@ file.create(file.path(dir, "newfile"))
 file.create(file.path(dir, "anotherfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/tmp/RtmpR5tJmF/watcher-example/newfile"
-#> [1] "/tmp/RtmpR5tJmF/watcher-example/anotherfile"
+#> [1] "/tmp/RtmpLJO67C/watcher-example/newfile"
+#> [1] "/tmp/RtmpLJO67C/watcher-example/anotherfile"
 
 newfile <- file(file.path(dir, "newfile"), open = "r+")
 cat("hello", file = newfile)
 close(newfile)
 later::run_now(1)
-#> [1] "/tmp/RtmpR5tJmF/watcher-example/newfile"
+#> [1] "/tmp/RtmpLJO67C/watcher-example/newfile"
 
 file.remove(file.path(dir, "newfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/tmp/RtmpR5tJmF/watcher-example/newfile"
+#> [1] "/tmp/RtmpLJO67C/watcher-example/newfile"
 
 w$stop()
 unlink(dir, recursive = TRUE, force = TRUE)
