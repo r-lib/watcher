@@ -1,23 +1,20 @@
-Package: watcher
 Type: Package
+Package: watcher
 Title: Watch the File System for Changes
 Version: 0.1.3.9000
-Authors@R: 
-    c(person(given = "Charlie",
-             family = "Gao",
-             role = c("aut", "cre"),
-             email = "charlie.gao@shikokuchuo.net",
-             comment = c(ORCID = "0000-0002-0750-061X")),
-      person(given = "Posit Software, PBC",
-             role = "cph"))
-Description: R binding for 'libfswatch', a file system monitoring library. Watch
-    files, or directories recursively, for changes in the background. Log
-    activity, or run an R function every time a change event occurs. 
+Authors@R: c(
+    person("Charlie", "Gao", , "charlie.gao@shikokuchuo.net", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-0750-061X")),
+    person("Posit Software, PBC", role = c("cph", "fnd"),
+           comment = c(ROR = "03wc8by49"))
+  )
+Description: R binding for 'libfswatch', a file system monitoring library.
+    Watch files, or directories recursively, for changes in the
+    background. Log activity, or run an R function every time a change
+    event occurs.
 License: MIT + file LICENSE
-BugReports: https://github.com/r-lib/watcher/issues
 URL: https://watcher.r-lib.org, https://github.com/r-lib/watcher
-Encoding: UTF-8
-SystemRequirements: 'libfswatch', or 'cmake' to compile from package sources
+BugReports: https://github.com/r-lib/watcher/issues
 Depends: 
     R (>= 3.5)
 Imports:
@@ -26,8 +23,12 @@ Imports:
     rlang
 Suggests: 
     testthat (>= 3.0.0)
-RoxygenNote: 7.3.2
-Roxygen: list(markdown = TRUE)
 Biarch: true
-Config/testthat/edition: 3
 Config/Needs/website: tidyverse/tidytemplate
+Config/testthat/edition: 3
+Config/usethis/last-upkeep: 2025-04-23
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+SystemRequirements: 'libfswatch', or 'cmake' to compile from package
+    sources
