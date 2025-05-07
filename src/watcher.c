@@ -53,20 +53,21 @@ static void exec_later(void *data) {
 static void process_events(fsw_cevent const *const events, const unsigned int event_num, void *data) {
 
   SEXP callback = (SEXP) data;
+  watcher_cb *wcb = NULL;
 
   if (callback != R_NilValue) {
 
-    watcher_cb *wcb = calloc(1, sizeof(watcher_cb));
-    if (!wcb) return;
+    wcb = malloc(sizeof(watcher_cb));
+    if (wcb == NULL) goto fail;
 
     wcb->event_num = event_num;
-    wcb->paths = calloc(event_num, sizeof(char *));
-    if (!wcb->paths) { watcher_unwind(wcb); return; }
     wcb->callback = callback;
+    wcb->paths = calloc(event_num, sizeof(char *));
+    if (wcb->paths == NULL) goto fail;
     for (unsigned int i = 0; i < event_num; i++) {
       size_t slen = strlen(events[i].path) + 1;
       wcb->paths[i] = malloc(sizeof(char) * slen);
-      if (!wcb->paths[i]) { watcher_unwind(wcb); return; }
+      if (wcb->paths[i] == NULL) goto fail;
       memcpy(wcb->paths[i], events[i].path, slen);
     }
     eln2(exec_later, wcb, 0, 0);
@@ -78,6 +79,11 @@ static void process_events(fsw_cevent const *const events, const unsigned int ev
     }
 
   }
+
+  return;
+
+  fail:
+  watcher_unwind(wcb);
 
 }
 
