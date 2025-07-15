@@ -109,19 +109,20 @@ static void session_finalizer(SEXP xptr) {
 SEXP watcher_create(SEXP path, SEXP callback, SEXP latency) {
 
   const char *watch_path = Rf_translateChar(STRING_ELT(path, 0));
-  const double lat = REAL(latency)[0];
+  const double lat = Rf_asReal(latency);
 
   FSW_HANDLE handle = fsw_init_session(system_default_monitor_type);
   if (handle == NULL)
     watcher_error(handle, "Watcher failed to allocate memory.");
 
-  if (fsw_add_path(handle, watch_path) != FSW_OK)
-    watcher_error(handle, "Watcher path invalid.");
+  /* no need to test return value of fsw_add_path() as it only errors if the
+   * path is a null pointer, and Rf_translateChar() cannot return one
+   */
+  fsw_add_path(handle, watch_path);
 
   if (XLENGTH(path) > 1) {
     for (R_xlen_t i = 1; i < XLENGTH(path); i++) {
-      if (fsw_add_path(handle, Rf_translateChar(STRING_ELT(path, i))) != FSW_OK)
-        watcher_error(handle, "Watcher path invalid.");
+      fsw_add_path(handle, Rf_translateChar(STRING_ELT(path, i)));
     }
   }
 

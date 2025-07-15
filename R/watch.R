@@ -67,7 +67,6 @@ Watcher <- R6Class(
         if (!is.null(callback) && !is.function(callback)) {
           callback <- rlang::as_function(callback)
         }
-        latency <- as.double(latency)
         private$watch <- .Call(watcher_create, private$path, callback, latency)
       }
       invisible(self)
