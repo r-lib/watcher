@@ -29,6 +29,6 @@ Config/testthat/edition: 3
 Config/usethis/last-upkeep: 2025-04-23
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2.9000
+RoxygenNote: 7.3.2
 SystemRequirements: 'libfswatch', or 'cmake' to compile from package
     sources
