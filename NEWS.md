@@ -1,6 +1,6 @@
 # watcher (development version)
 
-* Watcher can now use a system-installed 'libfswatch' in a non-standard filesystem location.
+* Watcher can now use a system 'libfswatch' installed in a non-standard location (#28).
 
 # watcher 0.1.3
 
