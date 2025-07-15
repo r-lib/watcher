@@ -25,7 +25,6 @@ test_that("watcher() logs", {
 })
 
 test_that("watcher() callbacks", {
-  skip_if(R.version$arch == "aarch64" && !Sys.getenv("NOT_CRAN") == "true")
   x <- 0L
   w <- watcher(
     c(dir, dir2),
