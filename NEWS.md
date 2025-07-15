@@ -1,5 +1,7 @@
 # watcher (development version)
 
+* Watcher can now use a system-installed 'libfswatch' in a non-standard filesystem location.
+
 # watcher 0.1.3
 
 * `watcher()` now accepts a vector for the `path` argument to monitor multiple files or directories (#16).

@@ -5,6 +5,7 @@ LIB_VER="5c443d2"
 
 # Initialise
 PKG_CFLAGS=""
+PKG_LIBL="-lfswatch"
 PKG_LIBS="-lpthread"
 
 # Find compiler and export flags
@@ -37,33 +38,36 @@ if [ -z "$WATCHER_LIBS" ]; then
 if [ "$INCLUDE_DIR" ] || [ "$LIB_DIR" ]
 then
   PKG_CFLAGS="-I$INCLUDE_DIR $PKG_CFLAGS"
-  PKG_LIBS="-L$LIB_DIR -lfswatch $PKG_LIBS"
+  PKG_LIBL="-L$LIB_DIR $PKG_LIBL"
   echo "Found INCLUDE_DIR $INCLUDE_DIR"
   echo "Found LIB_DIR $LIB_DIR"
 elif [ -d "/usr/local/include/libfswatch" ]
 then
   PKG_CFLAGS="-I/usr/local/include $PKG_CFLAGS"
-  PKG_LIBS="-L/usr/local/lib -lfswatch $PKG_LIBS"
-  echo "Found 'libfswatch' $PKG_CFLAGS"
+  PKG_LIBL="-L/usr/local/lib $PKG_LIBL"
 elif [ -d "/usr/include/libfswatch" ]
 then
   PKG_CFLAGS="-I/usr/include $PKG_CFLAGS"
-  PKG_LIBS="-L/usr/lib -lfswatch $PKG_LIBS"
-  echo "Found 'libfswatch' $PKG_CFLAGS"
+  PKG_LIBL="-L/usr/lib $PKG_LIBL"
 elif [ -d "/usr/local/opt/libfswatch" ]
 then
   PKG_CFLAGS="-I/usr/local/opt/fswatch/include $PKG_CFLAGS"
-  PKG_LIBS="-L/usr/local/opt/fswatch/lib -lfswatch $PKG_LIBS"
-  echo "Found 'libfswatch' $PKG_CFLAGS"
-else
-  echo "Existing 'libfswatch' not found"
+  PKG_LIBL="-L/usr/local/opt/fswatch/lib $PKG_LIBL"
 fi
+echo "#include <libfswatch/c/libfswatch.h>
+int main() {
+#if FSW_OK
+    *(void *) 0 = 0;
+#endif
+}" | ${CC} ${PKG_CFLAGS} -xc - -o /dev/null > /dev/null 2>&1
 
 else
   echo "WATCHER_LIBS is set... skipping detection"
+  false
 fi
 
-if [ -z "$PKG_CFLAGS" ]; then
+if [ $? -ne 0 ]
+then
   echo "Compiling 'libfswatch' from source..."
   echo "Detecting 'cmake'..."
   which cmake
@@ -92,6 +96,9 @@ if [ -z "$PKG_CFLAGS" ]; then
   PKG_CFLAGS="-I../install/include $PKG_CFLAGS"
   PKG_LIBS="../install/lib/libfswatch.b $PKG_LIBS"
   fi
+else
+  echo "Found 'libfswatch' $PKG_CFLAGS"
+  PKG_LIBS="$PKG_LIBL $PKG_LIBS"
 fi
 
 # Write to Makevars
