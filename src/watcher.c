@@ -14,14 +14,14 @@ static void Wprintf(const char *fmt, ...) {
 
 }
 
-static inline void watcher_error(FSW_HANDLE handle, const char *msg) {
+static void watcher_error(FSW_HANDLE handle, const char *msg) {
 
   if (handle) fsw_destroy_session(handle);
   Rf_error("%s", msg);
 
 }
 
-static inline void watcher_unwind(watcher_cb *wcb) {
+static void watcher_unwind(watcher_cb *wcb) {
 
   if (wcb->paths) {
     for (unsigned int i = 0; i < wcb->event_num; i++) {
