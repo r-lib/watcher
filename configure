@@ -56,7 +56,9 @@ then
 fi
 echo "#include <libfswatch/c/libfswatch.h>
 int main() {
-    if (fsw_init_library() != FSW_OK) return;
+#if FSW_OK
+    *(void *) 0 = 0;
+#endif
 }" | ${CC} ${PKG_CFLAGS} -xc - -o /dev/null > /dev/null 2>&1
 
 else
