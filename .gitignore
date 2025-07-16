@@ -4,5 +4,6 @@
 .Ruserdata
 install
 docs
+revdep
 .vscode
 air.toml
