@@ -10,8 +10,8 @@ Authors@R: c(
   )
 Description: R binding for 'libfswatch', a file system monitoring library.
     Watch files, or directories recursively, for changes in the
-    background. Log activity, or run an R function every time a change
-    event occurs.
+    background.  Log activity, or call an R function, upon every change
+    event.
 License: MIT + file LICENSE
 URL: https://watcher.r-lib.org, https://github.com/r-lib/watcher
 BugReports: https://github.com/r-lib/watcher/issues
