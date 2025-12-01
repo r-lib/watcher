@@ -1,5 +1,5 @@
 # Upstream SHA of emcrisostomo/fswatch
-LIB_VER="5c443d2"
+LIB_VER="5c443d2p"
 
 # Find compiler and export flags
 CC=`"${R_HOME}/bin/R" CMD config CC`

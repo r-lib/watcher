@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Upstream SHA of emcrisostomo/fswatch
-LIB_VER="5c443d2"
+LIB_VER="5c443d2p"
 
 # Initialise
 PKG_CFLAGS=""
