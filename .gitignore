@@ -3,7 +3,8 @@
 .RData
 .Ruserdata
 install
-docs
-revdep
+/docs/
+/revdep/
+/.claude/
 .vscode
 air.toml
