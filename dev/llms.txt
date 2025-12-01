@@ -12,11 +12,11 @@ for each platform:
 - `kqueue` on BSD
 - `File Events Notification` on Solaris/Illumos
 
-Watching is done asynchronously in the background, without blocking the
-session.
+Watching is performed asynchronously in the background, without blocking
+the session.
 
 - Watch files, or directories recursively.
-- Log activity, or run an R function every time a change event occurs.
+- Log activity, or call an R function, upon every change event.
 
 ## Installation
 
@@ -69,7 +69,7 @@ w
 #>     start: function () 
 #>     stop: function () 
 #>   Private:
-#>     path: /tmp/RtmpCPJhDS/watcher-example
+#>     path: /tmp/RtmpslHgGB/watcher-example
 #>     running: FALSE
 #>     watch: externalptr
 w$start()
@@ -79,19 +79,19 @@ file.create(file.path(dir, "newfile"))
 file.create(file.path(dir, "anotherfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/tmp/RtmpCPJhDS/watcher-example/newfile"    
-#> [2] "/tmp/RtmpCPJhDS/watcher-example/anotherfile"
+#> [1] "/tmp/RtmpslHgGB/watcher-example/newfile"
+#> [1] "/tmp/RtmpslHgGB/watcher-example/anotherfile"
 
 newfile <- file(file.path(dir, "newfile"), open = "r+")
 cat("hello", file = newfile)
 close(newfile)
 later::run_now(1)
-#> [1] "/tmp/RtmpCPJhDS/watcher-example/newfile"
+#> [1] "/tmp/RtmpslHgGB/watcher-example/newfile"
 
 file.remove(file.path(dir, "newfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/tmp/RtmpCPJhDS/watcher-example/newfile"
+#> [1] "/tmp/RtmpslHgGB/watcher-example/newfile"
 
 w$stop()
 unlink(dir, recursive = TRUE, force = TRUE)
