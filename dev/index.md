@@ -2,8 +2,9 @@
 
 Watch the File System for Changes
 
-R binding for ‘libfswatch’, a file system monitoring library. This uses
-an optimal event-driven API for each platform:
+R binding for [libfswatch](https://emcrisostomo.github.io/fswatch/), a
+file system monitoring library. This uses an optimal event-driven API
+for each platform:
 
 - `ReadDirectoryChangesW` on Windows
 - `FSEvents` on MacOS
@@ -68,7 +69,7 @@ w
 #>     start: function () 
 #>     stop: function () 
 #>   Private:
-#>     path: /tmp/RtmpLJO67C/watcher-example
+#>     path: /var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T//RtmpPM ...
 #>     running: FALSE
 #>     watch: externalptr
 w$start()
@@ -78,19 +79,20 @@ file.create(file.path(dir, "newfile"))
 file.create(file.path(dir, "anotherfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/tmp/RtmpLJO67C/watcher-example/newfile"
-#> [1] "/tmp/RtmpLJO67C/watcher-example/anotherfile"
+#> [1] "/private/var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T/RtmpPM1giN/watcher-example"            
+#> [2] "/private/var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T/RtmpPM1giN/watcher-example/newfile"    
+#> [3] "/private/var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T/RtmpPM1giN/watcher-example/anotherfile"
 
 newfile <- file(file.path(dir, "newfile"), open = "r+")
 cat("hello", file = newfile)
 close(newfile)
 later::run_now(1)
-#> [1] "/tmp/RtmpLJO67C/watcher-example/newfile"
+#> [1] "/private/var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T/RtmpPM1giN/watcher-example/newfile"
 
 file.remove(file.path(dir, "newfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/tmp/RtmpLJO67C/watcher-example/newfile"
+#> [1] "/private/var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T/RtmpPM1giN/watcher-example/newfile"
 
 w$stop()
 unlink(dir, recursive = TRUE, force = TRUE)
@@ -98,7 +100,9 @@ unlink(dir, recursive = TRUE, force = TRUE)
 
 ## Acknowledgements
 
-Thanks to the authors of ‘libfswatch’, upon which this package is based:
+Thanks to the authors of
+[libfswatch](https://emcrisostomo.github.io/fswatch/), upon which this
+package is based:
 
 - Alan Dipert
 - Enrico M. Crisostomo
