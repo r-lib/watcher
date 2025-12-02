@@ -8,3 +8,4 @@ install
 /.claude/
 .vscode
 air.toml
+.DS_Store

@@ -1,6 +1,3 @@
-# Upstream SHA of emcrisostomo/fswatch
-LIB_VER="5c443d2p"
-
 # Find compiler and export flags
 CC=`"${R_HOME}/bin/R" CMD config CC`
 CFLAGS=`"${R_HOME}/bin/R" CMD config CFLAGS`
@@ -9,15 +6,13 @@ LDFLAGS=`"${R_HOME}/bin/R" CMD config LDFLAGS`
 export CC CFLAGS CPPFLAGS LDFLAGS
 
 echo "Compiling 'libfswatch' from source..."
-gzip -dc src/fswatch-$LIB_VER.tar.gz | tar -xf -
-cd fswatch-$LIB_VER
+cd fswatch
 cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=../install \
   -DBUILD_LIBS_ONLY=1 -DUSE_NLS=0 -DCMAKE_POSITION_INDEPENDENT_CODE=1 \
   -DCMAKE_COLOR_MAKEFILE=0 -DCMAKE_INSTALL_MESSAGE=NEVER \
   -DCMAKE_BUILD_TYPE=Release .
 cmake --build . --target install
 cd ..
-rm -rf fswatch-$LIB_VER
 
 # Success
 exit 0
