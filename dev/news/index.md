@@ -2,6 +2,10 @@
 
 ## watcher (development version)
 
+## watcher 0.1.5
+
+CRAN release: 2025-12-01
+
 - Fixed issue on Windows where watching with a `latency` \< 1 caused
   high CPU usage ([\#32](https://github.com/r-lib/watcher/issues/32),
   thanks

@@ -2,7 +2,7 @@
 
 R binding for 'libfswatch', a file system monitoring library. Watch
 files, or directories recursively, for changes in the background. Log
-activity, or run an R function every time a change event occurs.
+activity, or call an R function, upon every change event.
 
 ## See also
 

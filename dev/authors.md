@@ -15,12 +15,12 @@ Source:
 [`DESCRIPTION`](https://github.com/r-lib/watcher/blob/main/DESCRIPTION)
 
 Gao C (2025). *watcher: Watch the File System for Changes*. R package
-version 0.1.4.9000, <https://watcher.r-lib.org>.
+version 0.1.5.9000, <https://watcher.r-lib.org>.
 
     @Manual{,
       title = {watcher: Watch the File System for Changes},
       author = {Charlie Gao},
       year = {2025},
-      note = {R package version 0.1.4.9000},
+      note = {R package version 0.1.5.9000},
       url = {https://watcher.r-lib.org},
     }
