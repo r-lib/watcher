@@ -2,9 +2,11 @@
 .Rhistory
 .RData
 .Ruserdata
-install
+/build/
+/install/
 /docs/
 /revdep/
 /.claude/
 .vscode
 air.toml
+.DS_Store
