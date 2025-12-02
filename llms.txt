@@ -1,0 +1,115 @@
+# watcher
+
+Watch the File System for Changes
+
+R binding for [libfswatch](https://emcrisostomo.github.io/fswatch/), a
+file system monitoring library. This uses an optimal event-driven API
+for each platform:
+
+- `ReadDirectoryChangesW` on Windows
+- `FSEvents` on MacOS
+- `inotify` on Linux
+- `kqueue` on BSD
+- `File Events Notification` on Solaris/Illumos
+
+Watching is performed asynchronously in the background, without blocking
+the session.
+
+- Watch files, or directories recursively.
+- Log activity, or call an R function, upon every change event.
+
+## Installation
+
+Install watcher from CRAN with:
+
+``` r
+install.packages("watcher")
+```
+
+#### Installation from Source
+
+watcher requires the ‘libfswatch’ library.
+
+- On Linux / MacOS, an installed version will be used if found in the
+  standard filesystem locations.
+- On Windows, or if not found, the bundled version of ‘libfswatch’
+  1.19.0-dev will be compiled from source.
+- Source compilation of the library requires ‘cmake’.
+
+## Quick Start
+
+Create a ‘Watcher’ using
+[`watcher::watcher()`](https://watcher.r-lib.org/reference/watcher.md).
+
+By default this will watch the current working directory recursively and
+write events to `stdout`.
+
+Set the `callback` argument to run an R function, or rlang-style
+formula, every time a file changes:
+
+- Uses the ‘later’ package to execute the callback when R is idle at the
+  top level, or whenever
+  [`later::run_now()`](https://later.r-lib.org/reference/run_now.html)
+  is called, for instance automatically in Shiny’s event loop.
+- Function is called back with a character vector of the paths of all
+  files which have changed.
+
+``` r
+library(watcher)
+dir <- file.path(tempdir(), "watcher-example")
+dir.create(dir)
+
+w <- watcher(dir, callback = ~print(.x), latency = 0.5)
+w
+#> <Watcher>
+#>   Public:
+#>     get_path: function () 
+#>     initialize: function (path, callback, latency) 
+#>     is_running: function () 
+#>     start: function () 
+#>     stop: function () 
+#>   Private:
+#>     path: /tmp/RtmpslHgGB/watcher-example
+#>     running: FALSE
+#>     watch: externalptr
+w$start()
+
+file.create(file.path(dir, "newfile"))
+#> [1] TRUE
+file.create(file.path(dir, "anotherfile"))
+#> [1] TRUE
+later::run_now(1)
+#> [1] "/tmp/RtmpslHgGB/watcher-example/newfile"
+#> [1] "/tmp/RtmpslHgGB/watcher-example/anotherfile"
+
+newfile <- file(file.path(dir, "newfile"), open = "r+")
+cat("hello", file = newfile)
+close(newfile)
+later::run_now(1)
+#> [1] "/tmp/RtmpslHgGB/watcher-example/newfile"
+
+file.remove(file.path(dir, "newfile"))
+#> [1] TRUE
+later::run_now(1)
+#> [1] "/tmp/RtmpslHgGB/watcher-example/newfile"
+
+w$stop()
+unlink(dir, recursive = TRUE, force = TRUE)
+```
+
+## Acknowledgements
+
+Thanks to the authors of
+[libfswatch](https://emcrisostomo.github.io/fswatch/), upon which this
+package is based:
+
+- Alan Dipert
+- Enrico M. Crisostomo
+
+# Package index
+
+## All functions
+
+- [`watcher()`](https://watcher.r-lib.org/reference/watcher.md) : Watch
+  a Filesystem Location
+
