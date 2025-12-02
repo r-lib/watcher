@@ -12,7 +12,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/r-lib/watcher/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/r-lib/watcher/blob/v0.1.5/DESCRIPTION)
 
 Gao C (2025). *watcher: Watch the File System for Changes*. R package
 version 0.1.5, <https://watcher.r-lib.org>.
