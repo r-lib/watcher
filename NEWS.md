@@ -1,3 +1,5 @@
+# watcher (development version)
+
 # watcher 0.1.5
 
 * Fixed issue on Windows where watching with a `latency` < 1 caused high CPU usage (#32, thanks @RichardHooijmaijers).
