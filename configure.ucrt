@@ -6,13 +6,13 @@ LDFLAGS=`"${R_HOME}/bin/R" CMD config LDFLAGS`
 export CC CFLAGS CPPFLAGS LDFLAGS
 
 echo "Compiling 'libfswatch' from source..."
-cd fswatch
-cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=../install \
+cmake -S src/fswatch -B build -G "Unix Makefiles" \
+  -DCMAKE_INSTALL_PREFIX=install \
   -DBUILD_LIBS_ONLY=1 -DUSE_NLS=0 -DCMAKE_POSITION_INDEPENDENT_CODE=1 \
   -DCMAKE_COLOR_MAKEFILE=0 -DCMAKE_INSTALL_MESSAGE=NEVER \
-  -DCMAKE_BUILD_TYPE=Release .
-cmake --build . --target install
-cd ..
+  -DCMAKE_BUILD_TYPE=Release
+cmake --build build --target install
+rm -rf build
 
 # Success
 exit 0

@@ -2,7 +2,8 @@
 .Rhistory
 .RData
 .Ruserdata
-install
+/build/
+/install/
 /docs/
 /revdep/
 /.claude/

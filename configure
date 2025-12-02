@@ -78,13 +78,13 @@ then
       exit 1
     fi
   fi
-  cd fswatch
-  cmake -DCMAKE_INSTALL_PREFIX=../install -DCMAKE_INSTALL_LIBDIR=lib \
+  cmake -S src/fswatch -B build \
+  -DCMAKE_INSTALL_PREFIX=install -DCMAKE_INSTALL_LIBDIR=lib \
   -DBUILD_LIBS_ONLY=1 -DUSE_NLS=0 -DCMAKE_POSITION_INDEPENDENT_CODE=1 \
   -DCMAKE_COLOR_MAKEFILE=0 -DCMAKE_INSTALL_MESSAGE=NEVER \
-  -DCMAKE_BUILD_TYPE=Release .
-  cmake --build . --target install
-  cd ..
+  -DCMAKE_BUILD_TYPE=Release
+  cmake --build build --target install
+  rm -rf build
 
   if [ -d "install/lib" ]
   then

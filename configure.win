@@ -9,15 +9,13 @@ for ARCH in x64 i386; do
 
     echo "Compiling 'libfswatch' from source for ${ARCH} ..."
 
-    cd fswatch
-    mkdir ${ARCH}
-    cd ${ARCH}
-    cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=../../install/${ARCH} \
+    cmake -S src/fswatch -B build -G "Unix Makefiles" \ 
+      -DCMAKE_INSTALL_PREFIX=install/${ARCH} \
       -DBUILD_LIBS_ONLY=1 -DUSE_NLS=0 -DCMAKE_POSITION_INDEPENDENT_CODE=1 \
       -DCMAKE_COLOR_MAKEFILE=0 -DCMAKE_INSTALL_MESSAGE=NEVER \
-      -DCMAKE_BUILD_TYPE=Release ..
-    cmake --build . --target install
-    cd ../..
+      -DCMAKE_BUILD_TYPE=Release
+    cmake --build build --target install
+    rm -rf build
 
   else
   echo "Note: ${ARCH} not installed, skipping ..."
