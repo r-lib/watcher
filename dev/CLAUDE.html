@@ -83,7 +83,7 @@
 <div class="section level3">
 <h3 id="build-system">Build System<a class="anchor" aria-label="anchor" href="#build-system"></a></h3>
 <p><strong>Configure Scripts:</strong> - <code>configure</code> (Linux/macOS): Detects system-installed libfswatch in standard locations (<code>/usr/local</code>, <code>/usr</code>, homebrew paths). If not found, compiles bundled libfswatch (v1.19.0-dev) using cmake. Handles special cases like ARM atomic operations. - <code>configure.win</code> (Windows non-UCRT): Compiles libfswatch from source for both x64 and i386 architectures - <code>configure.ucrt</code> (Windows UCRT): Simplified version for modern Windows R builds - All scripts generate <code>src/Makevars</code> with appropriate compiler flags</p>
-<p><strong>Key Dependencies:</strong> - libfswatch (bundled as <code>src/fswatch-5c443d2p.tar.gz</code>) - cmake (required for compiling libfswatch from source) - pthread (for background monitoring thread) - ‘later’ R package (for async callback execution)</p>
+<p><strong>Key Dependencies:</strong> - libfswatch (bundled source in <code>src/fswatch/</code>) - cmake (required for compiling libfswatch from source) - pthread (for background monitoring thread) - ‘later’ R package (for async callback execution)</p>
 </div>
 <div class="section level3">
 <h3 id="event-filtering">Event Filtering<a class="anchor" aria-label="anchor" href="#event-filtering"></a></h3>

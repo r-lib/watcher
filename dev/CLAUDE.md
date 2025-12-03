@@ -91,10 +91,10 @@ both x64 and i386 architectures - `configure.ucrt` (Windows UCRT):
 Simplified version for modern Windows R builds - All scripts generate
 `src/Makevars` with appropriate compiler flags
 
-**Key Dependencies:** - libfswatch (bundled as
-`src/fswatch-5c443d2p.tar.gz`) - cmake (required for compiling
-libfswatch from source) - pthread (for background monitoring thread) -
-‘later’ R package (for async callback execution)
+**Key Dependencies:** - libfswatch (bundled source in `src/fswatch/`) -
+cmake (required for compiling libfswatch from source) - pthread (for
+background monitoring thread) - ‘later’ R package (for async callback
+execution)
 
 ### Event Filtering
 
