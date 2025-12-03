@@ -81,7 +81,7 @@ The package uses GitHub Actions workflows in `.github/workflows/`:
 - All scripts generate `src/Makevars` with appropriate compiler flags
 
 **Key Dependencies:**
-- libfswatch (bundled as `src/fswatch-5c443d2p.tar.gz`)
+- libfswatch (bundled source in `src/fswatch/`)
 - cmake (required for compiling libfswatch from source)
 - pthread (for background monitoring thread)
 - 'later' R package (for async callback execution)
