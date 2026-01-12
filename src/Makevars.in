@@ -1,2 +1,17 @@
-PKG_CFLAGS=@cflags@ $(C_VISIBILITY)
-PKG_LIBS=@libs@
+PKG_CFLAGS = @cflags@ $(C_VISIBILITY)
+PKG_LIBS = @libs@
+
+SOURCES = init.c watcher.c
+OBJECTS = $(SOURCES:.c=.o)
+
+.PHONY: all clean-archives clean
+
+all: clean-archives
+
+clean-archives: $(SHLIB)
+	@rm -f ../install/lib/*.a
+
+$(SHLIB): $(OBJECTS)
+
+clean:
+	rm -f $(OBJECTS) $(SHLIB)

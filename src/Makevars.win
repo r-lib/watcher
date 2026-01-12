@@ -1,2 +1,17 @@
-PKG_CFLAGS=-I../install${R_ARCH}/include $(C_VISIBILITY)
-PKG_LIBS=../install${R_ARCH}/lib/libfswatch.b -pthread -lstdc++fs
+PKG_CFLAGS = -I../install${R_ARCH}/include $(C_VISIBILITY)
+PKG_LIBS = ../install${R_ARCH}/lib/libfswatch.a -pthread -lstdc++fs
+
+SOURCES = init.c watcher.c
+OBJECTS = $(SOURCES:.c=.o)
+
+.PHONY: all clean-archives clean
+
+all: clean-archives
+
+clean-archives: $(SHLIB)
+	@rm -f ../install${R_ARCH}/lib/*.a
+
+$(SHLIB): $(OBJECTS)
+
+clean:
+	rm -f $(OBJECTS) $(SHLIB)

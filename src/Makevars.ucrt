@@ -1,2 +1,17 @@
-PKG_CFLAGS=-I../install/include $(C_VISIBILITY)
-PKG_LIBS=../install/lib/libfswatch.b -pthread
+PKG_CFLAGS = -I../install/include $(C_VISIBILITY)
+PKG_LIBS = ../install/lib/libfswatch.a -pthread
+
+SOURCES = init.c watcher.c
+OBJECTS = $(SOURCES:.c=.o)
+
+.PHONY: all clean-archives clean
+
+all: clean-archives
+
+clean-archives: $(SHLIB)
+	@rm -f ../install/lib/*.a
+
+$(SHLIB): $(OBJECTS)
+
+clean:
+	rm -f $(OBJECTS) $(SHLIB)
