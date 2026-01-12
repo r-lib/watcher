@@ -13,7 +13,8 @@ LDFLAGS=`"${R_HOME}/bin/R" CMD config LDFLAGS`
 export CC CFLAGS CPPFLAGS LDFLAGS
 
 if [ -z "$MACOSX_DEPLOYMENT_TARGET" ]; then
-export MACOSX_DEPLOYMENT_TARGET=`echo $CC | sed -En 's/.*-version-min=([0-9][0-9.]*).*/\1/p'`
+  MACOSX_DEPLOYMENT_TARGET=`echo $CC | sed -En 's/.*-version-min=([0-9][0-9.]*).*/\1/p'`
+  [ -n "$MACOSX_DEPLOYMENT_TARGET" ] && export MACOSX_DEPLOYMENT_TARGET
 fi
 
 # Detect -latomic linker flag for ARM architectures (Raspberry Pi etc.)
@@ -89,7 +90,7 @@ then
   if [ -d "install/lib" ]
   then
   PKG_CFLAGS="-I../install/include $PKG_CFLAGS"
-  PKG_LIBS="../install/lib/libfswatch.b $PKG_LIBS"
+  PKG_LIBS="../install/lib/libfswatch.a $PKG_LIBS"
   fi
 else
   echo "Found 'libfswatch' $PKG_CFLAGS"
