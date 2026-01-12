@@ -24,6 +24,8 @@ knitr::opts_chunk$set(
 
 Watch the File System for Changes
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/r-lib/watcher)
+
 R binding for [libfswatch](https://emcrisostomo.github.io/fswatch/), a file system monitoring library. This uses an optimal event-driven API for each platform:
 
 - `ReadDirectoryChangesW` on Windows
