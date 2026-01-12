@@ -2,8 +2,47 @@
 
 # Initialise
 PKG_CFLAGS=""
-PKG_LIBL="-lfswatch"
 PKG_LIBS="-lpthread"
+
+# Helper function: detect cmake
+detect_cmake() {
+  if which cmake > /dev/null 2>&1; then
+    return 0
+  fi
+  export PATH=$PATH:/Applications/CMake.app/Contents/bin
+  if which cmake > /dev/null 2>&1; then
+    return 0
+  fi
+  echo "Required 'cmake' not found"
+  exit 1
+}
+
+# Helper function: find library paths
+# Usage: find_lib_paths <lib_name> <header_subdir> <default_libs>
+# Sets: LIB_CFLAGS, LIB_LIBS
+find_lib_paths() {
+  lib_name=$1
+  header_subdir=$2
+  default_libs=$3
+  LIB_CFLAGS=""
+  LIB_LIBS="$default_libs"
+
+  if [ "$INCLUDE_DIR" ] || [ "$LIB_DIR" ]; then
+    LIB_CFLAGS="-I$INCLUDE_DIR"
+    LIB_LIBS="-L$LIB_DIR $LIB_LIBS"
+    echo "Found INCLUDE_DIR $INCLUDE_DIR"
+    echo "Found LIB_DIR $LIB_DIR"
+  elif [ -d "/usr/local/include/$header_subdir" ]; then
+    LIB_CFLAGS="-I/usr/local/include"
+    LIB_LIBS="-L/usr/local/lib $LIB_LIBS"
+  elif [ -d "/usr/include/$header_subdir" ]; then
+    LIB_CFLAGS="-I/usr/include"
+    LIB_LIBS="-L/usr/lib $LIB_LIBS"
+  elif [ -d "/usr/local/opt/$lib_name" ]; then
+    LIB_CFLAGS="-I/usr/local/opt/$lib_name/include"
+    LIB_LIBS="-L/usr/local/opt/$lib_name/lib $LIB_LIBS"
+  fi
+}
 
 # Find compiler and export flags
 CC=`"${R_HOME}/bin/R" CMD config CC`
@@ -13,8 +52,7 @@ LDFLAGS=`"${R_HOME}/bin/R" CMD config LDFLAGS`
 export CC CFLAGS CPPFLAGS LDFLAGS
 
 if [ -z "$MACOSX_DEPLOYMENT_TARGET" ]; then
-  MACOSX_DEPLOYMENT_TARGET=`echo $CC | sed -En 's/.*-version-min=([0-9][0-9.]*).*/\1/p'`
-  [ -n "$MACOSX_DEPLOYMENT_TARGET" ] && export MACOSX_DEPLOYMENT_TARGET
+  export MACOSX_DEPLOYMENT_TARGET=`echo $CC | sed -En 's/.*-version-min=([0-9][0-9.]*).*/\1/p'`
 fi
 
 # Detect -latomic linker flag for ARM architectures (Raspberry Pi etc.)
@@ -23,78 +61,59 @@ uint64_t v;
 int main() {
     return (int)__atomic_load_n(&v, __ATOMIC_ACQUIRE);
 }" | ${CC} -xc - -o /dev/null > /dev/null 2>&1
-if [ $? -ne 0 ]
-then
+if [ $? -ne 0 ]; then
   echo "Adding -latomic linker flag ..."
   PKG_LIBS="$PKG_LIBS -latomic"
 fi
 
-# Force build bundled libs
-if [ -z "$WATCHER_LIBS" ]; then
+# Determine whether to compile bundled library
+compile_fswatch=0
 
-# Find MbedTLS and compile if necessary
-if [ "$INCLUDE_DIR" ] || [ "$LIB_DIR" ]
-then
-  PKG_CFLAGS="-I$INCLUDE_DIR $PKG_CFLAGS"
-  PKG_LIBL="-L$LIB_DIR $PKG_LIBL"
-  echo "Found INCLUDE_DIR $INCLUDE_DIR"
-  echo "Found LIB_DIR $LIB_DIR"
-elif [ -d "/usr/local/include/libfswatch" ]
-then
-  PKG_CFLAGS="-I/usr/local/include $PKG_CFLAGS"
-  PKG_LIBL="-L/usr/local/lib $PKG_LIBL"
-elif [ -d "/usr/include/libfswatch" ]
-then
-  PKG_CFLAGS="-I/usr/include $PKG_CFLAGS"
-  PKG_LIBL="-L/usr/lib $PKG_LIBL"
-elif [ -d "/usr/local/opt/libfswatch" ]
-then
-  PKG_CFLAGS="-I/usr/local/opt/fswatch/include $PKG_CFLAGS"
-  PKG_LIBL="-L/usr/local/opt/fswatch/lib $PKG_LIBL"
-fi
-echo "#include <libfswatch/c/libfswatch.h>
+if [ -n "$WATCHER_LIBS" ]; then
+  echo "WATCHER_LIBS is set... building from source"
+  compile_fswatch=1
+else
+  # Find libfswatch
+  find_lib_paths "fswatch" "libfswatch" "-lfswatch"
+  FSWATCH_CFLAGS="$LIB_CFLAGS"
+  FSWATCH_LIBS="$LIB_LIBS"
+
+  echo "#include <libfswatch/c/libfswatch.h>
 int main() {
 #if FSW_OK
     *(void *) 0 = 0;
 #endif
-}" | ${CC} ${PKG_CFLAGS} -xc - -o /dev/null > /dev/null 2>&1
-
-else
-  echo "WATCHER_LIBS is set... skipping detection"
-  false
+}" | ${CC} ${FSWATCH_CFLAGS} -xc - -o /dev/null > /dev/null 2>&1
+  if [ $? -ne 0 ]; then
+    compile_fswatch=1
+  else
+    echo "Found 'libfswatch' $FSWATCH_CFLAGS"
+    PKG_CFLAGS="$FSWATCH_CFLAGS $PKG_CFLAGS"
+    PKG_LIBS="$FSWATCH_LIBS $PKG_LIBS"
+  fi
 fi
 
-if [ $? -ne 0 ]
-then
-  echo "Compiling 'libfswatch' from source..."
-  echo "Detecting 'cmake'..."
-  which cmake
-  if [ $? -ne 0 ]
-  then
-    export PATH=$PATH:/Applications/CMake.app/Contents/bin
-    which cmake
-    if [ $? -ne 0 ]
-    then
-      echo "Required 'cmake' not found"
-      exit 1
-    fi
-  fi
+# Compile libfswatch if needed
+if [ $compile_fswatch -eq 1 ]; then
+  echo "Compiling 'libfswatch' from source ..."
+  detect_cmake
   cmake -S src/fswatch -B build \
-  -DCMAKE_INSTALL_PREFIX=install -DCMAKE_INSTALL_LIBDIR=lib \
-  -DBUILD_LIBS_ONLY=1 -DUSE_NLS=0 -DCMAKE_POSITION_INDEPENDENT_CODE=1 \
-  -DCMAKE_COLOR_MAKEFILE=0 -DCMAKE_INSTALL_MESSAGE=NEVER \
-  -DCMAKE_BUILD_TYPE=Release
+    -DCMAKE_INSTALL_PREFIX=install \
+    -DCMAKE_INSTALL_LIBDIR=lib \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_POSITION_INDEPENDENT_CODE=1 \
+    -DCMAKE_COLOR_MAKEFILE=0 \
+    -DCMAKE_INSTALL_MESSAGE=NEVER \
+    -DBUILD_LIBS_ONLY=1 \
+    -DUSE_NLS=0
   cmake --build build --target install
   rm -rf build
+fi
 
-  if [ -d "install/lib" ]
-  then
+# Set flags for bundled library
+if [ -d "install/lib" ]; then
   PKG_CFLAGS="-I../install/include $PKG_CFLAGS"
   PKG_LIBS="../install/lib/libfswatch.a $PKG_LIBS"
-  fi
-else
-  echo "Found 'libfswatch' $PKG_CFLAGS"
-  PKG_LIBS="$PKG_LIBL $PKG_LIBS"
 fi
 
 # Write to Makevars
