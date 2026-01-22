@@ -97,8 +97,8 @@ fi
 if [ $compile_fswatch -eq 1 ]; then
   echo "Compiling 'libfswatch' from source ..."
   detect_cmake
-  cmake -S src/fswatch -B build \
-    -DCMAKE_INSTALL_PREFIX=install \
+  cmake -S src/fswatch -B w-build \
+    -DCMAKE_INSTALL_PREFIX=w-install \
     -DCMAKE_INSTALL_LIBDIR=lib \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_POSITION_INDEPENDENT_CODE=1 \
@@ -106,14 +106,14 @@ if [ $compile_fswatch -eq 1 ]; then
     -DCMAKE_INSTALL_MESSAGE=NEVER \
     -DBUILD_LIBS_ONLY=1 \
     -DUSE_NLS=0
-  cmake --build build --target install
-  rm -rf build
+  cmake --build w-build --target install
+  rm -rf w-build
 fi
 
 # Set flags for bundled library
-if [ -d "install/lib" ]; then
-  PKG_CFLAGS="-I../install/include $PKG_CFLAGS"
-  PKG_LIBS="../install/lib/libfswatch.a $PKG_LIBS"
+if [ -d "w-install/lib" ]; then
+  PKG_CFLAGS="-I../w-install/include $PKG_CFLAGS"
+  PKG_LIBS="../w-install/lib/libfswatch.a $PKG_LIBS"
 fi
 
 # Write to Makevars

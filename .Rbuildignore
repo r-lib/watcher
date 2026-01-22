@@ -13,3 +13,5 @@
 ^\.vscode$
 ^\.claude$
 ^CLAUDE.md$
+^w-build$
+^w-install$
