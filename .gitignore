@@ -2,8 +2,8 @@
 .Rhistory
 .RData
 .Ruserdata
-/build/
-/install/
+/w-build/
+/w-install/
 /docs/
 /revdep/
 /.claude/
