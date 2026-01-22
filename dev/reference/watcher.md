@@ -80,11 +80,11 @@ w
 #>     start: function () 
 #>     stop: function () 
 #>   Private:
-#>     path: /tmp/RtmpyAdg4F
+#>     path: /tmp/Rtmp5oisN8
 #>     running: TRUE
 #>     watch: externalptr
 w$get_path()
-#> [1] "/tmp/RtmpyAdg4F"
+#> [1] "/tmp/Rtmp5oisN8"
 w$stop()
 w$is_running()
 #> [1] FALSE
