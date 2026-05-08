@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014-2025 Enrico M. Crisostomo
+# Copyright (c) 2014-2026 Enrico M. Crisostomo
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -14,9 +14,9 @@
 # this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 cmake_minimum_required(VERSION 3.14)
-project(fswatch VERSION 1.19.0 LANGUAGES C CXX)
+project(fswatch VERSION 1.20.1 LANGUAGES C CXX)
 
-set(VERSION_MODIFIER "-develop")
+set(VERSION_MODIFIER "")
 set(FULL_VERSION "${PROJECT_VERSION}${VERSION_MODIFIER}")
 
 #@formatter:off
@@ -48,6 +48,7 @@ include(FindIntl)
 include(CheckIncludeFileCXX)
 include(CheckStructHasMember)
 include(CheckCXXSymbolExists)
+include(CTest)
 
 # check for gettext and libintl
 check_include_file_cxx(getopt.h HAVE_GETOPT_H)

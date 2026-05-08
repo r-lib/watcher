@@ -1,5 +1,7 @@
 # watcher (development version)
 
+* Updates bundled 'libfswatch' source to 1.20.1 release.
+
 # watcher 0.1.5
 
 * Fixed issue on Windows where watching with a `latency` < 1 caused high CPU usage (#32, thanks @RichardHooijmaijers).

@@ -48,7 +48,7 @@ watcher requires the ‘libfswatch’ library.
 - On Linux / MacOS, an installed version will be used if found in the
   standard filesystem locations.
 - On Windows, or if not found, the bundled version of ‘libfswatch’
-  1.19.0-dev will be compiled from source.
+  1.20.1 will be compiled from source.
 - Source compilation of the library requires ‘cmake’.
 
 ## Quick Start
@@ -82,7 +82,7 @@ w
 #>     start: function () 
 #>     stop: function () 
 #>   Private:
-#>     path: /var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T//RtmpFm ...
+#>     path: /var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T//Rtmp3X ...
 #>     running: FALSE
 #>     watch: externalptr
 w$start()
@@ -92,20 +92,20 @@ file.create(file.path(dir, "newfile"))
 file.create(file.path(dir, "anotherfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/private/var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T/RtmpFmlhtZ/watcher-example"            
-#> [2] "/private/var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T/RtmpFmlhtZ/watcher-example/newfile"    
-#> [3] "/private/var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T/RtmpFmlhtZ/watcher-example/anotherfile"
+#> [1] "/private/var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T/Rtmp3XW7UO/watcher-example"            
+#> [2] "/private/var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T/Rtmp3XW7UO/watcher-example/newfile"    
+#> [3] "/private/var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T/Rtmp3XW7UO/watcher-example/anotherfile"
 
 newfile <- file(file.path(dir, "newfile"), open = "r+")
 cat("hello", file = newfile)
 close(newfile)
 later::run_now(1)
-#> [1] "/private/var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T/RtmpFmlhtZ/watcher-example/newfile"
+#> [1] "/private/var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T/Rtmp3XW7UO/watcher-example/newfile"
 
 file.remove(file.path(dir, "newfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/private/var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T/RtmpFmlhtZ/watcher-example/newfile"
+#> [1] "/private/var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T/Rtmp3XW7UO/watcher-example/newfile"
 
 w$stop()
 unlink(dir, recursive = TRUE, force = TRUE)

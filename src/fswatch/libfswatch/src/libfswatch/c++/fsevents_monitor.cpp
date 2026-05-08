@@ -46,6 +46,7 @@ namespace fsw
     Impl& operator=(const Impl&) = delete;
 
     FSEventStreamRef stream = nullptr;
+    CFArrayRef paths_to_watch = nullptr;
 #ifdef HAVE_MACOS_GE_10_6
     dispatch_queue_t fsevents_queue = nullptr;
 #else
@@ -109,34 +110,25 @@ namespace fsw
   {
   }
 
+  fsevents_monitor::~fsevents_monitor() = default;
+
   void fsevents_monitor::run()
   {
     std::unique_lock<std::mutex> run_loop_lock(run_mutex);
 
     if (pImpl->stream) return;
 
-    // parsing paths
-    vector<CFStringRef> dirs;
+    pImpl->paths_to_watch = copy_cf_paths(paths);
+    if (!pImpl->paths_to_watch) return;
 
-    for (const string& path : paths)
-    {
-      dirs.push_back(CFStringCreateWithCString(nullptr,
-                                               path.c_str(),
-                                               kCFStringEncodingUTF8));
-    }
-
-    if (dirs.empty()) return;
-
-    CFArrayRef pathsToWatch =
-      CFArrayCreate(nullptr,
-                    reinterpret_cast<const void **> (&dirs[0]),
-                    dirs.size(),
-                    &kCFTypeArrayCallBacks);
-
-    create_stream(pathsToWatch);
+    create_stream(pImpl->paths_to_watch);
 
     if (!pImpl->stream)
+    {
+      CFRelease(pImpl->paths_to_watch);
+      pImpl->paths_to_watch = nullptr;
       throw libfsw_exception(_("Event stream could not be created."));
+    }
 
 #ifdef HAVE_MACOS_GE_10_6
     // Creating dispatch queue
@@ -186,6 +178,8 @@ namespace fsw
 #ifdef HAVE_MACOS_GE_10_6
     dispatch_release(pImpl->fsevents_queue);
 #endif
+    CFRelease(pImpl->paths_to_watch);
+    pImpl->paths_to_watch = nullptr;
     pImpl->stream = nullptr;
   }
 
@@ -242,10 +236,26 @@ namespace fsw
     for (size_t i = 0; i < numEvents; ++i)
     {
 #ifdef HAVE_MACOS_GE_10_13
-      auto path_info_dict = static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex((CFArrayRef) eventPaths,
+      auto event_paths = static_cast<CFArrayRef>(eventPaths);
+      if (!event_paths)
+      {
+        continue;
+      }
+
+      auto path_info_dict = static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(event_paths,
                                                                                 i));
+      if (!path_info_dict)
+      {
+        continue;
+      }
+
       auto path = static_cast<CFStringRef>(CFDictionaryGetValue(path_info_dict,
                                                                 kFSEventStreamEventExtendedDataPathKey));
+      if (!path)
+      {
+        continue;
+      }
+
       auto cf_inode = static_cast<CFNumberRef>(CFDictionaryGetValue(path_info_dict,
                                                                     kFSEventStreamEventExtendedFileIDKey));
 
@@ -261,8 +271,12 @@ namespace fsw
           continue;
       }
 
-      unsigned long inode;
-      CFNumberGetValue(cf_inode, kCFNumberLongType, &inode);
+      unsigned long inode = 0;
+      if (cf_inode)
+      {
+        CFNumberGetValue(cf_inode, kCFNumberLongType, &inode);
+      }
+
       events.emplace_back(std::string(path_buffer.data()),
                           curr_time,
                           decode_flags(eventFlags[i]),
@@ -289,6 +303,34 @@ namespace fsw
       return (!isatty(fileno(stdin)));
 
     return (no_defer == "true");
+  }
+
+  CFArrayRef fsevents_monitor::copy_cf_paths(const vector<string>& paths)
+  {
+    vector<CFStringRef> dirs;
+
+    for (const string& path : paths)
+    {
+      auto dir = CFStringCreateWithCString(nullptr,
+                                           path.c_str(),
+                                           kCFStringEncodingUTF8);
+      if (dir) dirs.push_back(dir);
+    }
+
+    if (dirs.empty()) return nullptr;
+
+    CFArrayRef pathsToWatch =
+      CFArrayCreate(nullptr,
+                    reinterpret_cast<const void **> (&dirs[0]),
+                    dirs.size(),
+                    &kCFTypeArrayCallBacks);
+
+    for (auto dir : dirs)
+    {
+      CFRelease(dir);
+    }
+
+    return pathsToWatch;
   }
 
   void fsevents_monitor::create_stream(CFArrayRef pathsToWatch)

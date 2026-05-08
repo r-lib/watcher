@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2021 Enrico M. Crisostomo
+ * Copyright (c) 2014-2026 Enrico M. Crisostomo
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -27,8 +27,11 @@
 #if defined(HAVE_PORT_H)
   #include "fen_monitor.hpp"
 #endif
-#if defined(HAVE_SYS_INOTIFY_H)
+#if defined(HAVE_INOTIFY_MONITOR)
   #include "inotify_monitor.hpp"
+#endif
+#if defined(HAVE_FANOTIFY)
+  #include "fanotify_monitor.hpp"
 #endif
 #if defined(HAVE_WINDOWS)
   #include "windows_monitor.hpp"
@@ -49,7 +52,7 @@ namespace fsw
     type = fsw_monitor_type::kqueue_monitor_type;
 #elif defined(HAVE_PORT_H)
     type = fsw_monitor_type::fen_monitor_type;
-#elif defined(HAVE_SYS_INOTIFY_H)
+#elif defined(HAVE_INOTIFY_MONITOR)
     type = fsw_monitor_type::inotify_monitor_type;
 #elif defined(HAVE_WINDOWS)
     type = fsw_monitor_type::windows_monitor_type;
@@ -80,9 +83,13 @@ namespace fsw
 #if defined(HAVE_SYS_EVENT_H)
       case kqueue_monitor_type:return new kqueue_monitor(paths, callback, context);
 #endif
-#if defined(HAVE_SYS_INOTIFY_H)
+#if defined(HAVE_INOTIFY_MONITOR)
       case inotify_monitor_type:
         return new inotify_monitor(paths, callback, context);
+#endif
+#if defined(HAVE_FANOTIFY)
+      case fanotify_monitor_type:
+        return new fanotify_monitor(paths, callback, context);
 #endif
 #if defined(HAVE_WINDOWS)
       case windows_monitor_type:
@@ -114,8 +121,11 @@ namespace fsw
 #if defined(HAVE_PORT_H)
     creator_by_string_set[fsw_quote(fen_monitor)] = fsw_monitor_type::fen_monitor_type;
 #endif
-#if defined(HAVE_SYS_INOTIFY_H)
+#if defined(HAVE_INOTIFY_MONITOR)
     creator_by_string_set[fsw_quote(inotify_monitor)] = fsw_monitor_type::inotify_monitor_type;
+#endif
+#if defined(HAVE_FANOTIFY)
+    creator_by_string_set[fsw_quote(fanotify_monitor)] = fsw_monitor_type::fanotify_monitor_type;
 #endif
 #if defined(HAVE_WINDOWS)
     creator_by_string_set[fsw_quote(windows_monitor)] = fsw_monitor_type::windows_monitor_type;

@@ -28,6 +28,7 @@
 
 #  include "monitor.hpp"
 #  include <CoreServices/CoreServices.h>
+#  include <memory>
 
 namespace fsw
 {
@@ -67,6 +68,7 @@ namespace fsw
     fsevents_monitor(std::vector<std::string> paths,
                      FSW_EVENT_CALLBACK *callback,
                      void *context = nullptr);
+    ~fsevents_monitor() override;
     fsevents_monitor(const fsevents_monitor& orig) = delete;
     fsevents_monitor& operator=(const fsevents_monitor& that) = delete;
 
@@ -97,6 +99,7 @@ namespace fsw
                                   const FSEventStreamEventId eventIds[]);
 
     bool no_defer();
+    static CFArrayRef copy_cf_paths(const std::vector<std::string>& paths);
     void create_stream(CFArrayRef pathsToWatch);
   };
 }
