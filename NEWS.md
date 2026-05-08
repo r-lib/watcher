@@ -1,4 +1,4 @@
-# watcher (development version)
+# watcher 0.1.6
 
 * Updates bundled 'libfswatch' source to 1.20.1 release.
 
