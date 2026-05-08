@@ -9,6 +9,12 @@
   Copyright holder, funder.
   [![ROR](https://raw.githubusercontent.com/ror-community/ror-logos/main/ror-icon-rgb.svg)](https://ror.org/03wc8by49)
 
+- **Enrico M. Crisostomo**. Copyright holder.  
+  libfswatch library
+
+- **Alan Dipert**. Copyright holder.  
+  libfswatch library
+
 ## Citation
 
 Source:
