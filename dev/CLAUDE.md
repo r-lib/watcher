@@ -34,6 +34,7 @@ R -e "devtools::test()"
 ### Single Test Execution
 
 ``` r
+
 # In R console
 testthat::test_file("tests/testthat/test-watch.R")
 ```
