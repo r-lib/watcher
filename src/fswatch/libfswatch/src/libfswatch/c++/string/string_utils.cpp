@@ -26,6 +26,7 @@ namespace fsw
   {
     string vstring_from_format(const char *format, va_list args)
     {
+      if (!format) return string();
       size_t current_buffer_size = 0;
       int required_chars = 512;
 

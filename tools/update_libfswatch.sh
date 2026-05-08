@@ -4,7 +4,7 @@
 # Usage: ./tools/update_libfswatch.sh [version/commit/tag]
 #
 # This script reproduces how to get the current vendored code from the
-# upstream libfswatch repository.
+# upstream libfswatch repository and applies local patches.
 
 set -e
 
@@ -81,24 +81,49 @@ find "${STAGING_DIR}" -name "Makefile.am" -delete
 
 echo ""
 
-# Step 3: Replace vendored code
-echo -e "${YELLOW}Step 3: Updating vendored code...${NC}"
+# Step 3: Apply patches specific to watcher package
+echo -e "${YELLOW}Step 3: Applying patches for watcher package...${NC}"
+
+# Patch: Avoid GCC -Wformat-truncation "null format string" warning in
+# string_utils.cpp by adding an explicit null check on the format argument
+# before the vsnprintf call. Surfaces in stricter CRAN/rhub Linux builds.
+echo "Applying string_utils.cpp null-format guard..."
+STRING_UTILS="${STAGING_DIR}/libfswatch/src/libfswatch/c++/string/string_utils.cpp"
+
+if [ -f "${STRING_UTILS}" ]; then
+  if ! grep -q "if (!format) return" "${STRING_UTILS}"; then
+    sed -i.bak 's|^      size_t current_buffer_size = 0;$|      if (!format) return string();\
+      size_t current_buffer_size = 0;|' "${STRING_UTILS}"
+    rm -f "${STRING_UTILS}.bak"
+    echo -e "${GREEN}  ✓ Null-format guard applied${NC}"
+  else
+    echo -e "${GREEN}  ✓ Null-format guard already present${NC}"
+  fi
+else
+  echo -e "${YELLOW}  ⚠ string_utils.cpp not found, skipping patch${NC}"
+fi
+
+echo ""
+
+# Step 4: Replace vendored code
+echo -e "${YELLOW}Step 4: Updating vendored code...${NC}"
 rm -rf "${TARGET_DIR}"
 mv "${STAGING_DIR}" "${TARGET_DIR}"
 echo -e "${GREEN}Vendored code updated successfully!${NC}"
 echo ""
 
-# Step 4: Clean up
-echo -e "${YELLOW}Step 4: Cleaning up...${NC}"
+# Step 5: Clean up
+echo -e "${YELLOW}Step 5: Cleaning up...${NC}"
 cd "$(dirname "${WORK_DIR}")"
 rm -rf "${WORK_DIR}"
 echo -e "${GREEN}Temporary files removed${NC}"
 echo ""
 
-# Step 5: Show summary
+# Step 6: Show summary
 echo -e "${GREEN}=== Update Complete ===${NC}"
 echo ""
 echo "Summary:"
 echo "  - Updated from commit: ${CURRENT_COMMIT}"
 echo "  - Updated from tag: ${CURRENT_TAG}"
+echo "  - Patches applied: string_utils.cpp null-format guard"
 echo ""
