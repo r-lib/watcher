@@ -2,6 +2,9 @@
 
 Watch the File System for Changes
 
+[![Ask
+DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/r-lib/watcher)
+
 R binding for [libfswatch](https://emcrisostomo.github.io/fswatch/), a
 file system monitoring library. This uses an optimal event-driven API
 for each platform:
@@ -23,6 +26,7 @@ the session.
 Install watcher from CRAN with:
 
 ``` r
+
 install.packages("watcher")
 ```
 
@@ -33,7 +37,7 @@ watcher requires the ‘libfswatch’ library.
 - On Linux / MacOS, an installed version will be used if found in the
   standard filesystem locations.
 - On Windows, or if not found, the bundled version of ‘libfswatch’
-  1.19.0-dev will be compiled from source.
+  1.20.1 will be compiled from source.
 - Source compilation of the library requires ‘cmake’.
 
 ## Quick Start
@@ -55,6 +59,7 @@ formula, every time a file changes:
   files which have changed.
 
 ``` r
+
 library(watcher)
 dir <- file.path(tempdir(), "watcher-example")
 dir.create(dir)
@@ -69,7 +74,7 @@ w
 #>     start: function () 
 #>     stop: function () 
 #>   Private:
-#>     path: /tmp/RtmpslHgGB/watcher-example
+#>     path: /tmp/Rtmph2w1cl/watcher-example
 #>     running: FALSE
 #>     watch: externalptr
 w$start()
@@ -79,19 +84,19 @@ file.create(file.path(dir, "newfile"))
 file.create(file.path(dir, "anotherfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/tmp/RtmpslHgGB/watcher-example/newfile"
-#> [1] "/tmp/RtmpslHgGB/watcher-example/anotherfile"
+#> [1] "/tmp/Rtmph2w1cl/watcher-example/newfile"
+#> [1] "/tmp/Rtmph2w1cl/watcher-example/anotherfile"
 
 newfile <- file(file.path(dir, "newfile"), open = "r+")
 cat("hello", file = newfile)
 close(newfile)
 later::run_now(1)
-#> [1] "/tmp/RtmpslHgGB/watcher-example/newfile"
+#> [1] "/tmp/Rtmph2w1cl/watcher-example/newfile"
 
 file.remove(file.path(dir, "newfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/tmp/RtmpslHgGB/watcher-example/newfile"
+#> [1] "/tmp/Rtmph2w1cl/watcher-example/newfile"
 
 w$stop()
 unlink(dir, recursive = TRUE, force = TRUE)
