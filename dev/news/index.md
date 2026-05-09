@@ -2,6 +2,10 @@
 
 ## watcher (development version)
 
+## watcher 0.1.6
+
+CRAN release: 2026-05-09
+
 - Updates bundled ‘libfswatch’ source to 1.20.1 release.
 
 ## watcher 0.1.5
