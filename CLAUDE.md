@@ -74,17 +74,51 @@ The package uses GitHub Actions workflows in `.github/workflows/`:
 
 ### Build System
 
-**Configure Scripts:**
-- `configure` (Linux/macOS): Detects system-installed libfswatch in standard locations (`/usr/local`, `/usr`, homebrew paths). If not found, compiles bundled libfswatch (v1.19.0-dev) using cmake. Handles special cases like ARM atomic operations.
-- `configure.win` (Windows non-UCRT): Compiles libfswatch from source for both x64 and i386 architectures
-- `configure.ucrt` (Windows UCRT): Simplified version for modern Windows R builds
-- All scripts generate `src/Makevars` with appropriate compiler flags
+The bundled libfswatch sources (`src/fswatch/`) are compiled **directly into the
+package shared object** alongside `init.c`/`watcher.c` — no cmake, no static
+archive, no separate library. Platform feature selection comes from a
+hand-maintained config header, not host probing.
 
-**Key Dependencies:**
-- libfswatch (bundled source in `src/fswatch/`)
-- cmake (required for compiling libfswatch from source)
-- pthread (for background monitoring thread)
-- 'later' R package (for async callback execution)
+**Configure scripts:**
+- `configure` (Linux/macOS/other Unix): detects a system libfswatch
+  (`/usr/local`, `/usr`, Homebrew); if absent, sets up the in-place bundled
+  build. Probes for `-latomic` (ARM) and adds `-framework CoreServices` (macOS),
+  emits the `CXX_STD` line (only on R < 4.3), and substitutes `src/Makevars.in`
+  → `src/Makevars`.
+- `configure.ucrt` (Windows UCRT): computes only the `CXX_STD` line,
+  substituting `src/Makevars.ucrt.in` → `src/Makevars.ucrt`.
+- Legacy non-UCRT Windows has no `configure.win`; it uses the static
+  `src/Makevars.win`, and `Biarch: true` keeps the dual i386/x64 build.
+
+**Key pieces:**
+- `src/fswatch/.../libfswatch_config.h`: hand-maintained; selects `HAVE_*`
+  features from compiler platform macros (replaces the cmake/autotools probe).
+- `src/Makevars{.in,.win,.ucrt.in}`: declare the bundled objects and carry one
+  portable explicit compile rule per object (no GNU-make extensions). The POSIX
+  object list is `tools/fsw_objects_posix.list`; the Windows object list is
+  separate because those files include `<windows.h>`.
+- `src/link.cpp`: empty `.cpp` that forces R to link with the C++ linker.
+- `tools/update_libfswatch.sh`: re-vendors libfswatch and regenerates the config
+  header, object list, and Makevars; calls `tools/patch_libfswatch.sh`.
+- `tools/patch_libfswatch.sh`: idempotent source patches — a null-format guard
+  in `string_utils`, self-guards on the fsevents/inotify/fanotify monitors, and
+  neutering of libfswatch's stdout/stderr/cerr logging (for the R CMD check
+  "compiled code" policy).
+
+**Key dependencies:** an R C/C++ toolchain plus `make`; pthread; the
+'later' R package. A system libfswatch is used automatically when present.
+
+### C++ Standard and Minimum R Version
+
+The bundled libfswatch uses `std::filesystem` (in `path_utils`, `poll_monitor`,
+and every monitor's `scan()`), which mandates **C++17** — there is no portable
+pre-C++17 substitute. Because the package now compiles libfswatch itself rather
+than via cmake, it relies on R's own `CXX_STD = CXX17`, support for which was
+added in **R 3.5.0**. That is precisely why `DESCRIPTION` requires
+`R (>= 3.5)`: it is the lowest R that can build the package (R < 3.5 cannot
+request C++17), not an arbitrary floor. `configure`/`configure.ucrt` emit
+`CXX_STD = CXX17` only on R < 4.3, since R >= 4.3 defaults to C++17 and
+specifying it then trips a CRAN "drop specification unless essential" NOTE.
 
 ### Event Filtering
 
@@ -102,12 +136,13 @@ The package filters filesystem events to only report main event types (Created, 
 ### Windows
 - Uses ReadDirectoryChangesW API (always recursive)
 - Windows latency has been specifically addressed (see NEWS.md - patch in v0.1.4.9000)
-- Builds require cmake and compile libfswatch from bundled source
+- Compiles the bundled libfswatch in place: UCRT via `Makevars.ucrt` (generated
+  by `configure.ucrt`), legacy non-UCRT via the static `Makevars.win` (gcc 8.3
+  needs `-lstdc++fs` for `std::filesystem`); `Biarch: true` builds i386 + x64
 
 ### macOS
 - Uses FSEvents API (always recursive)
-- Can use system libfswatch if installed via homebrew/MacPorts
-- MACOSX_DEPLOYMENT_TARGET is automatically extracted from compiler flags
+- Links `-framework CoreServices`; can use a system libfswatch (Homebrew/MacPorts)
 
 ### Linux
 - Uses inotify API
