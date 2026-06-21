@@ -65,30 +65,30 @@ void fsw_logf_perror(const char * format, ...);
  * @brief Log the specified message to the standard output prepended by the
  * source line number.
  */
-#  define FSW_LOG(msg)           fsw_logf("%s: ", __func__);          fsw_log(msg)
+#  define FSW_LOG(msg) ((void)0)
 
 /**
  * @brief Log the specified message to the standard error prepended by the
  * source line number.
  */
-#  define FSW_ELOG(msg)          fsw_flogf(stderr, "%s: ", __func__); fsw_flog(stderr, msg)
+#  define FSW_ELOG(msg) ((void)0)
 
 /**
  * @brief Log the specified `printf()`-like message to the standard output
  * prepended by the source line number.
  */
-#  define FSW_LOGF(msg, ...)     fsw_logf("%s: ", __func__);          fsw_logf(msg, __VA_ARGS__)
+#  define FSW_LOGF(msg, ...) ((void)0)
 
 /**
  * @brief Log the specified `printf()`-like message to the standard error
  * prepended by the source line number.
  */
-#  define FSW_ELOGF(msg, ...)    fsw_flogf(stderr, "%s: ", __func__); fsw_flogf(stderr, msg, __VA_ARGS__)
+#  define FSW_ELOGF(msg, ...) ((void)0)
 
 /**
  * @brief Log the specified `printf()`-like message to the specified file
  * descriptor prepended by the source line number.
  */
-#  define FSW_FLOGF(f, msg, ...) fsw_flogf(f, "%s: ", __func__);      fsw_flogf(f, msg, __VA_ARGS__)
+#  define FSW_FLOGF(f, msg, ...) ((void)0)
 
 #endif  /* LIBFSW_LOG_H */

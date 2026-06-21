@@ -19,6 +19,8 @@
 
 #include <libfswatch/libfswatch_config.h>
 
+#ifdef HAVE_INOTIFY_MONITOR
+
 #include "libfswatch/gettext_defs.h"
 #include "inotify_monitor.hpp"
 #include <algorithm>
@@ -645,3 +647,5 @@ namespace fsw
     }
   }
 }
+
+#endif  /* WATCHER guard HAVE_INOTIFY_MONITOR */

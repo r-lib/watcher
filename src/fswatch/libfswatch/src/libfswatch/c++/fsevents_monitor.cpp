@@ -14,6 +14,8 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <libfswatch/libfswatch_config.h>
+
+#ifdef HAVE_FSEVENTS_FSEVENTSTREAMSETDISPATCHQUEUE
 #include <memory>
 #include <unistd.h> // isatty()
 #include <cstdio> // fileno()
@@ -267,7 +269,6 @@ namespace fsw
       std::vector<char> path_buffer(max_path_size);
       if (!CFStringGetCString(path, path_buffer.data(), max_path_size, kCFStringEncodingUTF8))
       {
-          std::cerr << "Warning: Failed to convert CFStringRef to C string." << std::endl;
           continue;
       }
 
@@ -363,3 +364,5 @@ namespace fsw
                                  streamFlags);
   }
 }
+
+#endif  /* WATCHER guard HAVE_FSEVENTS_FSEVENTSTREAMSETDISPATCHQUEUE */

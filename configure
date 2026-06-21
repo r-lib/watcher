@@ -1,21 +1,7 @@
 #!/bin/sh
 
 # Initialise
-PKG_CFLAGS=""
 PKG_LIBS="-lpthread"
-
-# Helper function: detect cmake
-detect_cmake() {
-  if which cmake > /dev/null 2>&1; then
-    return 0
-  fi
-  export PATH=$PATH:/Applications/CMake.app/Contents/bin
-  if which cmake > /dev/null 2>&1; then
-    return 0
-  fi
-  echo "Required 'cmake' not found"
-  exit 1
-}
 
 # Helper function: find library paths
 # Usage: find_lib_paths <lib_name> <header_subdir> <default_libs>
@@ -51,9 +37,11 @@ CPPFLAGS=`"${R_HOME}/bin/R" CMD config CPPFLAGS`
 LDFLAGS=`"${R_HOME}/bin/R" CMD config LDFLAGS`
 export CC CFLAGS CPPFLAGS LDFLAGS
 
-if [ -z "$MACOSX_DEPLOYMENT_TARGET" ]; then
-  export MACOSX_DEPLOYMENT_TARGET=`echo $CC | sed -En 's/.*-version-min=([0-9][0-9.]*).*/\1/p'`
-fi
+# C++ standard: the bundled libfswatch requires C++17. R >= 4.3 compiles C++ as
+# C++17 by default, so requesting it explicitly is redundant and trips a CRAN
+# "please drop specification unless essential" NOTE. Only emit CXX_STD on older
+# R, where the default is below C++17.
+CXX_STD_LINE=`"${R_HOME}/bin/Rscript" -e 'cat(if (getRversion() < "4.3.0") "CXX_STD = CXX17" else "")'`
 
 # Detect -latomic linker flag for ARM architectures (Raspberry Pi etc.)
 echo "#include <stdint.h>
@@ -66,14 +54,14 @@ if [ $? -ne 0 ]; then
   PKG_LIBS="$PKG_LIBS -latomic"
 fi
 
-# Determine whether to compile bundled library
+# Determine whether to compile the bundled library
 compile_fswatch=0
 
 if [ -n "$WATCHER_LIBS" ]; then
   echo "WATCHER_LIBS is set... building from source"
   compile_fswatch=1
 else
-  # Find libfswatch
+  # Find a system libfswatch
   find_lib_paths "fswatch" "libfswatch" "-lfswatch"
   FSWATCH_CFLAGS="$LIB_CFLAGS"
   FSWATCH_LIBS="$LIB_LIBS"
@@ -88,36 +76,37 @@ int main() {
     compile_fswatch=1
   else
     echo "Found 'libfswatch' $FSWATCH_CFLAGS"
-    PKG_CFLAGS="$FSWATCH_CFLAGS $PKG_CFLAGS"
     PKG_LIBS="$FSWATCH_LIBS $PKG_LIBS"
   fi
 fi
 
-# Compile libfswatch if needed
-if [ $compile_fswatch -eq 1 ]; then
-  echo "Compiling 'libfswatch' from source ..."
-  detect_cmake
-  cmake -S src/fswatch -B w-build \
-    -DCMAKE_INSTALL_PREFIX=w-install \
-    -DCMAKE_INSTALL_LIBDIR=lib \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_POSITION_INDEPENDENT_CODE=1 \
-    -DCMAKE_COLOR_MAKEFILE=0 \
-    -DCMAKE_INSTALL_MESSAGE=NEVER \
-    -DBUILD_LIBS_ONLY=1 \
-    -DUSE_NLS=0
-  cmake --build w-build --target install
-  rm -rf w-build
-fi
-
-# Set flags for bundled library
-if [ -d "w-install/lib" ]; then
-  PKG_CFLAGS="-I../w-install/include $PKG_CFLAGS"
-  PKG_LIBS="../w-install/lib/libfswatch.a $PKG_LIBS"
+if [ "$compile_fswatch" -eq 1 ]; then
+  # Compile the bundled libfswatch in place: put its source tree on the include
+  # path and build the POSIX object list (common core + the self-guarding POSIX
+  # monitors). The monitors self-guard on platform macros, so no uname-based
+  # source selection is needed.
+  echo "Compiling bundled 'libfswatch' in place ..."
+  PKG_CPPFLAGS="-Ifswatch/libfswatch/src"
+  # Single whitespace-separated line: embedded newlines would terminate the make
+  # variable assignment.
+  FSW_OBJECTS=`tr '\n' ' ' < tools/fsw_objects_posix.list | sed 's/ *$//'`
+  case `uname -s` in
+    Darwin) PKG_LIBS="$PKG_LIBS -framework CoreServices" ;;
+  esac
+else
+  # System libfswatch: compile against ITS headers only. The bundled tree is
+  # deliberately kept off the include path so the package compiles against the
+  # same libfswatch version it links. No bundled objects are built.
+  PKG_CPPFLAGS="$FSWATCH_CFLAGS"
+  FSW_OBJECTS=""
 fi
 
 # Write to Makevars
-sed -e "s|@cflags@|$PKG_CFLAGS|" -e "s|@libs@|$PKG_LIBS|" src/Makevars.in > src/Makevars
+sed -e "s|@cppflags@|$PKG_CPPFLAGS|" \
+    -e "s|@libs@|$PKG_LIBS|" \
+    -e "s|@fsw_objects@|$FSW_OBJECTS|" \
+    -e "s|@cxx_std@|$CXX_STD_LINE|" \
+    src/Makevars.in > src/Makevars
 
 # Success
 exit 0

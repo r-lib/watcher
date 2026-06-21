@@ -1,2 +1,3 @@
 #!/bin/sh
-rm -rf src/Makevars w-build w-install
+rm -f src/Makevars src/*.so
+find src -name '*.o' -delete 2>/dev/null

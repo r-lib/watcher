@@ -1,22 +1,15 @@
-# Find compiler and export flags
-CC=`"${R_HOME}/bin/R" CMD config CC`
-CFLAGS=`"${R_HOME}/bin/R" CMD config CFLAGS`
-CPPFLAGS=`"${R_HOME}/bin/R" CMD config CPPFLAGS`
-LDFLAGS=`"${R_HOME}/bin/R" CMD config LDFLAGS`
-export CC CFLAGS CPPFLAGS LDFLAGS
+#!/bin/sh
 
-echo "Compiling 'libfswatch' from source ..."
-cmake -S src/fswatch -B w-build -G "Unix Makefiles" \
-  -DCMAKE_INSTALL_PREFIX=w-install \
-  -DCMAKE_INSTALL_LIBDIR=lib \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_POSITION_INDEPENDENT_CODE=1 \
-  -DCMAKE_COLOR_MAKEFILE=0 \
-  -DCMAKE_INSTALL_MESSAGE=NEVER \
-  -DBUILD_LIBS_ONLY=1 \
-  -DUSE_NLS=0
-cmake --build w-build --target install
-rm -rf w-build
+# UCRT (Rtools42+) configure: the only thing to compute on Windows is the C++
+# standard request. R >= 4.3 compiles C++ as C++17 by default, so specifying
+# CXX_STD = CXX17 explicitly trips a CRAN "please drop specification unless
+# essential" NOTE. Emit CXX_STD only on older R (R 4.2), where the default is
+# below the C++17 that the bundled libfswatch needs. Everything else in
+# Makevars.ucrt is static (legacy Makevars.win stays fully static -- Rtools40
+# only ever serves R <= 4.1).
 
-# Success
+CXX_STD_LINE=`"${R_HOME}/bin/Rscript" -e 'cat(if (getRversion() < "4.3.0") "CXX_STD = CXX17" else "")'`
+
+sed -e "s|@cxx_std@|$CXX_STD_LINE|" src/Makevars.ucrt.in > src/Makevars.ucrt
+
 exit 0

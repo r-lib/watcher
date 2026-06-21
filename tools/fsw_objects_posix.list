@@ -1,0 +1,16 @@
+$(FSW)/c/cevent.o
+$(FSW)/c/libfswatch.o
+$(FSW)/c/libfswatch_log.o
+$(FSW)/c++/event.o
+$(FSW)/c++/filter.o
+$(FSW)/c++/libfswatch_exception.o
+$(FSW)/c++/monitor.o
+$(FSW)/c++/monitor_factory.o
+$(FSW)/c++/path_utils.o
+$(FSW)/c++/poll_monitor.o
+$(FSW)/c++/string/string_utils.o
+$(FSW)/c++/fsevents_monitor.o
+$(FSW)/c++/kqueue_monitor.o
+$(FSW)/c++/inotify_monitor.o
+$(FSW)/c++/fanotify_monitor.o
+$(FSW)/c++/fen_monitor.o
