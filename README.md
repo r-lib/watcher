@@ -49,7 +49,6 @@ watcher requires the ‘libfswatch’ library.
   standard filesystem locations.
 - On Windows, or if not found, the bundled version of ‘libfswatch’
   1.20.1 will be compiled from source.
-- Source compilation of the library requires ‘cmake’.
 
 ## Quick Start
 

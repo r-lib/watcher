@@ -34,4 +34,5 @@ Config/roxygen2/version: 8.0.0
 Config/testthat/edition: 3
 Config/usethis/last-upkeep: 2025-04-23
 Encoding: UTF-8
-SystemRequirements: libfswatch (optional, bundled copy compiled otherwise)
+SystemRequirements: 'libfswatch' (optional, bundled copy compiled
+    otherwise)
