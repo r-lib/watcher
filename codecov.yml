@@ -12,3 +12,5 @@ coverage:
         target: auto
         threshold: 1%
         informational: true
+ignore:
+  - "src/fswatch"
