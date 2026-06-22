@@ -1,7 +1,7 @@
 # watcher (development version)
 
 * Building the bundled 'libfswatch' from source no longer requires 'cmake', now directly using the R C/C++ toolchain.
-  A system 'libfswatch' is still used when one is available.
+  A system 'libfswatch' is still used when available.
 
 # watcher 0.1.6
 
