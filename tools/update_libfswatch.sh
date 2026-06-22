@@ -4,7 +4,11 @@
 # Usage: ./tools/update_libfswatch.sh [version/commit/tag]
 #
 # This script reproduces how to get the current vendored code from the
-# upstream libfswatch repository and applies local patches.
+# upstream libfswatch repository and applies local patches. It also
+# (re)generates the hand-maintained config header, the per-object compile
+# rules in src/Makevars.in / Makevars.win / Makevars.ucrt, and the POSIX
+# object list read by ./configure. No cmake or autotools artifacts are kept:
+# the bundled sources compile straight into the package shared object.
 
 set -e
 
@@ -17,8 +21,242 @@ NC='\033[0m' # No Color
 # Configuration
 FSWATCH_REPO="https://github.com/emcrisostomo/fswatch.git"
 FSWATCH_VERSION="${1:-master}"  # Default to master branch if no version specified
-WORK_DIR="$(pwd)/fswatch-update-tmp"
-TARGET_DIR="$(pwd)/src/fswatch"
+PKG_ROOT="$(pwd)"
+WORK_DIR="${PKG_ROOT}/fswatch-update-tmp"
+TARGET_DIR="${PKG_ROOT}/src/fswatch"
+
+# Bundled libfswatch object lists (single source of truth, paths use $(FSW)).
+# Keep in sync with ./configure (POSIX) and Makevars.win/.ucrt (Windows).
+COMMON_CORE='$(FSW)/c/cevent.o
+$(FSW)/c/libfswatch.o
+$(FSW)/c/libfswatch_log.o
+$(FSW)/c++/event.o
+$(FSW)/c++/filter.o
+$(FSW)/c++/libfswatch_exception.o
+$(FSW)/c++/monitor.o
+$(FSW)/c++/monitor_factory.o
+$(FSW)/c++/path_utils.o
+$(FSW)/c++/poll_monitor.o
+$(FSW)/c++/string/string_utils.o'
+
+POSIX_MONITORS='$(FSW)/c++/fsevents_monitor.o
+$(FSW)/c++/kqueue_monitor.o
+$(FSW)/c++/inotify_monitor.o
+$(FSW)/c++/fanotify_monitor.o
+$(FSW)/c++/fen_monitor.o'
+
+WINDOWS_MONITORS='$(FSW)/c++/windows_monitor.o
+$(FSW)/c++/windows/win_directory_change_event.o
+$(FSW)/c++/windows/win_error_message.o
+$(FSW)/c++/windows/win_handle.o
+$(FSW)/c++/windows/win_paths.o
+$(FSW)/c++/windows/win_strings.o'
+
+# Emit one explicit compile rule per object (object paths read from stdin).
+emit_rules() {
+  while IFS= read -r obj; do
+    [ -n "$obj" ] || continue
+    src="${obj%.o}.cpp"
+    printf '%s: %s\n\t$(CXX) $(ALL_CPPFLAGS) $(ALL_CXXFLAGS) -c %s -o $@\n' "$obj" "$src" "$src"
+  done
+}
+
+# Join an object list (stdin) into one trimmed space-separated line.
+join_objs() { tr '\n' ' ' | sed 's/ *$//'; }
+
+# Write the hand-maintained config header (replaces the cmake template).
+write_config_header() {
+  cat > "$1" <<'EOF'
+/* Hand-maintained replacement for the cmake/autotools-generated config header.
+ * Feature selection is keyed on compiler-predefined platform macros.
+ * Regenerated/owned by the watcher package — not by upstream tooling. */
+#ifndef LIBFSWATCH_CONFIG_H
+#define LIBFSWATCH_CONFIG_H
+
+/* C++17 guarantees these; used by libfswatch_map.hpp / libfswatch_set.hpp */
+#define HAVE_UNORDERED_MAP 1
+#define HAVE_UNORDERED_SET 1
+
+#if defined(__APPLE__)
+/* FSEvents + kqueue. The HAVE_MACOS_GE_* gates are *derived from the deployment
+ * target* (a compile-time "probe" of MAC_OS_X_VERSION_MIN_REQUIRED) rather than
+ * hard-set true: this stays correct for any floor R might use, costs nothing,
+ * and needs no configure machinery. Compare against the named MAC_OS_X_VERSION_*
+ * constants — their numeric encoding changed (1090 vs 101000) at 10.10. */
+#  include <AvailabilityMacros.h>
+#  define HAVE_FSEVENTS_FSEVENTSTREAMSETDISPATCHQUEUE 1
+#  define HAVE_SYS_EVENT_H 1
+#  define HAVE_STRUCT_STAT_ST_MTIMESPEC 1
+#  if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5
+#    define HAVE_MACOS_GE_10_5 1
+#  endif
+#  if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_6
+#    define HAVE_MACOS_GE_10_6 1
+#  endif
+#  if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_7
+#    define HAVE_MACOS_GE_10_7 1
+#  endif
+#  if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_9
+#    define HAVE_MACOS_GE_10_9 1
+#  endif
+#  if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_10
+#    define HAVE_MACOS_GE_10_10 1
+#  endif
+#  if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_13
+#    define HAVE_MACOS_GE_10_13 1
+#  endif
+
+#elif defined(_WIN32)
+#  define HAVE_WINDOWS 1
+#  define HAVE_STRUCT_STAT_ST_MTIME 1
+
+#elif defined(__linux__)
+#  define HAVE_SYS_INOTIFY_H 1
+#  define HAVE_SYS_EPOLL_H 1
+#  define HAVE_SYS_EVENTFD_H 1
+#  define HAVE_INOTIFY_MONITOR 1
+#  define HAVE_STRUCT_STAT_ST_MTIME 1
+/* fanotify intentionally OFF: requires CAP_SYS_ADMIN/root and a large symbol surface. */
+
+#elif defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
+#  define HAVE_SYS_EVENT_H 1
+#  define HAVE_STRUCT_STAT_ST_MTIMESPEC 1
+
+#elif defined(__sun)
+#  define HAVE_PORT_H 1
+#  define HAVE_STRUCT_STAT_ST_MTIME 1
+
+#else
+/* Generic POSIX fallback: stat()-based poll monitor only. */
+#  define HAVE_STRUCT_STAT_ST_MTIME 1
+#endif
+
+#endif /* LIBFSWATCH_CONFIG_H */
+EOF
+}
+
+# (Re)generate the POSIX object list and the three Makevars files.
+generate_build_files() {
+  printf '%s\n%s\n' "$COMMON_CORE" "$POSIX_MONITORS" > "$PKG_ROOT/tools/fsw_objects_posix.list"
+
+  # --- src/Makevars.in (POSIX; configure fills @cppflags@/@libs@/@fsw_objects@)
+  {
+    cat <<'EOF'
+# Generated by tools/update_libfswatch.sh -- do not edit by hand.
+#
+# Compile the bundled libfswatch sources directly into the package shared object
+# (no cmake, no static archive). configure substitutes the include flags, the
+# link flags, the bundled object list (empty when a system libfswatch is used)
+# and the C++ standard line (a CXX_STD request set only on R < 4.3 -- see
+# configure).
+#
+# PKG_CPPFLAGS carries the include path so it reaches BOTH the C package files
+# and the bundled C++ via $(ALL_CPPFLAGS).
+PKG_CPPFLAGS = @cppflags@
+PKG_CFLAGS = $(C_VISIBILITY)
+PKG_CXXFLAGS = $(CXX_VISIBILITY)
+PKG_LIBS = @libs@
+
+@cxx_std@
+
+# Top-level package sources (built by R's own suffix rules)
+P_OBJECTS = init.o watcher.o
+# Bundled libfswatch objects (empty when a system libfswatch is used)
+FSW_OBJECTS = @fsw_objects@
+
+OBJECTS = $(P_OBJECTS) $(FSW_OBJECTS)
+
+FSW = fswatch/libfswatch/src/libfswatch
+
+# `all:` MUST be the first target: an explicit object rule below would otherwise
+# become make's default goal when R CMD SHLIB invokes make with no target.
+all: $(SHLIB)
+
+$(SHLIB): $(OBJECTS)
+
+# --- Explicit compile rules for the bundled (subdirectory) sources -----------
+# One rule per object; recipe identical to R's own .cpp.o suffix rule. Each
+# names its source explicitly and uses only portable make variables, so any
+# POSIX make builds them (no automatic-variable source refs, no pattern rules,
+# no directory search, no file inclusion).
+EOF
+    printf '%s\n%s\n' "$COMMON_CORE" "$POSIX_MONITORS" | emit_rules
+    printf '\n.PHONY: all clean\nclean:\n\trm -f $(OBJECTS) $(SHLIB)\n'
+  } > "$PKG_ROOT/src/Makevars.in"
+
+  # --- src/Makevars.win (Rtools40, gcc 8.3, dual i386 + x64) ------------------
+  win_objs=$(printf '%s\n%s\n' "$COMMON_CORE" "$WINDOWS_MONITORS" | join_objs)
+  {
+    cat <<'EOF'
+# Generated by tools/update_libfswatch.sh -- do not edit by hand.
+#
+# Rtools40 (gcc 8.3), dual i386 + x64. Always compiles the bundled libfswatch
+# (no system-library path on Windows). std::filesystem is used in the common
+# core, so -lstdc++fs is required on gcc 8.x/9.x.
+#
+# CXX_STD stays static here: Rtools40 only ever serves R <= 4.1 (< 4.3), whose
+# default is below C++17, so requesting it is always needed and never trips the
+# CRAN "please drop specification" NOTE. (UCRT is conditional -- see
+# Makevars.ucrt.in / configure.ucrt.)
+PKG_CPPFLAGS = -Ifswatch/libfswatch/src
+PKG_CFLAGS = $(C_VISIBILITY)
+PKG_CXXFLAGS = $(CXX_VISIBILITY)
+PKG_LIBS = -pthread -lstdc++fs
+
+CXX_STD = CXX17
+
+P_OBJECTS = init.o watcher.o
+FSW = fswatch/libfswatch/src/libfswatch
+EOF
+    printf 'FSW_OBJECTS = %s\n' "$win_objs"
+    cat <<'EOF'
+
+OBJECTS = $(P_OBJECTS) $(FSW_OBJECTS)
+
+all: $(SHLIB)
+
+$(SHLIB): $(OBJECTS)
+
+EOF
+    printf '%s\n%s\n' "$COMMON_CORE" "$WINDOWS_MONITORS" | emit_rules
+    printf '\n.PHONY: all clean\nclean:\n\trm -f $(OBJECTS) $(SHLIB)\n'
+  } > "$PKG_ROOT/src/Makevars.win"
+
+  # --- src/Makevars.ucrt (Rtools42/43/44; std::filesystem in libstdc++) -------
+  {
+    cat <<'EOF'
+# Generated by tools/update_libfswatch.sh -- do not edit by hand.
+# Template: configure.ucrt fills in the C++ standard line to produce
+# src/Makevars.ucrt.
+#
+# Rtools42/43/44 (gcc 10/12/13). Identical to Makevars.win except that
+# std::filesystem is folded into libstdc++, so -lstdc++fs is not needed, and the
+# CXX_STD request is emitted only on R < 4.3 (R >= 4.3 defaults to C++17;
+# specifying it then trips a CRAN "please drop specification" NOTE).
+PKG_CPPFLAGS = -Ifswatch/libfswatch/src
+PKG_CFLAGS = $(C_VISIBILITY)
+PKG_CXXFLAGS = $(CXX_VISIBILITY)
+PKG_LIBS = -pthread
+
+@cxx_std@
+
+P_OBJECTS = init.o watcher.o
+FSW = fswatch/libfswatch/src/libfswatch
+EOF
+    printf 'FSW_OBJECTS = %s\n' "$win_objs"
+    cat <<'EOF'
+
+OBJECTS = $(P_OBJECTS) $(FSW_OBJECTS)
+
+all: $(SHLIB)
+
+$(SHLIB): $(OBJECTS)
+
+EOF
+    printf '%s\n%s\n' "$COMMON_CORE" "$WINDOWS_MONITORS" | emit_rules
+    printf '\n.PHONY: all clean\nclean:\n\trm -f $(OBJECTS) $(SHLIB)\n'
+  } > "$PKG_ROOT/src/Makevars.ucrt.in"
+}
 
 echo -e "${GREEN}=== LibFSWatch Update Script ===${NC}"
 echo "Repository: ${FSWATCH_REPO}"
@@ -63,45 +301,40 @@ echo -e "${YELLOW}Step 2: Extracting required files...${NC}"
 STAGING_DIR="${WORK_DIR}/staging"
 mkdir -p "${STAGING_DIR}"
 
-# Copy the files we need (excluding fswatch CLI tool, tests, and build infrastructure)
+# Copy the files we need (excluding fswatch CLI tool, tests, and all build
+# infrastructure — we compile in place, so no CMakeLists.txt is wanted).
 echo "Copying libfswatch source files..."
 cp -r libfswatch "${STAGING_DIR}/"
 
-# Copy top-level files needed for the build
-cp CMakeLists.txt "${STAGING_DIR}/"
+# Copy attribution files (required by DESCRIPTION cph entries / src/LICENSE.note)
 cp AUTHORS "${STAGING_DIR}/"
 cp AUTHORS.libfswatch "${STAGING_DIR}/"
 cp LICENSE-2.0.txt "${STAGING_DIR}/"
 cp README.md "${STAGING_DIR}/"
 
-# Remove unnecessary files from libfswatch
+# Remove docs, automake files, and every cmake/config artifact: we own the
+# config header and drive the build from the package Makevars.
 echo "Cleaning up unnecessary files..."
 rm -rf "${STAGING_DIR}/libfswatch/doc"
 find "${STAGING_DIR}" -name "Makefile.am" -delete
+rm -f "${STAGING_DIR}/libfswatch/CMakeLists.txt"
+rm -f "${STAGING_DIR}/libfswatch/src/libfswatch.pc.in"
+rm -f "${STAGING_DIR}/libfswatch/libfswatch_config.in"
 
 echo ""
 
-# Step 3: Apply patches specific to watcher package
+# Step 3: Apply patches and write the owned config header
 echo -e "${YELLOW}Step 3: Applying patches for watcher package...${NC}"
 
-# Patch: Avoid GCC -Wformat-truncation "null format string" warning in
-# string_utils.cpp by adding an explicit null check on the format argument
-# before the vsnprintf call. Surfaces in stricter CRAN/rhub Linux builds.
-echo "Applying string_utils.cpp null-format guard..."
-STRING_UTILS="${STAGING_DIR}/libfswatch/src/libfswatch/c++/string/string_utils.cpp"
+LIBFSW_SRC="${STAGING_DIR}/libfswatch/src/libfswatch"
 
-if [ -f "${STRING_UTILS}" ]; then
-  if ! grep -q "if (!format) return" "${STRING_UTILS}"; then
-    sed -i.bak 's|^      size_t current_buffer_size = 0;$|      if (!format) return string();\
-      size_t current_buffer_size = 0;|' "${STRING_UTILS}"
-    rm -f "${STRING_UTILS}.bak"
-    echo -e "${GREEN}  ✓ Null-format guard applied${NC}"
-  else
-    echo -e "${GREEN}  ✓ Null-format guard already present${NC}"
-  fi
-else
-  echo -e "${YELLOW}  ⚠ string_utils.cpp not found, skipping patch${NC}"
-fi
+echo "Writing hand-maintained libfswatch_config.h..."
+write_config_header "${LIBFSW_SRC}/libfswatch_config.h"
+echo -e "${GREEN}  ✓ config header written${NC}"
+
+# Apply all watcher source patches (string_utils guard, monitor self-guards,
+# logging neutering) idempotently to the staged tree.
+"${PKG_ROOT}/tools/patch_libfswatch.sh" "${LIBFSW_SRC}"
 
 echo ""
 
@@ -112,18 +345,27 @@ mv "${STAGING_DIR}" "${TARGET_DIR}"
 echo -e "${GREEN}Vendored code updated successfully!${NC}"
 echo ""
 
-# Step 5: Clean up
-echo -e "${YELLOW}Step 5: Cleaning up...${NC}"
-cd "$(dirname "${WORK_DIR}")"
+# Step 5: Regenerate build files (object list + Makevars)
+echo -e "${YELLOW}Step 5: Regenerating build files...${NC}"
+generate_build_files
+echo -e "${GREEN}  ✓ tools/fsw_objects_posix.list${NC}"
+echo -e "${GREEN}  ✓ src/Makevars.in, src/Makevars.win, src/Makevars.ucrt${NC}"
+echo ""
+
+# Step 6: Clean up
+echo -e "${YELLOW}Step 6: Cleaning up...${NC}"
+cd "${PKG_ROOT}"
 rm -rf "${WORK_DIR}"
 echo -e "${GREEN}Temporary files removed${NC}"
 echo ""
 
-# Step 6: Show summary
+# Step 7: Show summary
 echo -e "${GREEN}=== Update Complete ===${NC}"
 echo ""
 echo "Summary:"
 echo "  - Updated from commit: ${CURRENT_COMMIT}"
 echo "  - Updated from tag: ${CURRENT_TAG}"
-echo "  - Patches applied: string_utils.cpp null-format guard"
+echo "  - Owned libfswatch_config.h written"
+echo "  - Source patches applied via tools/patch_libfswatch.sh"
+echo "  - Regenerated Makevars + tools/fsw_objects_posix.list"
 echo ""

@@ -148,7 +148,6 @@ namespace fsw
       }
       else
       {
-        cerr << _("File name unexpectedly empty.") << endl;
       }
 
       curr_entry = (currEntry->NextEntryOffset == 0) ? nullptr : curr_entry + currEntry->NextEntryOffset;

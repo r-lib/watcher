@@ -108,7 +108,6 @@ namespace fsw
 
     if (!win_handle::is_valid(h))
     {
-      fprintf(stderr, _("Invalid handle when opening %s.\n"), win_strings::wstring_to_string(path).c_str());
       return false;
     }
 

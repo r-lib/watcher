@@ -20,6 +20,8 @@
 
 #include <libfswatch/libfswatch_config.h>
 
+#ifdef HAVE_FANOTIFY
+
 #include "fanotify_monitor.hpp"
 #include "libfswatch/gettext_defs.h"
 #include "libfswatch_exception.hpp"
@@ -734,3 +736,5 @@ namespace fsw
     }
   }
 }
+
+#endif  /* WATCHER guard HAVE_FANOTIFY */

@@ -1,1 +1,2 @@
-rm -rf src/Makevars w-build w-install
+rm -f src/Makevars src/Makevars.ucrt src/*.dll
+find src -name '*.o' -delete 2>/dev/null
