@@ -18,7 +18,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/r-lib/watcher/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/r-lib/watcher/blob/v0.2.0/DESCRIPTION)
 
 Gao C (2026). *watcher: Watch the File System for Changes*. R package
 version 0.2.0, <https://watcher.r-lib.org>.
