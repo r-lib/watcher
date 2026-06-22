@@ -82,8 +82,14 @@
 </div>
 <div class="section level3">
 <h3 id="build-system">Build System<a class="anchor" aria-label="anchor" href="#build-system"></a></h3>
-<p><strong>Configure Scripts:</strong> - <code>configure</code> (Linux/macOS): Detects system-installed libfswatch in standard locations (<code>/usr/local</code>, <code>/usr</code>, homebrew paths). If not found, compiles bundled libfswatch (v1.19.0-dev) using cmake. Handles special cases like ARM atomic operations. - <code>configure.win</code> (Windows non-UCRT): Compiles libfswatch from source for both x64 and i386 architectures - <code>configure.ucrt</code> (Windows UCRT): Simplified version for modern Windows R builds - All scripts generate <code>src/Makevars</code> with appropriate compiler flags</p>
-<p><strong>Key Dependencies:</strong> - libfswatch (bundled source in <code>src/fswatch/</code>) - cmake (required for compiling libfswatch from source) - pthread (for background monitoring thread) - ‘later’ R package (for async callback execution)</p>
+<p>The bundled libfswatch sources (<code>src/fswatch/</code>) are compiled <strong>directly into the package shared object</strong> alongside <code>init.c</code>/<code>watcher.c</code> — no cmake, no static archive, no separate library. Platform feature selection comes from a hand-maintained config header, not host probing.</p>
+<p><strong>Configure scripts:</strong> - <code>configure</code> (Linux/macOS/other Unix): detects a system libfswatch (<code>/usr/local</code>, <code>/usr</code>, Homebrew); if absent, sets up the in-place bundled build. Probes for <code>-latomic</code> (ARM) and adds <code>-framework CoreServices</code> (macOS), emits the <code>CXX_STD</code> line (only on R &lt; 4.3), and substitutes <code>src/Makevars.in</code> → <code>src/Makevars</code>. - <code>configure.ucrt</code> (Windows UCRT): computes only the <code>CXX_STD</code> line, substituting <code>src/Makevars.ucrt.in</code> → <code>src/Makevars.ucrt</code>. - Legacy non-UCRT Windows has no <code>configure.win</code>; it uses the static <code>src/Makevars.win</code>, and <code>Biarch: true</code> keeps the dual i386/x64 build.</p>
+<p><strong>Key pieces:</strong> - <code>src/fswatch/.../libfswatch_config.h</code>: hand-maintained; selects <code>HAVE_*</code> features from compiler platform macros (replaces the cmake/autotools probe). - <code>src/Makevars{.in,.win,.ucrt.in}</code>: declare the bundled objects and carry one portable explicit compile rule per object (no GNU-make extensions). The POSIX object list is <code>tools/fsw_objects_posix.list</code>; the Windows object list is separate because those files include <code>&lt;windows.h&gt;</code>. - <code>src/link.cpp</code>: empty <code>.cpp</code> that forces R to link with the C++ linker. - <code>tools/update_libfswatch.sh</code>: re-vendors libfswatch and regenerates the config header, object list, and Makevars; calls <code>tools/patch_libfswatch.sh</code>. - <code>tools/patch_libfswatch.sh</code>: idempotent source patches — a null-format guard in <code>string_utils</code>, self-guards on the fsevents/inotify/fanotify monitors, and neutering of libfswatch’s stdout/stderr/cerr logging (for the R CMD check “compiled code” policy).</p>
+<p><strong>Key dependencies:</strong> an R C/C++ toolchain plus <code>make</code>; pthread; the ‘later’ R package. A system libfswatch is used automatically when present.</p>
+</div>
+<div class="section level3">
+<h3 id="c-standard-and-minimum-r-version">C++ Standard and Minimum R Version<a class="anchor" aria-label="anchor" href="#c-standard-and-minimum-r-version"></a></h3>
+<p>The bundled libfswatch uses <code>std::filesystem</code> (in <code>path_utils</code>, <code>poll_monitor</code>, and every monitor’s <code><a href="https://rdrr.io/r/base/scan.html" class="external-link">scan()</a></code>), which mandates <strong>C++17</strong> — there is no portable pre-C++17 substitute. Because the package now compiles libfswatch itself rather than via cmake, it relies on R’s own <code>CXX_STD = CXX17</code>, support for which was added in <strong>R 3.5.0</strong>. That is precisely why <code>DESCRIPTION</code> requires <code>R (&gt;= 3.5)</code>: it is the lowest R that can build the package (R &lt; 3.5 cannot request C++17), not an arbitrary floor. <code>configure</code>/<code>configure.ucrt</code> emit <code>CXX_STD = CXX17</code> only on R &lt; 4.3, since R &gt;= 4.3 defaults to C++17 and specifying it then trips a CRAN “drop specification unless essential” NOTE.</p>
 </div>
 <div class="section level3">
 <h3 id="event-filtering">Event Filtering<a class="anchor" aria-label="anchor" href="#event-filtering"></a></h3>
@@ -104,13 +110,12 @@
 <h3 id="windows">Windows<a class="anchor" aria-label="anchor" href="#windows"></a></h3>
 <ul><li>Uses ReadDirectoryChangesW API (always recursive)</li>
 <li>Windows latency has been specifically addressed (see NEWS.md - patch in v0.1.4.9000)</li>
-<li>Builds require cmake and compile libfswatch from bundled source</li>
+<li>Compiles the bundled libfswatch in place: UCRT via <code>Makevars.ucrt</code> (generated by <code>configure.ucrt</code>), legacy non-UCRT via the static <code>Makevars.win</code> (gcc 8.3 needs <code>-lstdc++fs</code> for <code>std::filesystem</code>); <code>Biarch: true</code> builds i386 + x64</li>
 </ul></div>
 <div class="section level3">
 <h3 id="macos">macOS<a class="anchor" aria-label="anchor" href="#macos"></a></h3>
 <ul><li>Uses FSEvents API (always recursive)</li>
-<li>Can use system libfswatch if installed via homebrew/MacPorts</li>
-<li>MACOSX_DEPLOYMENT_TARGET is automatically extracted from compiler flags</li>
+<li>Links <code>-framework CoreServices</code>; can use a system libfswatch (Homebrew/MacPorts)</li>
 </ul></div>
 <div class="section level3">
 <h3 id="linux">Linux<a class="anchor" aria-label="anchor" href="#linux"></a></h3>
