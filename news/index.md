@@ -1,5 +1,13 @@
 # Changelog
 
+## watcher 0.2.0
+
+CRAN release: 2026-06-22
+
+- Building the bundled ‘libfswatch’ from source no longer requires
+  ‘cmake’, now directly using the R C/C++ toolchain. A system
+  ‘libfswatch’ is still used when available.
+
 ## watcher 0.1.6
 
 CRAN release: 2026-05-09
