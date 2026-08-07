@@ -12,4 +12,5 @@
 ^[\.]?air\.toml$
 ^\.vscode$
 ^\.claude$
-^CLAUDE.md$
+^\.posit$
+^AGENTS.md$

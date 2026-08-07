@@ -1,6 +1,4 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+# watcher
 
 ## Overview
 
@@ -16,12 +14,13 @@ R CMD check watcher_*.tar.gz
 
 # Install from source (triggers configure script)
 R CMD INSTALL .
+```
 
-# Run tests
-Rscript -e "testthat::test_dir('tests/testthat')"
-
-# Or interactively in R
-R -e "devtools::test()"
+```r
+# Run tests (in the R console)
+devtools::test()
+# or without devtools:
+testthat::test_dir("tests/testthat")
 ```
 
 ### Single Test Execution
@@ -31,9 +30,9 @@ testthat::test_file("tests/testthat/test-watch.R")
 ```
 
 ### Documentation
-```bash
-# Generate documentation with roxygen2
-Rscript -e "roxygen2::roxygenize()"
+```r
+# Generate documentation with roxygen2 (in the R console)
+roxygen2::roxygenize()
 ```
 
 ### CI/CD
@@ -41,6 +40,7 @@ The package uses GitHub Actions workflows in `.github/workflows/`:
 - `R-CMD-check.yaml`: Comprehensive R CMD check across multiple OS/R versions
 - `test-coverage.yaml`: Code coverage reporting
 - `pkgdown.yaml`: Documentation site generation
+- `pr-commands.yaml`: `/document` and `/style` PR comment commands
 
 ## Architecture
 

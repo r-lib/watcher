@@ -5,6 +5,7 @@
 /docs/
 /revdep/
 /.claude/
+/.posit/
 .vscode
 air.toml
 .DS_Store
