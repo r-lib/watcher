@@ -37,7 +37,7 @@ watcher requires the ‘libfswatch’ library.
 - On Linux / MacOS, an installed version will be used if found in the
   standard filesystem locations.
 - On Windows, or if not found, the bundled version of ‘libfswatch’
-  1.20.1 will be compiled from source.
+  1.22.0 will be compiled from source.
 
 ## Quick Start
 
