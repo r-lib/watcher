@@ -18,15 +18,15 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/r-lib/watcher/blob/v0.2.0/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/r-lib/watcher/blob/main/DESCRIPTION)
 
 Gao C (2026). *watcher: Watch the File System for Changes*. R package
-version 0.2.0, <https://watcher.r-lib.org>.
+version 0.2.1, <https://watcher.r-lib.org>.
 
     @Manual{,
       title = {watcher: Watch the File System for Changes},
       author = {Charlie Gao},
       year = {2026},
-      note = {R package version 0.2.0},
+      note = {R package version 0.2.1},
       url = {https://watcher.r-lib.org},
     }
