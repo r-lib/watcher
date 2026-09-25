@@ -1,5 +1,7 @@
 # watcher (development version)
 
+* Fixes installation failing on systems with a partial or broken system 'libfswatch', now falling back to the bundled build.
+
 # watcher 0.2.0
 
 * Building the bundled 'libfswatch' from source no longer requires 'cmake', now directly using the R C/C++ toolchain.

@@ -66,12 +66,13 @@ else
   FSWATCH_CFLAGS="$LIB_CFLAGS"
   FSWATCH_LIBS="$LIB_LIBS"
 
+  # The probe must LINK, not just compile: a header-only check passes on a
+  # broken partial install (headers present, library missing) and the real
+  # link of watcher.so then fails with 'cannot find -lfswatch'.
   echo "#include <libfswatch/c/libfswatch.h>
-int main() {
-#if FSW_OK
-    *(void *) 0 = 0;
-#endif
-}" | ${CC} ${FSWATCH_CFLAGS} -xc - -o /dev/null > /dev/null 2>&1
+int main(void) {
+    return fsw_init_library();
+}" | ${CC} ${CFLAGS} ${CPPFLAGS} ${FSWATCH_CFLAGS} -xc - -o /dev/null ${LDFLAGS} ${FSWATCH_LIBS} > /dev/null 2>&1
   if [ $? -ne 0 ]; then
     compile_fswatch=1
   else
