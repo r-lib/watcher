@@ -2,6 +2,8 @@
 
 ## watcher (development version)
 
+## watcher 0.2.1
+
 - Fixes installation failing on systems with a partial or broken system
   ‘libfswatch’, now falling back to the bundled build
   ([\#48](https://github.com/r-lib/watcher/issues/48)).
