@@ -76,6 +76,41 @@ test_that("watcher() callbacks", {
   rm(w)
 })
 
+test_that("watcher() reports full path for one-sided move into watched dir", {
+  skip_if(R.version$arch == "aarch64" && !Sys.getenv("NOT_CRAN") == "true")
+  # Regression test for libfswatch issue #387: pre-1.22.0 the Linux inotify
+  # monitor dropped the child filename from one-sided move events, reporting
+  # only the watched directory path.
+  staging <- file.path(tempdir(), "watcher-staging")
+  dir.create(staging)
+  src <- file.path(staging, "moved-in")
+  dest <- file.path(dir, "moved-in")
+  paths <- character()
+  w <- watcher(
+    dir,
+    callback = ~ {
+      paths <<- c(paths, .x)
+    },
+    latency = 0.2
+  )
+  expect_true(w$start())
+  Sys.sleep(1)
+  file.create(src)
+  file.rename(src, dest)
+  for (i in 1:20) {
+    later::run_now(0.5)
+    if (any(normalizePath(paths, mustWork = FALSE) == normalizePath(dest))) {
+      break
+    }
+  }
+  expect_true(any(
+    normalizePath(paths, mustWork = FALSE) == normalizePath(dest)
+  ))
+  expect_true(w$stop())
+  rm(w)
+  unlink(staging, recursive = TRUE, force = TRUE)
+})
+
 unlink(dir, recursive = TRUE, force = TRUE)
 unlink(dir2, recursive = TRUE, force = TRUE)
 
