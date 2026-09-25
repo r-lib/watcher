@@ -2,6 +2,9 @@
 
 ## watcher (development version)
 
+- Fixes installation failing on systems with a partial or broken system
+  ‘libfswatch’, now falling back to the bundled build.
+
 ## watcher 0.2.0
 
 CRAN release: 2026-06-22
