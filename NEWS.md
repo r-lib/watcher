@@ -1,6 +1,7 @@
 # watcher (development version)
 
-* Fixes installation failing on systems with a partial or broken system 'libfswatch', now falling back to the bundled build.
+* Fixes installation failing on systems with a partial or broken system 'libfswatch', now falling back to the bundled build (#48).
+* Updates bundled 'libfswatch' source to 1.22.0 release. On Linux, this fixes 'Renamed' events reporting only the watched directory path when a file is moved in from an unwatched location.
 
 # watcher 0.2.0
 

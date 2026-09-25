@@ -318,6 +318,7 @@ echo "Cleaning up unnecessary files..."
 rm -rf "${STAGING_DIR}/libfswatch/doc"
 find "${STAGING_DIR}" -name "Makefile.am" -delete
 rm -f "${STAGING_DIR}/libfswatch/CMakeLists.txt"
+rm -rf "${STAGING_DIR}/libfswatch/cmake"
 rm -f "${STAGING_DIR}/libfswatch/src/libfswatch.pc.in"
 rm -f "${STAGING_DIR}/libfswatch/libfswatch_config.in"
 

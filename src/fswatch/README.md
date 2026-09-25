@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://emcrisostomo.github.io/fswatch/">
+    <img src="https://emcrisostomo.github.io/fswatch/images/fswatch-logo.svg" alt="fswatch logo" width="128">
+  </a>
+</p>
+
 [![License](https://img.shields.io/badge/license-GPL--3.0-blue.svg?style=flat)](https://github.com/emcrisostomo/fswatch/blob/master/COPYING)
 [![C/C++ CI](https://github.com/emcrisostomo/fswatch/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/emcrisostomo/fswatch/actions/workflows/c-cpp.yml)
 [![CMake](https://github.com/emcrisostomo/fswatch/actions/workflows/cmake.yml/badge.svg)](https://github.com/emcrisostomo/fswatch/actions/workflows/cmake.yml)
@@ -16,6 +22,8 @@ several monitors:
     and its derivatives.
   * A monitor based on _inotify_, a Linux kernel subsystem that reports file
     system changes to applications.
+  * A monitor based on _fanotify_, a Linux kernel subsystem that reports file
+    system events to applications.
   * A monitor based on _ReadDirectoryChangesW_, a Microsoft Windows API that
     reports changes to a directory.
   * A monitor which periodically stats the file system, saves file modification
@@ -57,7 +65,8 @@ Features
 
   * Support for many OS-specific APIs such as kevent, inotify, and FSEvents.
   * Recursive directory monitoring.
-  * Path filtering using including and excluding regular expressions.
+  * Path filtering using including and excluding regular expressions, with
+    legacy and conjunctive evaluation modes.
   * Customizable record format.
   * Support for periodic idle events.
 
@@ -80,11 +89,38 @@ The limitations of `fswatch` depend largely on the monitor being used:
     every file that cannot be opened.
 
   * The **inotify** monitor, available on Linux since kernel 2.6.13, may suffer
-    a queue overflow if events are generated faster than they are read from the
-    queue.  In any case, the application is guaranteed to receive an overflow
-    notification which can be handled to gracefully recover.  `fswatch`
-    currently throws an exception if a queue overflow occurs.  Future versions
-    will handle the overflow by emitting proper notifications.
+    from several limitations.  It provides no information about the user or
+    process that triggered an event, so it cannot easily distinguish events it
+    triggers itself from those triggered by other processes.  It reports only
+    events triggered through the filesystem API, so it does not catch remote
+    events on network filesystems and cannot monitor pseudo-filesystems such as
+    `/proc`, `/sys`, or `/dev/pts`.  It also does not report accesses or
+    modifications that occur through `mmap(2)`, `msync(2)`, or `munmap(2)`.
+    Events identify files by name, but the name may already have been deleted
+    or renamed by the time the application handles the event.  Events are also
+    identified by watch descriptors, so applications must cache a mapping to
+    pathnames if they need one, and directory renames can affect several cached
+    pathnames at once.  Inotify monitoring of directories is not recursive, so
+    additional watches must be created for subdirectories, and that can take a
+    significant amount of time on large trees.  If a new subdirectory appears
+    or is renamed into a monitored tree, the application may need to rescan it
+    immediately after adding the watch so that it does not miss children that
+    already exist.  The event queue can overflow, in which case events are lost
+    and robust applications may need to rebuild some or all of their cache.
+    Finally, if a filesystem is mounted on top of a monitored directory, no
+    event is generated until the filesystem is unmounted again.
+
+  * The **fanotify** monitor, available on Linux since kernel 2.6.37, reports
+    only events triggered through the filesystem API, so it does not catch
+    remote events on network filesystems.  It also does not report accesses or
+    modifications that occur through `mmap(2)`, `msync(2)`, or `munmap(2)`.
+    Directory events are generated only when the directory itself is opened,
+    read, and closed, so adding, removing, or changing children does not create
+    events for the monitored directory itself.  Fanotify monitoring of
+    directories is not recursive: subdirectories require additional marks, and
+    using `FAN_CREATE` to detect them is racy because events may be lost before
+    the new mark is added.  Monitoring mounts or entire filesystems avoids this
+    race.  The event queue can also overflow, in which case events are lost.
 
   * The **Windows** monitor can only establish a watch _directories_, not files.
     To watch a file, its parent directory must be watched in order to receive
@@ -215,7 +251,7 @@ Documentation
   * Texinfo documentation, included with the distribution.
   * HTML documentation.
   * PDF documentation.
-  * A [wiki] page.
+  * The [GitHub website].
   * A man page.
 
 `fswatch` official documentation is provided in Texinfo format.  This is the
@@ -223,12 +259,15 @@ most comprehensive source of information about `fswatch` and the only
 authoritative one.  The man page, in particular, is a stub that suggests the
 user to use the info page instead.
 
+The project website also provides maintained online documentation and release
+resources.
+
 If you are installing `fswatch` using a package manager and you would like the
 PDF manual to be bundled into the package, please send a feature request to the
 package maintainer.
 
-[documentation]: http://emcrisostomo.github.io/fswatch/doc
-[wiki]: https://github.com/emcrisostomo/fswatch/wiki
+[documentation]: https://emcrisostomo.github.io/fswatch/documentation.html
+[GitHub website]: https://emcrisostomo.github.io/fswatch/
 
 Localization
 ------------
@@ -315,7 +354,7 @@ v. 2.0.
 
 -----
 
-Copyright (c) 2013-2025 Enrico M. Crisostomo
+Copyright (c) 2013-2026 Enrico M. Crisostomo
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
