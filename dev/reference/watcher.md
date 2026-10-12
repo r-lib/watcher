@@ -46,7 +46,8 @@ processed, and does not mean that changes are polled for at this
 interval. The changes are monitored in an event-driven fashion by the
 platform-specific monitor. Events are 'bubbled' such that a single
 change that triggers multiple filesystem events will cause the callback
-to be called only once.
+to be called only once, and the paths reported by a single callback are
+always unique.
 
 It is possible to set a watch on a path that does not currently exist,
 and it will be monitored once created.
@@ -80,11 +81,11 @@ w
 #>     start: function () 
 #>     stop: function () 
 #>   Private:
-#>     path: /tmp/RtmpowePbM
+#>     path: /tmp/RtmpPgBXwJ
 #>     running: TRUE
 #>     watch: externalptr
 w$get_path()
-#> [1] "/tmp/RtmpowePbM"
+#> [1] "/tmp/RtmpPgBXwJ"
 w$stop()
 w$is_running()
 #> [1] FALSE
