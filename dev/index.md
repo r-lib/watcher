@@ -3,7 +3,7 @@
 Watch the File System for Changes
 
 [![Ask
-DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/r-lib/watcher)
+DeepWiki](https://img.shields.io/badge/Ask-DeepWiki-1f6feb)](https://deepwiki.com/r-lib/watcher)
 
 R binding for [libfswatch](https://emcrisostomo.github.io/fswatch/), a
 file system monitoring library. This uses an optimal event-driven API
@@ -73,7 +73,7 @@ w
 #>     start: function () 
 #>     stop: function () 
 #>   Private:
-#>     path: /tmp/Rtmph2w1cl/watcher-example
+#>     path: /var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T//RtmpNd ...
 #>     running: FALSE
 #>     watch: externalptr
 w$start()
@@ -83,19 +83,20 @@ file.create(file.path(dir, "newfile"))
 file.create(file.path(dir, "anotherfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/tmp/Rtmph2w1cl/watcher-example/newfile"
-#> [1] "/tmp/Rtmph2w1cl/watcher-example/anotherfile"
+#> [1] "/private/var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T/RtmpNdoQyI/watcher-example"            
+#> [2] "/private/var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T/RtmpNdoQyI/watcher-example/anotherfile"
+#> [3] "/private/var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T/RtmpNdoQyI/watcher-example/newfile"
 
 newfile <- file(file.path(dir, "newfile"), open = "r+")
 cat("hello", file = newfile)
 close(newfile)
 later::run_now(1)
-#> [1] "/tmp/Rtmph2w1cl/watcher-example/newfile"
+#> [1] "/private/var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T/RtmpNdoQyI/watcher-example/newfile"
 
 file.remove(file.path(dir, "newfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/tmp/Rtmph2w1cl/watcher-example/newfile"
+#> [1] "/private/var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T/RtmpNdoQyI/watcher-example/newfile"
 
 w$stop()
 unlink(dir, recursive = TRUE, force = TRUE)
