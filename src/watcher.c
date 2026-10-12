@@ -23,12 +23,7 @@ static void watcher_error(FSW_HANDLE handle, const char *msg) {
 
 static void watcher_unwind(watcher_cb *wcb) {
 
-  if (wcb->paths) {
-    for (unsigned int i = 0; i < wcb->event_num; i++) {
-      free(wcb->paths[i]);
-    }
-    free(wcb->paths);
-  }
+  free(wcb->paths);
   free(wcb);
 
 }
@@ -53,37 +48,49 @@ static void exec_later(void *data) {
 static void process_events(fsw_cevent const *const events, const unsigned int event_num, void *data) {
 
   SEXP callback = (SEXP) data;
-  watcher_cb *wcb = NULL;
+
+  /* Single allocation: the pointer array, followed by the string storage. */
+  size_t bytes = sizeof(char *) * event_num;
+  for (unsigned int i = 0; i < event_num; i++) {
+    bytes += strlen(events[i].path) + 1;
+  }
+
+  watcher_cb *wcb = malloc(sizeof(watcher_cb));
+  if (wcb == NULL) return;
+  wcb->event_num = 0;
+  wcb->callback = callback;
+  wcb->paths = malloc(bytes);
+  if (wcb->paths == NULL) {
+    watcher_unwind(wcb);
+    return;
+  }
+  char *store = (char *) (wcb->paths + event_num);
+
+  /* Keep the first occurrence of each path: duplicates carry no information
+   * as only paths are surfaced to R (r-lib/watcher#55). */
+  for (unsigned int i = 0; i < event_num; i++) {
+    unsigned int j = 0;
+    while (j < wcb->event_num && strcmp(events[i].path, wcb->paths[j])) j++;
+    if (j < wcb->event_num) continue;
+    wcb->paths[wcb->event_num] = store;
+    const size_t slen = strlen(events[i].path) + 1;
+    memcpy(store, events[i].path, slen);
+    store += slen;
+    wcb->event_num++;
+  }
 
   if (callback != R_NilValue) {
 
-    wcb = malloc(sizeof(watcher_cb));
-    if (wcb == NULL) goto fail;
-
-    wcb->event_num = event_num;
-    wcb->callback = callback;
-    wcb->paths = calloc(event_num, sizeof(char *));
-    if (wcb->paths == NULL) goto fail;
-    for (unsigned int i = 0; i < event_num; i++) {
-      size_t slen = strlen(events[i].path) + 1;
-      wcb->paths[i] = malloc(sizeof(char) * slen);
-      if (wcb->paths[i] == NULL) goto fail;
-      memcpy(wcb->paths[i], events[i].path, slen);
-    }
     eln2(exec_later, wcb, 0, 0);
 
   } else {
 
-    for (unsigned int i = 0; i < event_num; i++) {
-      Wprintf("%d: %s\n", i, events[i].path);
+    for (unsigned int i = 0; i < wcb->event_num; i++) {
+      Wprintf("%d: %s\n", i, wcb->paths[i]);
     }
+    watcher_unwind(wcb);
 
   }
-
-  return;
-
-  fail:
-  watcher_unwind(wcb);
 
 }
 
@@ -108,7 +115,6 @@ static void session_finalizer(SEXP xptr) {
 
 SEXP watcher_create(SEXP path, SEXP callback, SEXP latency) {
 
-  const char *watch_path = Rf_translateChar(STRING_ELT(path, 0));
   const double lat = Rf_asReal(latency);
 
   FSW_HANDLE handle = fsw_init_session(system_default_monitor_type);
@@ -118,12 +124,8 @@ SEXP watcher_create(SEXP path, SEXP callback, SEXP latency) {
   /* no need to test return value of fsw_add_path() as it only errors if the
    * path is a null pointer, and Rf_translateChar() cannot return one
    */
-  fsw_add_path(handle, watch_path);
-
-  if (XLENGTH(path) > 1) {
-    for (R_xlen_t i = 1; i < XLENGTH(path); i++) {
-      fsw_add_path(handle, Rf_translateChar(STRING_ELT(path, i)));
-    }
+  for (R_xlen_t i = 0; i < XLENGTH(path); i++) {
+    fsw_add_path(handle, Rf_translateChar(STRING_ELT(path, i)));
   }
 
   if (fsw_set_latency(handle, lat) != FSW_OK)
@@ -141,9 +143,9 @@ SEXP watcher_create(SEXP path, SEXP callback, SEXP latency) {
    * This is to prevent events being triggered too often as some platforms e.g.
    * Ubuntu generate events even when files are being read etc.
    */
-  fsw_event_type_filter filter;
-  for (int flag = Created; flag <= Renamed; flag = flag << 1) {
-    filter.flag = flag;
+  static const enum fsw_event_flag flags[] = {Created, Updated, Removed, Renamed};
+  for (unsigned int i = 0; i < sizeof flags / sizeof(flags[0]); i++) {
+    const fsw_event_type_filter filter = {flags[i]};
     fsw_add_event_type_filter(handle, filter);
   }
 
