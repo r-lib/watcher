@@ -78,7 +78,7 @@ w
 #>     start: function () 
 #>     stop: function () 
 #>   Private:
-#>     path: /var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T//Rtmp41 ...
+#>     path: /tmp/RtmppOjmv7/watcher-example
 #>     running: FALSE
 #>     watch: externalptr
 w$start()
@@ -88,20 +88,19 @@ file.create(file.path(dir, "newfile"))
 file.create(file.path(dir, "anotherfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/private/var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T/Rtmp41KCUj/watcher-example"            
-#> [2] "/private/var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T/Rtmp41KCUj/watcher-example/anotherfile"
-#> [3] "/private/var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T/Rtmp41KCUj/watcher-example/newfile"
+#> [1] "/tmp/RtmppOjmv7/watcher-example/newfile"
+#> [1] "/tmp/RtmppOjmv7/watcher-example/anotherfile"
 
 newfile <- file(file.path(dir, "newfile"), open = "r+")
 cat("hello", file = newfile)
 close(newfile)
 later::run_now(1)
-#> [1] "/private/var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T/Rtmp41KCUj/watcher-example/newfile"
+#> [1] "/tmp/RtmppOjmv7/watcher-example/newfile"
 
 file.remove(file.path(dir, "newfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/private/var/folders/38/lgkw9s3d5tn626g4z2r11bzm0000gp/T/Rtmp41KCUj/watcher-example/newfile"
+#> [1] "/tmp/RtmppOjmv7/watcher-example/newfile"
 
 w$stop()
 unlink(dir, recursive = TRUE, force = TRUE)
