@@ -652,7 +652,7 @@ namespace fsw
      * @brief Bubble events by joining flags received for the same (time, path)
      * pair.
      */
-    bool bubble_events = false;
+    bool bubble_events = true;
 
     /**
      * @brief Mutex used to serialize access to the monitor state from multiple

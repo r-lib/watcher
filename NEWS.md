@@ -1,5 +1,7 @@
 # watcher (development version)
 
+* Paths reported by a single callback are now always unique, with duplicate filesystem events for the same path consolidated (#55, thanks @tomjemmett).
+
 # watcher 0.2.1
 
 * Fixes installation failing on systems with a partial or broken system 'libfswatch', now falling back to the bundled build (#48).

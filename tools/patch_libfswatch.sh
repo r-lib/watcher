@@ -20,6 +20,11 @@
 #      watcher never enables libfswatch verbose logging, so this is a no-op in
 #      normal use. Neutering removes the printf/stdout/stderr/cerr symbols that
 #      would otherwise be flagged when libfswatch is compiled into watcher.so.
+#   4. Bubble events by default - flip the monitor's bubble_events default to
+#      true. watcher surfaces only event paths to R, so duplicate same-path
+#      events within one latency window carry no information (r-lib/watcher#55).
+#      The C API does not expose set_bubble_events(); the vendored library is
+#      compiled solely for watcher, so flipping the default is safe.
 
 set -e
 
@@ -137,4 +142,22 @@ if grep -q 'fprintf(stderr, _("Invalid handle when opening' "$WIN_MON" 2>/dev/nu
   echo -e "${GREEN}  ✓ windows_monitor.cpp fprintf(stderr) removed${NC}"
 else
   echo -e "${GREEN}  ✓ windows_monitor.cpp fprintf(stderr) already removed${NC}"
+fi
+
+# --- Patch 4: enable event bubbling by default --------------------------------
+# watcher surfaces only event paths to R, so duplicate same-path events within
+# one latency window carry no information (r-lib/watcher#55). The C API does
+# not expose set_bubble_events(); as the vendored library is compiled solely
+# for watcher, flip the monitor default instead.
+MON_HPP="$LIBFSW_SRC/c++/monitor.hpp"
+if grep -q 'bool bubble_events = true;' "$MON_HPP" 2>/dev/null; then
+  echo -e "${GREEN}  ✓ bubble_events default already enabled${NC}"
+else
+  sed -i.bak 's|bool bubble_events = false;|bool bubble_events = true;|' "$MON_HPP"
+  rm -f "$MON_HPP.bak"
+  if ! grep -q 'bool bubble_events = true;' "$MON_HPP"; then
+    echo "Error: failed to enable bubble_events in $MON_HPP" >&2
+    exit 1
+  fi
+  echo -e "${GREEN}  ✓ bubble_events default enabled${NC}"
 fi
