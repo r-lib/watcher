@@ -127,9 +127,7 @@ namespace fsw
     catch (const std::regex_error& error)
     {
       throw libfsw_exception(
-        string_utils::string_from_format(
-          _("An error occurred during the compilation of %s"),
-          filter.text.c_str()),
+        _("An error occurred during the compilation of a filter regex"),
         FSW_ERR_INVALID_REGEX);
     }
   }
@@ -148,9 +146,7 @@ namespace fsw
     catch (const std::regex_error& error)
     {
       throw libfsw_exception(
-        string_utils::string_from_format(
-          _("An error occurred during the compilation of %s"),
-          filter.text.c_str()),
+        _("An error occurred during the compilation of a filter regex"),
         FSW_ERR_INVALID_REGEX);
     }
   }

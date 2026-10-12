@@ -13,54 +13,8 @@
  * You should have received a copy of the GNU General Public License along with
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <cstdarg>
-#include <cstdio>
-#include <vector>
+/* watcher: bodies removed as dead code. Logging is neutered, and the only
+ * other callers (regex-error paths in monitor.cpp) are unreachable in watcher.
+ * Also sidesteps a GCC 16 -Warray-bounds false positive.
+ * See tools/patch_libfswatch.sh. */
 #include "string_utils.hpp"
-
-using namespace std;
-
-namespace fsw
-{
-  namespace string_utils
-  {
-    string vstring_from_format(const char *format, va_list args)
-    {
-      if (!format) return string();
-      size_t current_buffer_size = 0;
-      int required_chars = 512;
-
-      vector<char> buffer;
-
-      do
-      {
-        current_buffer_size += required_chars;
-        buffer.resize(current_buffer_size);
-        required_chars = vsnprintf(&buffer[0], current_buffer_size, format, args);
-
-        // If an encoding error occurs, break and write an empty string into the
-        // buffer.
-        if (required_chars < 0)
-        {
-          buffer.resize(1);
-          break;
-        }
-      }
-      while ((size_t) required_chars > current_buffer_size);
-
-      return string(&buffer[0]);
-    }
-
-    string string_from_format(const char *format, ...)
-    {
-      va_list args;
-      va_start(args, format);
-
-      string ret = vstring_from_format(format, args);
-
-      va_end(args);
-
-      return ret;
-    }
-  }
-}
