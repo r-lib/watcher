@@ -19,7 +19,9 @@ R CMD INSTALL .
 ```r
 # Run tests (in the R console)
 devtools::test()
-# or without devtools:
+# or without devtools (package must be installed and attached;
+# NOT_CRAN=true also runs the tests that skip on aarch64):
+library(watcher)
 testthat::test_dir("tests/testthat")
 ```
 
@@ -69,6 +71,9 @@ The package uses GitHub Actions workflows in `.github/workflows/`:
 **Callback Mechanism:**
 - File events trigger `process_events()` callback in C
 - Events are bundled by path and passed to R via the 'later' package's `execLaterNative2`
+- Paths are deduplicated per callback (first occurrence kept) and copied in a
+  single allocation; combined with the patched-in event bubbling (see Build
+  System), paths reported by a single callback are always unique
 - R callbacks execute when R is idle or when `later::run_now()` is called
 - If no callback is provided, events are printed to stdout
 
@@ -100,10 +105,15 @@ hand-maintained config header, not host probing.
 - `src/link.cpp`: empty `.cpp` that forces R to link with the C++ linker.
 - `tools/update_libfswatch.sh`: re-vendors libfswatch and regenerates the config
   header, object list, and Makevars; calls `tools/patch_libfswatch.sh`.
-- `tools/patch_libfswatch.sh`: idempotent source patches — a null-format guard
-  in `string_utils`, self-guards on the fsevents/inotify/fanotify monitors, and
-  neutering of libfswatch's stdout/stderr/cerr logging (for the R CMD check
-  "compiled code" policy).
+- `tools/patch_libfswatch.sh`: idempotent source patches — (1) empty
+  `string_utils.cpp` to an include-only TU: after the logging neutering its
+  only live references are two regex-error exception messages in `monitor.cpp`,
+  unreachable in watcher (no text filters are ever added), so those are
+  replaced with a static message; also fixes a GCC 16 `-Warray-bounds` false
+  positive. (2) Self-guards on the fsevents/inotify/fanotify monitors. (3)
+  Neutering of libfswatch's stdout/stderr/cerr logging (for the R CMD check
+  "compiled code" policy). (4) `bubble_events = true` by default (the C API
+  does not expose `set_bubble_events()`).
 
 **Key dependencies:** an R C/C++ toolchain plus `make`; pthread; the
 'later' R package. A system libfswatch is used automatically when present.

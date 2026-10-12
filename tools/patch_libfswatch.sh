@@ -10,8 +10,14 @@
 #
 # Every patch is IDEMPOTENT: running this on already-patched sources is a no-op.
 # The patches are:
-#   1. string_utils.cpp  - guard against a null format string (GCC
-#      -Wformat-truncation in stricter CRAN/rhub builds).
+#   1. string_utils.cpp body removal - after patch 3's logging neutering,
+#      string_from_format()/vstring_from_format() are referenced only by two
+#      regex-error exception messages in monitor.cpp, which watcher can never
+#      reach (it adds only event-flag filters, never text filters). Replace
+#      those call sites with a static message (1a) and empty string_utils.cpp
+#      to an include-only TU (1b). Also resolves a GCC 16 -Warray-bounds false
+#      positive against the upstream vector<char>::resize implementation, which
+#      R CMD check reports as a significant warning.
 #   2. Monitor self-guards - wrap fsevents/inotify/fanotify monitor bodies in
 #      their platform #ifdef so they compile to empty objects on the wrong OS
 #      (kqueue/fen/windows monitors already self-guard upstream).
@@ -59,19 +65,47 @@ add_guard() {
   echo -e "${GREEN}  ✓ self-guard $macro applied${NC}"
 }
 
-# --- Patch 1: string_utils.cpp null-format guard -----------------------------
-STRING_UTILS="$LIBFSW_SRC/c++/string/string_utils.cpp"
-if [ -f "$STRING_UTILS" ]; then
-  if grep -q "if (!format) return" "$STRING_UTILS"; then
-    echo -e "${GREEN}  ✓ string_utils null-format guard already present${NC}"
-  else
-    sed -i.bak 's|^      size_t current_buffer_size = 0;$|      if (!format) return string();\
-      size_t current_buffer_size = 0;|' "$STRING_UTILS"
-    rm -f "$STRING_UTILS.bak"
-    echo -e "${GREEN}  ✓ string_utils null-format guard applied${NC}"
-  fi
+# --- Patch 1a: static regex-error messages in monitor.cpp --------------------
+# watcher never adds text filters (only event-flag filters), so the regex-error
+# exceptions in add_filter()/add_prune_filter() are unreachable. Replace their
+# string_from_format() messages with a static string so string_utils.cpp can be
+# emptied (patch 1b).
+MON_CPP="$LIBFSW_SRC/c++/monitor.cpp"
+if grep -q 'compilation of a filter regex' "$MON_CPP" 2>/dev/null; then
+  echo -e "${GREEN}  ✓ monitor.cpp regex-error messages already static${NC}"
 else
-  echo -e "${YELLOW}  ⚠ string_utils.cpp not found, skipping${NC}"
+  perl -0777 -pi -e 's/        string_utils::string_from_format\(\n          _\("An error occurred during the compilation of %s"\),\n          filter\.text\.c_str\(\)\),/        _("An error occurred during the compilation of a filter regex"),/g' "$MON_CPP"
+  if grep -q 'filter\.text\.c_str()' "$MON_CPP"; then
+    echo "Error: failed to patch string_from_format call sites in $MON_CPP" >&2
+    exit 1
+  fi
+  echo -e "${GREEN}  ✓ monitor.cpp regex-error messages made static${NC}"
+fi
+
+# --- Patch 1b: empty string_utils.cpp bodies (dead code) ---------------------
+# After patch 3's logging neutering and patch 1a, nothing references
+# string_from_format()/vstring_from_format(): empty the TU. The object stays in
+# the build, compiling empty like the self-guarded monitors. This also resolves
+# the GCC 16 -Warray-bounds false positive against the upstream
+# vector<char>::resize implementation, which R CMD check reports as a
+# significant warning.
+STRING_UTILS="$LIBFSW_SRC/c++/string/string_utils.cpp"
+if grep -q 'watcher: bodies removed' "$STRING_UTILS" 2>/dev/null; then
+  echo -e "${GREEN}  ✓ string_utils.cpp bodies already removed${NC}"
+else
+  # Preserve the upstream licence header (everything before the first #include).
+  HEADER=$(awk '/^#include/{exit} {print}' "$STRING_UTILS")
+  {
+    printf '%s\n' "$HEADER"
+    cat <<'EOF'
+/* watcher: bodies removed as dead code. Logging is neutered, and the only
+ * other callers (regex-error paths in monitor.cpp) are unreachable in watcher.
+ * Also sidesteps a GCC 16 -Warray-bounds false positive.
+ * See tools/patch_libfswatch.sh. */
+#include "string_utils.hpp"
+EOF
+  } > "$STRING_UTILS.tmp" && mv "$STRING_UTILS.tmp" "$STRING_UTILS"
+  echo -e "${GREEN}  ✓ string_utils.cpp bodies removed${NC}"
 fi
 
 # --- Patch 2: self-guard the three non-self-guarding monitors ----------------
