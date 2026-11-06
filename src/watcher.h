@@ -2,6 +2,7 @@
 #define WATCHER_H
 
 #include <stdarg.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -26,7 +27,7 @@ typedef struct watcher_cb_s {
   unsigned int event_num;
 } watcher_cb;
 
-extern void (*eln2)(void (*)(void *), void *, double, int);
+extern uint64_t (*eln2)(void (*)(void *), void *, double, int);
 
 SEXP watcher_create(SEXP, SEXP, SEXP);
 SEXP watcher_start_monitor(SEXP);
