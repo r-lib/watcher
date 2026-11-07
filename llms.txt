@@ -2,9 +2,6 @@
 
 Watch the File System for Changes
 
-[![Ask
-DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/r-lib/watcher)
-
 R binding for [libfswatch](https://emcrisostomo.github.io/fswatch/), a
 file system monitoring library. This uses an optimal event-driven API
 for each platform:
@@ -73,7 +70,7 @@ w
 #>     start: function () 
 #>     stop: function () 
 #>   Private:
-#>     path: /tmp/Rtmph2w1cl/watcher-example
+#>     path: /tmp/RtmppOjmv7/watcher-example
 #>     running: FALSE
 #>     watch: externalptr
 w$start()
@@ -83,19 +80,19 @@ file.create(file.path(dir, "newfile"))
 file.create(file.path(dir, "anotherfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/tmp/Rtmph2w1cl/watcher-example/newfile"
-#> [1] "/tmp/Rtmph2w1cl/watcher-example/anotherfile"
+#> [1] "/tmp/RtmppOjmv7/watcher-example/newfile"
+#> [1] "/tmp/RtmppOjmv7/watcher-example/anotherfile"
 
 newfile <- file(file.path(dir, "newfile"), open = "r+")
 cat("hello", file = newfile)
 close(newfile)
 later::run_now(1)
-#> [1] "/tmp/Rtmph2w1cl/watcher-example/newfile"
+#> [1] "/tmp/RtmppOjmv7/watcher-example/newfile"
 
 file.remove(file.path(dir, "newfile"))
 #> [1] TRUE
 later::run_now(1)
-#> [1] "/tmp/Rtmph2w1cl/watcher-example/newfile"
+#> [1] "/tmp/RtmppOjmv7/watcher-example/newfile"
 
 w$stop()
 unlink(dir, recursive = TRUE, force = TRUE)
