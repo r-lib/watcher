@@ -2,6 +2,8 @@
 
 ## watcher (development version)
 
+## watcher 0.2.2
+
 - Paths reported by a single callback are now always unique, with
   duplicate filesystem events for the same path consolidated
   ([\#55](https://github.com/r-lib/watcher/issues/55), thanks
