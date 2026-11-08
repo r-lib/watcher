@@ -2,6 +2,8 @@
 
 ## watcher 0.2.2
 
+CRAN release: 2026-11-07
+
 - Paths reported by a single callback are now always unique, with
   duplicate filesystem events for the same path consolidated
   ([\#55](https://github.com/r-lib/watcher/issues/55), thanks
